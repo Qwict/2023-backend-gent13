@@ -18,7 +18,7 @@ async function create({name,email,salt,hash}){
     const [id] = await getKnex()(tables.user).insert({
       name,email,salt,hash
     });
-    return id;
+    return findById(id);
   } catch (error) {
     const logger = getLogger();
     logger.error('Error in create', {

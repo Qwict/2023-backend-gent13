@@ -35,6 +35,7 @@ const validate = (schema) => {
   }
 
   return (ctx, next) => {
+    console.log(ctx.request.body);
     const errors = {};
     if (schema.query) {
       if (!Joi.isSchema(schema.query)) {

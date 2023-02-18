@@ -7,22 +7,20 @@ const jwt = require("jsonwebtoken");
 const validate = require('./_validation');
 
 const getById = async (ctx) => {
+  try {
   var token = ctx.headers.authorization;
-  console.log('METHOD');
-  console.log(token);
   const decoded = jwt.verify(token, 'supersecret');
-  if (decoded) {
-    ctx.body = await userService.getById(ctx.params.id);
-    ctx.status = 200;
-  } else{
-    ctx.status = 401;
+  ctx.body = await userService.getById(ctx.params.id);
+  ctx.status = 200;
+  } catch (error) {
+    ctx.body = 'UNAUTHORIZED';
+    ctx.status = 403;
   }
-  
-
 };
 
 const register = async (ctx) => {
-  await userService.register(ctx.request.body);
+  const token = await userService.register(ctx.request.body);
+  ctx.body = token;
   ctx.status = 201;
 }
 
@@ -57,7 +55,7 @@ module.exports = function installUserRouter(app) {
 
 
   router.get('/verify', validate(verify.validationScheme), verify);
-  router.get('/',getById);
+  router.get('/:id',getById);
   router.post('/register', validate(register.validationScheme), register);
 
   app
