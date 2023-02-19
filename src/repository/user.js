@@ -1,3 +1,5 @@
+const uuid = require('uuid');
+
 const {tables, getKnex} = require('../data');
 const {getLogger} = require('../core/logging');
 
@@ -15,8 +17,9 @@ async function findByMail(email) {
 
 async function create({name,email,salt,hash}){
   try {
-    const [id] = await getKnex()(tables.user).insert({
-      name,email,salt,hash
+    const id = uuid.v4();
+    await getKnex()(tables.user).insert({
+      id, name,email,salt,hash
     });
     return findById(id);
   } catch (error) {

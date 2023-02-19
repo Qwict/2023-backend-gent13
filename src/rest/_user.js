@@ -8,10 +8,10 @@ const validate = require('./_validation');
 
 const getById = async (ctx) => {
   try {
-  var token = ctx.headers.authorization;
-  const decoded = jwt.verify(token, 'supersecret');
-  ctx.body = await userService.getById(ctx.params.id);
-  ctx.status = 200;
+    var token = ctx.headers.authorization;
+    const decoded = jwt.verify(token, 'supersecret');
+    ctx.body = await userService.getById(ctx.params.id);
+    ctx.status = 200;
   } catch (error) {
     ctx.body = 'UNAUTHORIZED';
     ctx.status = 403;
@@ -19,9 +19,14 @@ const getById = async (ctx) => {
 };
 
 const register = async (ctx) => {
-  const token = await userService.register(ctx.request.body);
-  ctx.body = token;
-  ctx.status = 201;
+  console.log(ctx.request.body)
+  try {
+    const token = await userService.register(ctx.request.body);
+    ctx.body = token;
+    ctx.status = 201;
+  } catch {
+    ctx.status = 500
+  }
 }
 
 register.validationScheme = {
@@ -34,12 +39,17 @@ register.validationScheme = {
 
 const verify = async (ctx) => {
   console.log("REST")
-  const verification = await userService.verify(ctx.request.body);
-  console.log(verification);
-  ctx.body = verification;
-  ctx.status = 202;
+  console.log(ctx.request.body)
+  try {
+    const verification = await userService.verify(ctx.request.body);
+    console.log(verification);
+    ctx.body = verification;
+    ctx.status = 202;
+  } catch {
+    ctx.status = 500
+  }
 }
- 
+
 verify.validationScheme = {
   body: {
     email: Joi.string(),
@@ -53,12 +63,11 @@ module.exports = function installUserRouter(app) {
     prefix: '/user',
   });
 
-
-  router.get('/verify', validate(verify.validationScheme), verify);
-  router.get('/:id',getById);
+  router.post('/verify', validate(verify.validationScheme), verify);
+  router.get('/:id', getById);
   router.post('/register', validate(register.validationScheme), register);
 
   app
-  .use(router.routes())
-  .use(router.allowedMethods());
+    .use(router.routes())
+    .use(router.allowedMethods());
 }

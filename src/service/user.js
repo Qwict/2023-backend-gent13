@@ -13,9 +13,8 @@ const register = async ({
   email,
   password
 }) => {
-
   const salt = crypto.randomBytes(128).toString('base64');
-  const hash = crypto.pbkdf2Sync(password, salt, 10000,512,'sha256').toString('base64');
+  const hash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha256').toString('base64');
 
   const newUser = {
     name,
@@ -42,7 +41,7 @@ const verify = async ({
   if (!user) {
     return verification;
   }
-  const result = user.hash === crypto.pbkdf2Sync(password, user.salt, 10000,512,'sha256').toString('base64');
+  const result = user.hash === crypto.pbkdf2Sync(password, user.salt, 10000, 64, 'sha256').toString('base64');
   if (result) {
     const token = jwt.sign(user, 'supersecret', {
       expiresIn: 36000,
