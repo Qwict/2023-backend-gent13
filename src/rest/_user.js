@@ -24,7 +24,7 @@ const register = async (ctx) => {
     const token = await userService.register(ctx.request.body);
     ctx.body = token;
     ctx.status = 201;
-  } catch {
+  } catch(err) {
     ctx.status = 500
   }
 }
@@ -37,23 +37,31 @@ register.validationScheme = {
   }
 }
 
-const verify = async (ctx) => {
-  console.log("REST")
-  console.log(ctx.request.body)
+const login = async (ctx) => {
   try {
-    const verification = await userService.verify(ctx.request.body);
-    console.log(verification);
+    const verification = await userService.login(ctx.request.body);
     ctx.body = verification;
     ctx.status = 202;
-  } catch {
-    ctx.status = 500
+  } catch(err) {
+    ctx.status = 500;
   }
 }
 
-verify.validationScheme = {
+login.validationScheme = {
   body: {
     email: Joi.string(),
     password: Joi.string()
+  }
+}
+
+const verify = async(ctx) => {
+  const bool = await userService.verify(ctx.request.body);
+  ctx.body = bool;
+  ctx.status = 203;
+}
+verify.validationScheme = {
+  body: {
+    data: Joi.string(),
   }
 }
 
@@ -63,7 +71,8 @@ module.exports = function installUserRouter(app) {
     prefix: '/user',
   });
 
-  router.post('/verify', validate(verify.validationScheme), verify);
+  router.post('/login', validate(login.validationScheme), login);
+  router.post('/verify',validate(verify.validationScheme), verify)
   router.get('/:id', getById);
   router.post('/register', validate(register.validationScheme), register);
 

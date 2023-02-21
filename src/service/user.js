@@ -28,7 +28,7 @@ const register = async ({
   });
 }
 
-const verify = async ({
+const login = async ({
   email,
   password
 }) => {
@@ -53,8 +53,20 @@ const verify = async ({
   return verification;
 }
 
+const verify = async ({token}) => {
+  try {
+  const decoded = jwt.verify(token, 'supersecret');
+  if (decoded) {
+    return true;
+  }
+} catch (error) {
+    return false;
+  }
+}
+
 module.exports = {
   getById,
   register,
-  verify
+  login,
+  verify,
 }
