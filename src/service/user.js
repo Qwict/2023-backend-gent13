@@ -60,6 +60,7 @@ const verify = async ({token}) => {
     return true;
   }
 } catch (error) {
+  console.error(error);
     return false;
   }
 }

@@ -20,8 +20,8 @@
   "scripts": {
     "start": "npx env-cmd nodemon",
     "start:prod": "node src/index.js",
-    "test": "npx env-cmd -f .env.test jest",
-    "test:coverage": "npx env-cmd -f .env.test jest --coverage",
+    "test": "npx env-cmd -f .env.test jest --runInBand",
+    "test:coverage": "npx env-cmd -f .env.test jest --coverage --runInBand",
     "test:ci": "jest",
     "lint": "eslint . --fix"
   },

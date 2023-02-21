@@ -19,7 +19,6 @@ const getById = async (ctx) => {
 };
 
 const register = async (ctx) => {
-  console.log(ctx.request.body)
   try {
     const token = await userService.register(ctx.request.body);
     ctx.body = token;
@@ -61,7 +60,7 @@ const verify = async(ctx) => {
 }
 verify.validationScheme = {
   body: {
-    data: Joi.string(),
+    token: Joi.string(),
   }
 }
 
