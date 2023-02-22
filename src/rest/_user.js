@@ -7,23 +7,29 @@ const jwt = require("jsonwebtoken");
 const validate = require('./_validation');
 
 const getById = async (ctx) => {
-  var token = ctx.headers.authorization;
-  console.log('METHOD');
-  console.log(token);
-  const decoded = jwt.verify(token, 'supersecret');
-  if (decoded) {
+  try {
+    var token = ctx.headers.authorization;
+    const decoded = jwt.verify(token, 'supersecret');
     ctx.body = await userService.getById(ctx.params.id);
     ctx.status = 200;
-  } else{
-    ctx.status = 401;
+  } catch (error) {
+    ctx.body = 'UNAUTHORIZED';
+    ctx.status = 403;
   }
-  
-
 };
 
 const register = async (ctx) => {
-  await userService.register(ctx.request.body);
-  ctx.status = 201;
+  try {
+    const token = await userService.register(ctx.request.body);
+    ctx.body = token;
+    ctx.status = 201;
+  } catch (err) {
+    if (err.message === 'DUPLICATE_ENTRY') {
+      ctx.status = 409
+    } else {
+      ctx.status = 500
+    }
+  }
 }
 
 register.validationScheme = {
@@ -34,18 +40,35 @@ register.validationScheme = {
   }
 }
 
-const verify = async (ctx) => {
-  console.log("REST")
-  const verification = await userService.verify(ctx.request.body);
-  console.log(verification);
-  ctx.body = verification;
-  ctx.status = 202;
+const login = async (ctx) => {
+  try {
+    const verification = await userService.login(ctx.request.body);
+    ctx.body = verification;
+    if (verification.validated) {
+      ctx.status = 202;
+    } else {
+      ctx.status = 401;
+    }
+  } catch (err) {
+    ctx.status = 500;
+  }
 }
- 
-verify.validationScheme = {
+
+login.validationScheme = {
   body: {
     email: Joi.string(),
     password: Joi.string()
+  }
+}
+
+const verify = async (ctx) => {
+  const bool = await userService.verify(ctx.request.body);
+  ctx.body = bool;
+  ctx.status = 203;
+}
+verify.validationScheme = {
+  body: {
+    token: Joi.string(),
   }
 }
 
@@ -55,12 +78,12 @@ module.exports = function installUserRouter(app) {
     prefix: '/user',
   });
 
-
-  router.get('/verify', validate(verify.validationScheme), verify);
-  router.get('/',getById);
+  router.post('/login', validate(login.validationScheme), login);
+  router.post('/verify', validate(verify.validationScheme), verify)
+  router.get('/:id', getById);
   router.post('/register', validate(register.validationScheme), register);
 
   app
-  .use(router.routes())
-  .use(router.allowedMethods());
+    .use(router.routes())
+    .use(router.allowedMethods());
 }
