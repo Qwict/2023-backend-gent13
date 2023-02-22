@@ -53,14 +53,16 @@ const login = async ({
   return verification;
 }
 
-const verify = async ({token}) => {
+const verify = async ({
+  token
+}) => {
   try {
-  const decoded = jwt.verify(token, 'supersecret');
-  if (decoded) {
-    return true;
-  }
-} catch (error) {
-  console.error(error);
+    const decoded = jwt.verify(token, 'supersecret');
+    if (decoded) {
+      return true;
+    }
+  } catch (error) {
+    console.error(error);
     return false;
   }
 }

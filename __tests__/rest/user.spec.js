@@ -1,5 +1,9 @@
-const { withServer } = require('../helpers');
-const { tables } = require('../../src/data');
+const {
+  withServer
+} = require('../helpers');
+const {
+  tables
+} = require('../../src/data');
 const jwt = require('jsonwebtoken');
 
 const data = {
@@ -20,7 +24,10 @@ describe('Users', () => {
   let request;
   let knex;
 
-  withServer(({ knex: k, request: r }) => {
+  withServer(({
+    knex: k,
+    request: r
+  }) => {
     knex = k;
     request = r;
   });
@@ -42,7 +49,7 @@ describe('Users', () => {
       const token = jwt.sign(data.user, 'supersecret', {
         expiresIn: 36000,
       });
-      const response = await request.get(`${url}/${data.user.id}`).set('Authorization',token);
+      const response = await request.get(`${url}/${data.user.id}`).set('Authorization', token);
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(data.user);
@@ -69,29 +76,28 @@ describe('Users', () => {
   });
 
   describe('POST /api/user/login', () => {
-      beforeAll(async () => {
+    beforeAll(async () => {
 
-        await knex(tables.user).insert(data.user);
+      await knex(tables.user).insert(data.user);
+    });
+
+    afterAll(async () => {
+      await knex(tables.user)
+        .where('id', dataToDelete.user)
+        .delete();
+    });
+
+    test('It should 202 and return a token', async () => {
+      const response = await request.post(`${url}/login`).send({
+        email: data.user.email,
+        password: "WayTooStrong"
       });
-  
-      afterAll(async () => {
-        await knex(tables.user)
-          .where('id', dataToDelete.user)
-          .delete();
-      });
 
-      test('It should 202 and return a token', async () => {
-        const response = await request.post(`${url}/login`).send({
-          email: data.user.email,
-          password: "WayTooStrong"
-        });
+      expect(response.status).toBe(202);
+      expect(response.body.token).toBeTruthy();
+      expect(response.body.validated).toBe(true);
 
-        expect(response.status).toBe(202);
-        console.log(response.body);
-        expect(response.body.token).toBeTruthy();
-        expect(response.body.validated).toBe(true);
-
-      })
+    })
   });
 
   describe('POST /api/user/verify', () => {
@@ -110,8 +116,9 @@ describe('Users', () => {
         expiresIn: 36000,
       });
 
-      const response = await request.post(`${url}/verify`).send({token: token});
-      console.log(response.body);
+      const response = await request.post(`${url}/verify`).send({
+        token: token
+      });
       expect(response.status).toBe(203);
       expect(response.body).toBe(true);
     })

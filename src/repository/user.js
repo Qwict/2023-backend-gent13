@@ -1,25 +1,48 @@
 const uuid = require('uuid');
 
-const {tables, getKnex} = require('../data');
-const {getLogger} = require('../core/logging');
+const {
+  tables,
+  getKnex
+} = require('../data');
+const {
+  getLogger
+} = require('../core/logging');
 
-async function findById(id){
+async function findById(id) {
   console.log('OI');
-  const user = await getKnex()(tables.user).where('id',id).first();
-  console.log(user);
+  const user = await getKnex()(tables.user).where('id', id).first();
   return user;
 }
 
 async function findByMail(email) {
-    const user = await getKnex()(tables.user).where('email',email).first();
-    return user;
+  const user = await getKnex()(tables.user).where('email', email).first();
+  return user;
 }
 
-async function create({name,email,salt,hash}){
+async function create({
+  name,
+  email,
+  salt,
+  hash
+}) {
+  // is there a better way to catch a duplicate error?
+  const existingUser = await findByMail(email);
+  if (existingUser != undefined) {
+    const error = new Error('DUPLICATE_ENTRY');
+    const logger = getLogger();
+    logger.error('Error in create', {
+      error,
+    });
+    throw error;
+  }
   try {
     const id = uuid.v4();
     await getKnex()(tables.user).insert({
-      id, name,email,salt,hash
+      id,
+      name,
+      email,
+      salt,
+      hash
     });
     return findById(id);
   } catch (error) {
