@@ -46,8 +46,10 @@ describe('Users', () => {
     });
 
     test('it should 200 and return the requested user', async () => {
-      const token = jwt.sign(data.user, 'supersecret', {
+      const token = jwt.sign(data.user, process.env.JWT_SECRET, {
         expiresIn: 36000,
+        audience: process.env.AUTH_AUDIENCE,
+        issuer: process.env.AUTH_ISSUER,
       });
       const response = await request.get(`${url}/${data.user.id}`).set('Authorization', token);
 
@@ -87,13 +89,13 @@ describe('Users', () => {
         .delete();
     });
 
-    test('It should 202 and return a token', async () => {
+    test('It should 201 and return a token', async () => {
       const response = await request.post(`${url}/login`).send({
         email: data.user.email,
         password: "WayTooStrong"
       });
 
-      expect(response.status).toBe(202);
+      expect(response.status).toBe(201);
       expect(response.body.token).toBeTruthy();
       expect(response.body.validated).toBe(true);
 
@@ -111,15 +113,17 @@ describe('Users', () => {
         .delete();
     });
 
-    test('It should 203 and return true', async () => {
-      const token = jwt.sign(data.user, 'supersecret', {
+    test('It should 201 and return true', async () => {
+      const token = jwt.sign(data.user, process.env.JWT_SECRET, {
         expiresIn: 36000,
+        audience: process.env.AUTH_AUDIENCE,
+        issuer: process.env.AUTH_ISSUER,
       });
 
       const response = await request.post(`${url}/verify`).send({
         token: token
       });
-      expect(response.status).toBe(203);
+      expect(response.status).toBe(201);
       expect(response.body).toBe(true);
     })
   });
