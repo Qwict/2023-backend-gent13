@@ -9,7 +9,6 @@ const {
 } = require('../core/logging');
 
 async function findById(id) {
-  console.log('OI');
   const user = await getKnex()(tables.user).where('id', id).first();
   return user;
 }
