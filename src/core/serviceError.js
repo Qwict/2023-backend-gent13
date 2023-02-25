@@ -4,7 +4,6 @@ const UNAUTHORIZED = 'UNAUTHORIZED';
 const FORBIDDEN = 'FORBIDDEN';
 
 class ServiceError extends Error {
-
   constructor(code, message, details = {}) {
     super(message);
     this.code = code;

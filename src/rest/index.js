@@ -11,6 +11,5 @@ module.exports = (app) => {
   installHealthRouter(router);
   installUserRouter(router);
 
-
   app.use(router.routes()).use(router.allowedMethods());
 };

@@ -7,8 +7,6 @@ const {
   serializeError,
 } = require('serialize-error');
 
-
-
 const {
   initializeLogger,
   getLogger,
@@ -58,7 +56,6 @@ module.exports = async function createServer() {
 
   app.use(bodyParser());
 
-
   app.use(async (ctx, next) => {
     const logger = getLogger();
     logger.info(`${emoji.get('fast_forward')} ${ctx.method} ${ctx.url}`);
@@ -104,7 +101,7 @@ module.exports = async function createServer() {
       });
 
       let statusCode = error.status || 500;
-      let errorBody = {
+      const errorBody = {
         code: error.code || 'INTERNAL_SERVER_ERROR',
         message: error.message,
         details: error.details || {},

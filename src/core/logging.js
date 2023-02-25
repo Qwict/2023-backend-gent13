@@ -1,4 +1,5 @@
 const winston = require('winston');
+
 const {
   combine, timestamp, colorize, printf,
 } = winston.format;
@@ -14,10 +15,8 @@ const loggerFormat = () => {
   const formatError = ({
     error: { stack }, ...rest
   }) => `${formatMessage(rest)}\n\n${stack}\n`;
-  const format = (info) => info.error instanceof Error ? formatError(info) : formatMessage(info);
-  return combine(
-    colorize(), timestamp(), printf(format),
-  );
+  const format = (info) => (info.error instanceof Error ? formatError(info) : formatMessage(info));
+  return combine(colorize(), timestamp(), printf(format));
 };
 
 /**

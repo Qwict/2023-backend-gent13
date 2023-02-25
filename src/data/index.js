@@ -1,12 +1,12 @@
 const {
-  join
+  join,
 } = require('path');
 
 const config = require('config');
 const knex = require('knex');
 
 const {
-  getLogger
+  getLogger,
 } = require('../core/logging');
 
 const NODE_ENV = config.get('env');
@@ -25,8 +25,7 @@ const getKnexLogger = (logger, level) => (message) => {
   if (message.sql) {
     logger.log(level, message.sql);
   } else if (message.length && message.forEach) {
-    message.forEach((innerMessage) =>
-      logger.log(level, innerMessage.sql ? innerMessage.sql : JSON.stringify(innerMessage)));
+    message.forEach((innerMessage) => logger.log(level, innerMessage.sql ? innerMessage.sql : JSON.stringify(innerMessage)));
   } else {
     logger.log(level, JSON.stringify(message));
   }
@@ -80,7 +79,7 @@ async function initializeData() {
     await knexInstance.raw('SELECT 1+1 AS result');
   } catch (error) {
     logger.error(error.message, {
-      error
+      error,
     });
     throw new Error('Could not initialize the data layer');
   }
@@ -143,7 +142,8 @@ function getKnex() {
 }
 
 const tables = {
-  user: "user"
+  user: 'user',
+  product: 'product',
 };
 
 module.exports = {
