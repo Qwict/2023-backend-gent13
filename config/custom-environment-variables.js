@@ -7,5 +7,6 @@ module.exports = {
     username: 'DATABASE_USERNAME',
     password: 'DATABASE_PASSWORD',
     name: 'DATABASE_NAME',
+    ssl: 'DATABASE_SSL_PRIVATE_KEY',
   },
 };

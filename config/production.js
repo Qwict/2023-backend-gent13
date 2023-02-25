@@ -10,8 +10,8 @@ module.exports = {
   },
   database: {
     client: 'mysql2',
-    host: '',
+    host: 'localhost',
     port: 3306,
-    name: '',
+    name: 'dws_prod',
   },
 };
