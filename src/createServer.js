@@ -35,6 +35,7 @@ module.exports = async function createServer() {
 
   await initializeData();
 
+  const logger = getLogger();
   const app = new Koa();
 
   // Add CORS
@@ -52,12 +53,9 @@ module.exports = async function createServer() {
     }),
   );
 
-  const logger = getLogger();
-
   app.use(bodyParser());
 
   app.use(async (ctx, next) => {
-    const logger = getLogger();
     logger.info(`${emoji.get('fast_forward')} ${ctx.method} ${ctx.url}`);
 
     const getStatusEmoji = () => {
@@ -95,7 +93,6 @@ module.exports = async function createServer() {
         ctx.status = 404;
       }
     } catch (error) {
-      const logger = getLogger();
       logger.error('Error occured while handling a request', {
         error: serializeError(error),
       });
@@ -148,11 +145,9 @@ module.exports = async function createServer() {
     },
 
     async stop() {
-      {
-        app.removeAllListeners();
-        await shutdownData();
-        getLogger().info('Goodbye');
-      }
+      app.removeAllListeners();
+      await shutdownData();
+      getLogger().info('Goodbye');
     },
   };
 };

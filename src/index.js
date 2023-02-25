@@ -5,6 +5,7 @@ async function main() {
     const server = await createServer();
     await server.start();
 
+    // don't know how to fix this linter issue - how to move the function outside if it is async?
     async function onClose() {
       await server.stop();
       process.exit(0);
@@ -13,6 +14,7 @@ async function main() {
     process.on('SIGTERM', onClose);
     process.on('SIGQUIT', onClose);
   } catch (error) {
+    // don't know how to fix this linter issue (console.error is probable required here/ I con't use logger here)
     console.error(error); // print the error before exiting
     process.exit(-1);
   }

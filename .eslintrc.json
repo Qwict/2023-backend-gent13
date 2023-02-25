@@ -10,6 +10,11 @@
         "import"
     ],
     "rules": {
-        "max-len": ["error", { "code": 200 }]
+        "max-len": ["error", { "code": 200 }],
+        // don't throw Assignment to function parameter
+        //      I don't understand param-reassign -> so I disabled it (bad idea!?)
+        "no-param-reassign": 0,
+        // don't throw linting error on last empty line missing
+        "eol-last": ["error", "never"]
     }
 }

@@ -1,4 +1,6 @@
-const { getLogger } = require('../core/logging');
+const {
+  getLogger,
+} = require('../core/logging');
 const database = require('../repository/product');
 
 const debugLog = (message, meta = {}) => {
@@ -6,11 +8,15 @@ const debugLog = (message, meta = {}) => {
   this.logger.debug(message, meta);
 };
 
+const logger = getLogger();
+
 const getById = async (id) => {
   debugLog(`Fetching product with id ${id}`);
   const product = await database.findById(id);
   if (!product) {
-    console.error(`Product with id ${id} does not exist`, { id });
+    logger.error(`Product with id ${id} does not exist`, {
+      id,
+    });
   }
   return product;
 };
@@ -18,7 +24,7 @@ const getById = async (id) => {
 const getAll = async () => {
   const products = await database.findAll();
   if (products.length === 0) {
-    console.error('No products found');
+    logger.error('No products found');
   }
   return {
     products,

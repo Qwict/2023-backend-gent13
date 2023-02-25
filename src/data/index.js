@@ -20,7 +20,7 @@ const DATABASE_HOST = config.get('database.host');
 const DATABASE_PORT = config.get('database.port');
 const DATABASE_USERNAME = config.get('database.username');
 const DATABASE_PASSWORD = config.get('database.password');
-const DATABASE_SSL_PRIVATE_KEY = config.get('database.ssl')
+const DATABASE_SSL_PRIVATE_KEY = config.get('database.ssl');
 
 let knexInstance;
 
@@ -51,7 +51,7 @@ async function initializeData() {
         ca: fs.readFileSync(path.join(__dirname, '/certs/ca-cert.pem')).toString(),
         key: DATABASE_SSL_PRIVATE_KEY,
         cert: fs.readFileSync(path.join(__dirname, '/certs/client-cet.pem')).toString(),
-      }
+      },
     },
     debug: isDevelopment,
     log: {

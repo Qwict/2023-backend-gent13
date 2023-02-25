@@ -1,4 +1,6 @@
-const Joi = require('joi');
+// commented for linter uncomment if needed for validation
+// const Joi = require('joi');
+
 const Router = require('@koa/router');
 const productService = require('../service/product');
 

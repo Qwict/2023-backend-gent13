@@ -1,10 +1,10 @@
+const jwt = require('jsonwebtoken');
 const {
-  withServer
+  withServer,
 } = require('../helpers');
 const {
-  tables
+  tables,
 } = require('../../src/data');
-const jwt = require('jsonwebtoken');
 
 const data = {
   user: {
@@ -12,13 +12,13 @@ const data = {
     name: 'joris',
     email: 'test@gmail.com',
     salt: 'D4skUAZuGs3w5uJGJb+nOBUQNrPaXkzkNY6K/sMNZu8/KKl2+yhSrxjFnMMe2pdrFAqm9iOFNBiiilFBInjPssBq/WSMc76yKNLJSiTTkk8DV9tQuKg3LVVlEGrTjcx9UiKMh/3tjOBvkdNE1M/7fz/2nh70nl3WAqod226eccQ=',
-    hash: 'LKv3O/M6q5qdkyfgzpdJCStanWC4AZLGdVeC+g0ZEye8FAsA/gubfV3Nl29GaYXfSrrPnhg+6+joU69OBDoB2Q=='
+    hash: 'LKv3O/M6q5qdkyfgzpdJCStanWC4AZLGdVeC+g0ZEye8FAsA/gubfV3Nl29GaYXfSrrPnhg+6+joU69OBDoB2Q==',
   },
-}
+};
 
 const dataToDelete = {
   user: '4b09960e-0864-45e0-bab6-6cf8c7fc4626',
-}
+};
 
 describe('Users', () => {
   let request;
@@ -26,7 +26,7 @@ describe('Users', () => {
 
   withServer(({
     knex: k,
-    request: r
+    request: r,
   }) => {
     knex = k;
     request = r;
@@ -59,7 +59,6 @@ describe('Users', () => {
   });
 
   describe('POST /api/user/register', () => {
-
     afterAll(async () => {
       await knex(tables.user).delete();
     });
@@ -73,13 +72,11 @@ describe('Users', () => {
 
       expect(response.status).toBe(201);
       expect(response.body).toBeTruthy();
-
-    })
+    });
   });
 
   describe('POST /api/user/login', () => {
     beforeAll(async () => {
-
       await knex(tables.user).insert(data.user);
     });
 
@@ -92,14 +89,13 @@ describe('Users', () => {
     test('It should 201 and return a token', async () => {
       const response = await request.post(`${url}/login`).send({
         email: data.user.email,
-        password: "WayTooStrong"
+        password: 'WayTooStrong',
       });
 
       expect(response.status).toBe(201);
       expect(response.body.token).toBeTruthy();
       expect(response.body.validated).toBe(true);
-
-    })
+    });
   });
 
   describe('POST /api/user/verify', () => {
@@ -121,11 +117,10 @@ describe('Users', () => {
       });
 
       const response = await request.post(`${url}/verify`).send({
-        token: token
+        token,
       });
       expect(response.status).toBe(201);
       expect(response.body).toBe(true);
-    })
+    });
   });
-
 });

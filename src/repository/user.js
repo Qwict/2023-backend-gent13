@@ -2,10 +2,10 @@ const uuid = require('uuid');
 
 const {
   tables,
-  getKnex
+  getKnex,
 } = require('../data');
 const {
-  getLogger
+  getLogger,
 } = require('../core/logging');
 
 async function findById(id) {
@@ -22,11 +22,11 @@ async function create({
   name,
   email,
   salt,
-  hash
+  hash,
 }) {
   // is there a better way to catch a duplicate error?
   const existingUser = await findByMail(email);
-  if (existingUser != undefined) {
+  if (existingUser !== undefined) {
     const error = new Error('DUPLICATE_ENTRY');
     const logger = getLogger();
     logger.error('Error in create', {
@@ -41,7 +41,7 @@ async function create({
       name,
       email,
       salt,
-      hash
+      hash,
     });
     return findById(id);
   } catch (error) {
@@ -56,5 +56,5 @@ async function create({
 module.exports = {
   findById,
   findByMail,
-  create
-}
+  create,
+};
