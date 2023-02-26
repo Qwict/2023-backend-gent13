@@ -9,7 +9,7 @@ async function findById(id) {
     .first();
   return product;
 }
-// seeds en migrations voor product nog toevoegen
+// seeds voor product nog toevoegen
 const SELECT_COLUMNS = [
   'id', 'naam', 'foto', 'omschrijving', 'prijs', 'aantalInStock', 'vermoedelijkeLevertijd',
 ];
