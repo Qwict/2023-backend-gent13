@@ -12,9 +12,9 @@ const debugLog = (message, meta = {}) => {
   this.logger.debug(message, meta);
 };
 
-const getById = async (id) => {
-  debugLog(`Fetching user with id ${id}`);
-  const user = await database.findById(id);
+const getById = async (token) => {
+  debugLog(`Decoding token ${token}`);
+  const user = jwt.decode(token);
   return user;
 };
 

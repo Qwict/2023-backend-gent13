@@ -153,6 +153,9 @@ function getKnex() {
 const tables = {
   user: 'user',
   product: 'product',
+  productDescription: 'productdescription',
+  productPrice: 'productprice',
+  productMeasure: 'productunitofmeasureconverion',
 };
 
 module.exports = {
