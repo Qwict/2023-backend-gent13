@@ -9,15 +9,11 @@ const {
   permissions,
 } = require('../core/auth');
 
-const getById = async (ctx) => {
-  ctx.body = await userService.getById(ctx.params.id);
+const getByToken = async (ctx) => {
+  ctx.body = await userService.getById(ctx.headers.authorization);
   ctx.status = 200;
 };
-getById.validationScheme = {
-  params: {
-    id: Joi.any(),
-  },
-};
+getByToken.validationScheme = null;
 
 const register = async (ctx) => {
   const token = await userService.register(ctx.request.body);
@@ -68,7 +64,7 @@ module.exports = function installUserRouter(app) {
 
   router.post('/login', validate(login.validationScheme), login);
   router.post('/verify', validate(verify.validationScheme), verify);
-  router.get('/:id', validate(getById.validationScheme), authorization(permissions.loggedIn), getById);
+  router.get('/', validate(getByToken.validationScheme), authorization(permissions.loggedIn), getByToken);
   router.post('/register', validate(register.validationScheme), register);
 
   app
