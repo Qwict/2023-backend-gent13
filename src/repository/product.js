@@ -9,14 +9,10 @@ async function findById(id) {
     .first();
   return product;
 }
-// seeds voor product nog toevoegen
-const SELECT_COLUMNS = [
-  'id', 'naam', 'foto', 'omschrijving', 'prijs', 'aantalInStock', 'vermoedelijkeLevertijd',
-];
 
 const findAll = async () => {
   const products = await getKnex()(tables.product)
-    .select(SELECT_COLUMNS)
+    .select()
     .orderBy('id', 'DESC');
   return products;
 };
