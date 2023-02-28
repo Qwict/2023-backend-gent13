@@ -1,7 +1,8 @@
 name: Automatically deploy production backend 
 on: 
   push:
-    branches: [ master ]
+    branches: 
+    - main
     
 jobs:
   build:
