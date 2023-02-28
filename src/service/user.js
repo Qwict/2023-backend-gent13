@@ -12,7 +12,7 @@ const debugLog = (message, meta = {}) => {
   this.logger.debug(message, meta);
 };
 
-const getById = async (token) => {
+const getByToken = async (token) => {
   debugLog(`Decoding token ${token}`);
   const user = jwt.decode(token);
   return user;
@@ -33,7 +33,9 @@ const register = async ({
     salt,
     hash,
   };
-  const user = await database.create(newUser);
+  try {
+    const user = await database.create(newUser);
+
   const jwtPackage = {
     name: user.name,
     email: user.email,
@@ -43,6 +45,13 @@ const register = async ({
     issuer: process.env.AUTH_ISSUER,
     audience: process.env.AUTH_AUDIENCE,
   });
+  } catch (error) {
+    if (error.message === 'DUPLICATE_ENTRY') {
+      throw ServiceError.duplicate('DUPLICATE ENTRY');
+    } else {
+      throw ServiceError.validationFailed(error.message);
+    }
+  }
 };
 
 const login = async ({
@@ -98,7 +107,7 @@ const verify = async ({
 };
 
 module.exports = {
-  getById,
+  getByToken,
   register,
   login,
   verify,

@@ -121,6 +121,9 @@ module.exports = async function createServer() {
         if (error.isForbidden) {
           statusCode = 403;
         }
+        if (error.isDuplicate) {
+          statusCode = 409;
+        }
       }
 
       ctx.status = statusCode;

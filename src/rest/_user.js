@@ -10,7 +10,7 @@ const {
 } = require('../core/auth');
 
 const getByToken = async (ctx) => {
-  ctx.body = await userService.getById(ctx.headers.authorization);
+  ctx.body = await userService.getByToken(ctx.headers.authorization);
   ctx.status = 200;
 };
 getByToken.validationScheme = null;
