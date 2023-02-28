@@ -1,0 +1,26 @@
+name: manually deploy backend 
+on: workflow_dispatch
+
+jobs:
+  build:
+    name: Force manually deploy production
+    runs-on: ubuntu-latest
+    steps:
+    - name: Remove repo at clone it -> large footprint!
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.DWS_DEPLOY }}
+        port: ${{ secrets.PORT }}
+        script: |
+          cd /var/www/dws/
+          rm -rf 2023-backend-gent13
+          git clone git@github.com-dws-backend:HoGentProjectenII/2023-backend-gent13.git
+          cd 2023-backend-gent13/
+          git status
+          yarn install
+          cp ../dws_back/prod-pm2.ecosystem.config.js ./
+          pm2 list
+          pm2 delete dws_backend_prod
+          pm2 start prod-pm2.ecosystem.config.js --watch --ignore-watch="node_modules"
