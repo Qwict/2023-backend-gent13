@@ -34,9 +34,18 @@ const getKnexLogger = (logger, level) => (message) => {
   }
 };
 
+/* Check if string is IP */
+function checkIfValidIP(str) {
+  // Regular expression to check if string is a IP address
+  const regexExp = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/gi;
+
+  return regexExp.test(str);
+}
+
 async function initializeData() {
   const logger = getLogger();
   logger.info('Initializing connection to the database');
+  const sslCheck = checkIfValidIP(DATABASE_HOST);
 
   const knexOptions = {
     client: DATABASE_CLIENT,
@@ -47,7 +56,7 @@ async function initializeData() {
       password: DATABASE_PASSWORD,
       insecureAuth: isDevelopment,
       ssl: {
-        rejectUnauthorized: true,
+        rejectUnauthorized: sslCheck,
         ca: fs.readFileSync(path.join(__dirname, '/certs/ca-cert.pem')).toString(),
         key: DATABASE_SSL_PRIVATE_KEY,
         cert: fs.readFileSync(path.join(__dirname, '/certs/client-cet.pem')).toString(),

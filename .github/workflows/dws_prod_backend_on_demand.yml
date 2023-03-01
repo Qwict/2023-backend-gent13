@@ -1,4 +1,4 @@
-name: manually deploy backend 
+name: Manually deploy backend 
 on: workflow_dispatch
 
 jobs:
@@ -13,6 +13,7 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.DWS_DEPLOY }}
         port: ${{ secrets.PORT }}
+        passphrase: ${{ secrets.PASSPHRASE }}
         script: |
           cd /var/www/dws/
           rm -rf 2023-backend-gent13
