@@ -5,7 +5,7 @@ module.exports = {
     disabled: false,
   },
   cors: {
-    origins: ['http://localhost:3000'],
+    origins: ['http://localhost:3000', 'https://dws.qwict.com'],
     maxAge: 3 * 60 * 60, // 3h in seconds
   },
   database: {
