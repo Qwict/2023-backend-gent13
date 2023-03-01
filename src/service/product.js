@@ -7,14 +7,13 @@ const debugLog = (message, meta = {}) => {
   if (!this.logger) this.logger = getLogger();
   this.logger.debug(message, meta);
 };
-
-const logger = getLogger();
+const ServiceError = require('../core/serviceError');
 
 const getById = async (id) => {
   debugLog(`Fetching product with id ${id}`);
   const product = await database.findById(id);
   if (!product) {
-    logger.error(`Product with id ${id} does not exist`, {
+    throw ServiceError.notFound(`Product with id ${id} does not exist`, {
       id,
     });
   }
@@ -24,7 +23,7 @@ const getById = async (id) => {
 const getAll = async () => {
   const products = await database.findAll();
   if (products.length === 0) {
-    logger.error('No products found');
+    throw ServiceError.notFound('No products found');
   }
   return {
     products,
