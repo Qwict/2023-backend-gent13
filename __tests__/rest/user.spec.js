@@ -51,10 +51,10 @@ describe('Users', () => {
         audience: process.env.AUTH_AUDIENCE,
         issuer: process.env.AUTH_ISSUER,
       });
-      const response = await request.get(`${url}/${data.user.id}`).set('Authorization', token);
+      const response = await request.get(`${url}`).set('Authorization', token);
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(data.user);
+      expect(response.body).toHaveProperty('email', data.user.email);
     });
   });
 
