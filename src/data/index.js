@@ -165,6 +165,8 @@ const tables = {
   productDescription: 'productdescription',
   productPrice: 'productprice',
   productMeasure: 'productunitofmeasureconverion',
+  order: 'order',
+  orderItem: 'orderitem',
 };
 
 module.exports = {
