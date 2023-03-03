@@ -3,9 +3,9 @@ module.exports = {
         await knex('customer').insert([{
             "name": "something",
             "mail": "something",
-            "password": "somethingHashed",
+            "hash": "somethingHashed",
             "salt": "A salt",
-            "customerId": "CP100110"
+            "companyId": "CP100110"
         }]);
     },
 };
