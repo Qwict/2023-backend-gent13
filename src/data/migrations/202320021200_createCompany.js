@@ -9,7 +9,7 @@ module.exports = {
             table.string('name', 128);
             table.string('logoImg',512);
             table.string('countryCode',16);
-            table.integer('vatNumber');
+            table.string('vatNumber',64);
             table.string('street',64);
             table.integer('streetNumber');
             table.integer('zip_code');

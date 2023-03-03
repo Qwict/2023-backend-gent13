@@ -1,11 +1,16 @@
 module.exports = {
   seed: async (knex) => {
       await knex('company').insert([{
-          "name": "something",
-          "mail": "something",
-          "hash": "somethingHashed",
-          "salt": "A salt",
-          "companyId": "CP100110"
+          id: 1,
+          name: 'BVBA MILJAAR',
+          logoImg: null,
+          countryCode: "BE",
+          vatNumber: "0684579082",
+          street: "Bekkemmeers",
+          streetNumber: 26,
+          zip_code: 8740,
+          city: "Pittem",
+          country: "Belgium"
       }]);
   },
 };
