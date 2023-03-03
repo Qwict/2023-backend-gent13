@@ -8,22 +8,19 @@ const JOI_OPTIONS = {
   presence: 'required',
 };
 
-const cleanupJoiError = (error) => error.details.reduce((resultObj, {
-  message,
-  path,
-  type,
-}) => {
-  const joinedPath = path.join('.') || 'value';
-  if (!resultObj[joinedPath]) {
-    resultObj[joinedPath] = [];
-  }
-  resultObj[joinedPath].push({
-    type,
-    message,
-  });
+const cleanupJoiError = (error) =>
+  error.details.reduce((resultObj, { message, path, type }) => {
+    const joinedPath = path.join('.') || 'value';
+    if (!resultObj[joinedPath]) {
+      resultObj[joinedPath] = [];
+    }
+    resultObj[joinedPath].push({
+      type,
+      message,
+    });
 
-  return resultObj;
-}, {});
+    return resultObj;
+  }, {});
 
 const validate = (schema) => {
   if (!schema) {
@@ -41,13 +38,7 @@ const validate = (schema) => {
         schema.query = Joi.object(schema.query);
       }
 
-      const {
-        error: queryErrors,
-        value: queryValue,
-      } = schema.query.validate(
-        ctx.query,
-        JOI_OPTIONS,
-      );
+      const { error: queryErrors, value: queryValue } = schema.query.validate(ctx.query, JOI_OPTIONS);
 
       if (queryErrors) {
         errors.query = cleanupJoiError(queryErrors);
@@ -61,13 +52,7 @@ const validate = (schema) => {
         schema.body = Joi.object(schema.body);
       }
 
-      const {
-        error: bodyErrors,
-        value: bodyValue,
-      } = schema.body.validate(
-        ctx.request.body,
-        JOI_OPTIONS,
-      );
+      const { error: bodyErrors, value: bodyValue } = schema.body.validate(ctx.request.body, JOI_OPTIONS);
 
       if (bodyErrors) {
         errors.body = cleanupJoiError(bodyErrors);
@@ -81,13 +66,7 @@ const validate = (schema) => {
         schema.params = Joi.object(schema.params);
       }
 
-      const {
-        error: paramsErrors,
-        value: paramsValue,
-      } = schema.params.validate(
-        ctx.params,
-        JOI_OPTIONS,
-      );
+      const { error: paramsErrors, value: paramsValue } = schema.params.validate(ctx.params, JOI_OPTIONS);
 
       if (paramsErrors) {
         errors.params = cleanupJoiError(paramsErrors);

@@ -27,7 +27,5 @@ module.exports = function installPlacesRoutes(app) {
   router.get('/ping', validate(ping.validationScheme), ping);
   router.get('/version', validate(getVersion.validationScheme), getVersion);
 
-  app
-    .use(router.routes())
-    .use(router.allowedMethods());
+  app.use(router.routes()).use(router.allowedMethods());
 };

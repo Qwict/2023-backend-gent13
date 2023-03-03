@@ -1,16 +1,15 @@
-const {
-  tables,
-} = require('..');
+const { tables } = require('..');
 
 module.exports = {
-    up: async (knex) => {
-        await knex.schema.createTable(tables.product, (table) => {
-            table.string('id', 128).notNullable().primary();
-            table.integer('syncId');
-            table.string('unitOfMeasureId', 32);
-            table.string('productCategoryId', 64);
-            table.string('productAvailability', 32);
-        });
-    },
-    down: (knex) => knex.schema.dropTableIfExists(tables.product),
+  up: async (knex) => {
+    await knex.schema.createTable(tables.product, (table) => {
+      table.string('id', 128).notNullable().primary();
+      table.integer('syncId');
+      table.string('name', 32);
+      table.string('unitOfMeasureId', 32);
+      table.string('productCategoryId', 64);
+      table.string('productAvailability', 32);
+    });
+  },
+  down: (knex) => knex.schema.dropTableIfExists(tables.product),
 };

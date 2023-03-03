@@ -4,10 +4,7 @@ const Router = require('@koa/router');
 const userService = require('../service/user');
 const validate = require('./_validation');
 
-const {
-  authorization,
-  permissions,
-} = require('../core/auth');
+const { authorization, permissions } = require('../core/auth');
 
 const getByToken = async (ctx) => {
   ctx.body = await userService.getByToken(ctx.headers.authorization);
@@ -67,7 +64,5 @@ module.exports = function installUserRouter(app) {
   router.get('/', validate(getByToken.validationScheme), authorization(permissions.loggedIn), getByToken);
   router.post('/register', validate(register.validationScheme), register);
 
-  app
-    .use(router.routes())
-    .use(router.allowedMethods());
+  app.use(router.routes()).use(router.allowedMethods());
 };

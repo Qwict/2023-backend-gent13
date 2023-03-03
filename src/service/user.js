@@ -1,8 +1,6 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const {
-  getLogger,
-} = require('../core/logging');
+const { getLogger } = require('../core/logging');
 const ServiceError = require('../core/serviceError');
 
 const database = require('../repository/user');
@@ -18,11 +16,7 @@ const getByToken = async (token) => {
   return user;
 };
 
-const register = async ({
-  name,
-  email,
-  password,
-}) => {
+const register = async ({ name, email, password }) => {
   debugLog(`Creating user with name ${name} and email ${email}`);
   const salt = crypto.randomBytes(128).toString('base64');
   const hash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha256').toString('base64');
@@ -36,15 +30,15 @@ const register = async ({
   try {
     const user = await database.create(newUser);
 
-  const jwtPackage = {
-    name: user.name,
-    email: user.email,
-  };
-  return jwt.sign(jwtPackage, process.env.JWT_SECRET, {
-    expiresIn: 36000,
-    issuer: process.env.AUTH_ISSUER,
-    audience: process.env.AUTH_AUDIENCE,
-  });
+    const jwtPackage = {
+      name: user.name,
+      email: user.email,
+    };
+    return jwt.sign(jwtPackage, process.env.JWT_SECRET, {
+      expiresIn: 36000,
+      issuer: process.env.AUTH_ISSUER,
+      audience: process.env.AUTH_AUDIENCE,
+    });
   } catch (error) {
     if (error.message === 'DUPLICATE_ENTRY') {
       throw ServiceError.duplicate('DUPLICATE ENTRY');
@@ -54,10 +48,7 @@ const register = async ({
   }
 };
 
-const login = async ({
-  email,
-  password,
-}) => {
+const login = async ({ email, password }) => {
   debugLog(`Verifying user with email ${email}`);
   const verification = {
     token: undefined,
@@ -88,9 +79,7 @@ const login = async ({
   return verification;
 };
 
-const verify = async ({
-  token,
-}) => {
+const verify = async ({ token }) => {
   debugLog(`Verifying token ${token}`);
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET, {

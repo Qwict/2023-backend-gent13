@@ -20,7 +20,7 @@ const getAll = async (ctx) => {
   ctx.body = await productService.getAll();
 };
 
-module.exports = (app) => {
+module.exports = function installProductRouter(app) {
   const router = new Router({
     prefix: '/product',
   });
