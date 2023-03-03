@@ -1,7 +1,8 @@
 .env
 .env.test
 coverage
-
 node_modules
+.DS_Store
 
-.DS_store
+ecosystem.config.js
+*.ecosystem.config.js
