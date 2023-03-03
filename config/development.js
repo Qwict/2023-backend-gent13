@@ -12,6 +12,6 @@ module.exports = {
     client: 'mysql2',
     host: 'dws.qwict.com',
     port: 3306,
-    name: 'dws',
+    name: 'dws_dev',
   },
 };

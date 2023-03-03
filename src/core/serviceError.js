@@ -2,9 +2,9 @@ const NOT_FOUND = 'NOT_FOUND';
 const VALIDATION_FAILED = 'VALIDATION_FAILED';
 const UNAUTHORIZED = 'UNAUTHORIZED';
 const FORBIDDEN = 'FORBIDDEN';
+const DUPLICATE = 'DUPLICATE ENTRY';
 
 class ServiceError extends Error {
-
   constructor(code, message, details = {}) {
     super(message);
     this.code = code;
@@ -28,6 +28,10 @@ class ServiceError extends Error {
     return new ServiceError(FORBIDDEN, message, details);
   }
 
+  static duplicate(message, details) {
+    return new ServiceError(DUPLICATE, message, details);
+  }
+
   get isNotFound() {
     return this.code === NOT_FOUND;
   }
@@ -42,6 +46,10 @@ class ServiceError extends Error {
 
   get isForbidden() {
     return this.code === FORBIDDEN;
+  }
+
+  get isDuplicate() {
+    return this.code === DUPLICATE;
   }
 }
 

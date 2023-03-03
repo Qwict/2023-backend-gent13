@@ -1,9 +1,15 @@
-const { join } = require('path');
+const {
+  join,
+} = require('path');
+const fs = require('fs');
+const path = require('path');
 
 const config = require('config');
 const knex = require('knex');
 
-const { getLogger } = require('../core/logging');
+const {
+  getLogger,
+} = require('../core/logging');
 
 const NODE_ENV = config.get('env');
 const isDevelopment = NODE_ENV === 'development';
@@ -14,6 +20,7 @@ const DATABASE_HOST = config.get('database.host');
 const DATABASE_PORT = config.get('database.port');
 const DATABASE_USERNAME = config.get('database.username');
 const DATABASE_PASSWORD = config.get('database.password');
+const DATABASE_SSL_PRIVATE_KEY = config.get('database.ssl');
 
 let knexInstance;
 
@@ -21,16 +28,24 @@ const getKnexLogger = (logger, level) => (message) => {
   if (message.sql) {
     logger.log(level, message.sql);
   } else if (message.length && message.forEach) {
-    message.forEach((innerMessage) =>
-      logger.log(level, innerMessage.sql ? innerMessage.sql : JSON.stringify(innerMessage)));
+    message.forEach((innerMessage) => logger.log(level, innerMessage.sql ? innerMessage.sql : JSON.stringify(innerMessage)));
   } else {
     logger.log(level, JSON.stringify(message));
   }
 };
 
+/* Check if string is IP */
+function checkIfValidIP(str) {
+  // Regular expression to check if string is a IP address
+  const regexExp = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/gi;
+
+  return regexExp.test(str);
+}
+
 async function initializeData() {
   const logger = getLogger();
   logger.info('Initializing connection to the database');
+  const sslCheck = checkIfValidIP(DATABASE_HOST);
 
   const knexOptions = {
     client: DATABASE_CLIENT,
@@ -40,6 +55,12 @@ async function initializeData() {
       user: DATABASE_USERNAME,
       password: DATABASE_PASSWORD,
       insecureAuth: isDevelopment,
+      ssl: {
+        rejectUnauthorized: sslCheck,
+        ca: fs.readFileSync(path.join(__dirname, '/certs/ca-cert.pem')).toString(),
+        key: DATABASE_SSL_PRIVATE_KEY,
+        cert: fs.readFileSync(path.join(__dirname, '/certs/client-cet.pem')).toString(),
+      },
     },
     debug: isDevelopment,
     log: {
@@ -75,7 +96,9 @@ async function initializeData() {
     knexInstance = knex(knexOptions);
     await knexInstance.raw('SELECT 1+1 AS result');
   } catch (error) {
-    logger.error(error.message, { error });
+    logger.error(error.message, {
+      error,
+    });
     throw new Error('Could not initialize the data layer');
   }
 
@@ -115,7 +138,7 @@ async function initializeData() {
     }
   }
 
-  logger.info('Succesfully connected to the database');
+  logger.info('Successfully connected to the database');
 
   return knexInstance;
 }
@@ -137,7 +160,14 @@ function getKnex() {
 }
 
 const tables = {
-
+  user: 'user',
+  product: 'product',
+  productDescription: 'productdescription',
+  productPrice: 'productprice',
+  productMeasure: 'productunitofmeasureconverion',
+  order: 'order',
+  orderItem: 'orderitem',
+  company: 'company',
 };
 
 module.exports = {

@@ -1,0 +1,4 @@
+ecosystem.config.js
+*.ecosystem.config.js
+
+*.config.js

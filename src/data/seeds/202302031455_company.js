@@ -10,7 +10,7 @@ module.exports = {
           streetNumber: 26,
           zip_code: 8740,
           city: "Pittem",
-          country: "Belgium"
+          country: "Belgium",
       }]);
   },
 };

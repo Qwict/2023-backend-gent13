@@ -60,7 +60,7 @@ const validate = (schema) => {
       if (!Joi.isSchema(schema.body)) {
         schema.body = Joi.object(schema.body);
       }
-    
+
       const {
         error: bodyErrors,
         value: bodyValue,
@@ -68,7 +68,7 @@ const validate = (schema) => {
         ctx.request.body,
         JOI_OPTIONS,
       );
-    
+
       if (bodyErrors) {
         errors.body = cleanupJoiError(bodyErrors);
       } else {
@@ -80,7 +80,7 @@ const validate = (schema) => {
       if (!Joi.isSchema(schema.params)) {
         schema.params = Joi.object(schema.params);
       }
-    
+
       const {
         error: paramsErrors,
         value: paramsValue,
@@ -88,7 +88,7 @@ const validate = (schema) => {
         ctx.params,
         JOI_OPTIONS,
       );
-    
+
       if (paramsErrors) {
         errors.params = cleanupJoiError(paramsErrors);
       } else {

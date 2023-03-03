@@ -5,9 +5,8 @@ module.exports = {
       orderId: 1,
       productId: 1,
       quantity: 1,
-      netPrice: 1,
       netPrice: 49.99,
-    }
+    },
     ]);
   },
 };
