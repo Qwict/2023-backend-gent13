@@ -1,15 +1,11 @@
-const {
-  join,
-} = require('path');
+const { join } = require('path');
 const fs = require('fs');
 const path = require('path');
 
 const config = require('config');
 const knex = require('knex');
 
-const {
-  getLogger,
-} = require('../core/logging');
+const { getLogger } = require('../core/logging');
 
 const NODE_ENV = config.get('env');
 const isDevelopment = NODE_ENV === 'development';
@@ -58,10 +54,11 @@ async function initializeData() {
       debug: getKnexLogger(logger, 'debug'),
       error: getKnexLogger(logger, 'error'),
       warn: getKnexLogger(logger, 'warn'),
-      deprecate: (method, alternative) => logger.warn('Knex reported something deprecated', {
-        method,
-        alternative,
-      }),
+      deprecate: (method, alternative) =>
+        logger.warn('Knex reported something deprecated', {
+          method,
+          alternative,
+        }),
     },
     migrations: {
       tableName: 'knex_meta',

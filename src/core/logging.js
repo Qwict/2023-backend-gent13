@@ -14,10 +14,8 @@ const loggerFormat = () => {
   }) => `${timestamp} | ${level} | ${message} | ${JSON.stringify(rest)}`;
 
   // Errors don't have a decent toString, so we need to format them manually
-  const formatError = ({ error: { stack }, ...rest }) =>
-    `${formatMessage(rest)}\n\n${stack}\n`;
-  const format = (info) =>
-    info.error instanceof Error ? formatError(info) : formatMessage(info);
+  const formatError = ({ error: { stack }, ...rest }) => `${formatMessage(rest)}\n\n${stack}\n`;
+  const format = (info) => (info.error instanceof Error ? formatError(info) : formatMessage(info));
   return combine(colorize(), timestamp(), printf(format));
 };
 
@@ -38,12 +36,7 @@ module.exports.getLogger = () => {
  * @param {object} options.defaultMeta - Default metadata to show.
  * @param {winston.transport[]} options.extraTransports - Extra transports to add besides console.
  */
-module.exports.initializeLogger = ({
-  level,
-  disabled,
-  defaultMeta = {},
-  extraTransports = [],
-}) => {
+module.exports.initializeLogger = ({ level, disabled, defaultMeta = {}, extraTransports = [] }) => {
   logger = winston.createLogger({
     level,
     defaultMeta,
