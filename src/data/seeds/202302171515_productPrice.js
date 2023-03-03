@@ -17,7 +17,7 @@ module.exports = {
       {
         productId: "Product 3",
         currencyId: "EUR",
-        price: 199.99,
+        price: 10000,
         quantity: 3,
       },
     ]);
