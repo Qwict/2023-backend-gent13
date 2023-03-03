@@ -14,7 +14,7 @@ module.exports = {
             table.double('taxAmount');
             table.double('totalAmount');
             table.string('currencyId');
-            table.foreign('customerId', 'fk_User_Order').references(`${tables.user}.uuid`).onDelete('CASCADE');
+            table.foreign('customerId', 'fk_User_Order').references(`${tables.user}.id`).onDelete('CASCADE');
         });
     },
     down: (knex) => knex.schema.dropTableIfExists(tables.order),
