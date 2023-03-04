@@ -7,7 +7,7 @@ module.exports = {
         await knex.schema.createTable(tables.orderItem, (table) => {
             table.primary(['orderId', 'productId']);
             table.integer('orderId').unsigned().notNullable();
-            table.string('productId').notNullable();
+            table.integer('productId').unsigned().notNullable();
             table.integer('quantity').notNullable();
             table.double('netPrice').notNullable();
             table.foreign('orderId', 'fk_OrderItem_Order').references(`${tables.order}.id`).onDelete('CASCADE');

@@ -11,9 +11,9 @@ module.exports = {
             table.string('currencyId').notNullable();
             table.string('orderReference', 64).notNullable();
             table.datetime('orderDateTime').notNullable();
-            table.integer('netAmount').notNullable();
-            table.double('taxAmount').notNullable();
-            table.double('totalAmount').notNullable();
+            table.double('netPrice').notNullable();
+            table.double('taxPrice').notNullable();
+            table.double('totalPrice').notNullable();
             table.foreign('customerId', 'fk_Order_Company').references(`${tables.company}.id`).onDelete('CASCADE');
             table.foreign('buyerId', 'fk_Order_User').references(`${tables.user}.id`).onDelete('SET NULL');
         });
