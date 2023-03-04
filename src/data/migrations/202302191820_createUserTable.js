@@ -18,6 +18,8 @@ module.exports = {
       table.string('hash', 255)
         .notNullable()
         .unique();
+      table.boolean('companyValidated')
+        .defaultTo(false);
     });
   },
   down: (knex) => knex.schema.dropTableIfExists(tables.user),

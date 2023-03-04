@@ -160,7 +160,9 @@ function getKnex() {
 }
 
 const tables = {
+  company: 'company',
   user: 'user',
+  userCompany: 'userCompany',
   product: 'product',
   productDescription: 'productdescription',
   productPrice: 'productprice',
