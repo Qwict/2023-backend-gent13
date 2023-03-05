@@ -15,6 +15,7 @@ module.exports = {
           table.integer('zip_code').notNullable();
           table.string('city', 64).notNullable();
           table.string('country', 64).notNullable();
+          table.boolean('hasTransport');
       });
   },
   down: (knex) => knex.schema.dropTableIfExists(tables.company),

@@ -170,6 +170,7 @@ const tables = {
   order: 'order',
   orderItem: 'orderitem',
   notification: 'notification',
+  delivery: 'delivery',
 };
 
 module.exports = {

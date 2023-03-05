@@ -17,8 +17,9 @@ module.exports = {
       table.string('hash', 255)
         .notNullable()
         .unique();
-      table.integer('companyId').unsigned().notNullable();
+      table.integer('companyId').unsigned().nullable();
       table.boolean('verificated');
+      // 0 is gewone aankoper, 1 is magazijnier, 2 is admin ...
       table.integer('role').defaultTo(0);
       table.foreign('companyId', 'fk_User_Company').references(`${tables.company}`);
     });
