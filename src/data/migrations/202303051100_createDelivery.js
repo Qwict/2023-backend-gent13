@@ -13,7 +13,7 @@ module.exports = {
             table.integer('postCode').notNullable();
             table.string('country', 32).notNullable();
             table.string('additionalInformation', 1024);
-            table.string('track&trace', 128);
+            table.string('trackAndtrace', 128);
             // 0 is processing, 1 is departed ...
             table.integer('deliveryStatus');
             table.foreign('transporterId', 'fk_Delivery_Company').references(`${tables.deliveryService}.id`);

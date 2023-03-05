@@ -10,7 +10,7 @@ module.exports = {
           table.string('phoneNumber', 64);
           table.string('email', 128).notNullable();
           table.string('vatNumber', 64).notNullable();
-          table.string('track&traceInfo', 256);
+          table.string('trackandtraceInfo', 256);
           table.boolean('actief');
       });
   },
