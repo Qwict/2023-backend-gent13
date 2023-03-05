@@ -9,7 +9,7 @@ module.exports = {
       table.integer('syncId');
       table.string('productName', 128);
       table.string('productListerDescription', 256);
-      table.string('productShortDescritpion', 256);
+      table.string('productShortDescription', 256);
       table.string('productLongDescription', 512);
       table.foreign('productId', 'fk_Description_Product').references(`${tables.product}.id`).onDelete('CASCADE');
     });

@@ -14,7 +14,7 @@ const findPriceById = async (id) => {
   const product = await getKnex()(tables.productPrice)
     .select(` ${tables.productPrice}.productId`, ` ${tables.productPrice}.price`, ` ${tables.productPrice}.currencyId`, ` ${tables.productPrice}.quantity`)
     .join(tables.product, ` ${tables.product}.id`, '=', `${tables.productPrice}.productId`)
-    .where(tables.product.id, id)
+    .where(`${tables.product}.id`, id)
     .first();
   return product;
 };
@@ -24,12 +24,11 @@ const findDescriptionById = async (id) => {
     .select(
       ` ${tables.productDescription}.productId`,
       ` ${tables.productDescription}.productName`,
-      ` ${tables.productDescription}.productListerDescription`,
       ` ${tables.productDescription}.productShortDescription`,
       ` ${tables.productDescription}.productLongDescription`,
     )
     .join(tables.product, ` ${tables.product}.id`, '=', `${tables.productDescription}.productId`)
-    .where(tables.product.id, id)
+    .where(tables.productDescription.id, id)
     .first();
 
   return product;

@@ -25,7 +25,7 @@ module.exports = function installProductRouter(app) {
     prefix: '/product',
   });
 
-  router.get('/:id', getById); // nog validation toevoegen
+  router.get('/:id/:language', getById); // nog validation toevoegen
   router.get('/', getAll); // nog validation toevoegen
 
   app.use(router.routes()).use(router.allowedMethods());

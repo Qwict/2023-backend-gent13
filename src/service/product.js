@@ -18,7 +18,6 @@ const getById = async (id) => {
     productCategoryId: product.productCategoryId,
     quantity: product.quantity,
     productAvailability: product.productAvailability,
-    listerDescription: productDescription.productListerDescription,
     shortDescription: productDescription.productShortDescription,
     longDescription: productDescription.productlongDescription,
   };
