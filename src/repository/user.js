@@ -53,8 +53,68 @@ async function create({
   }
 }
 
+/**
+ * Update a user with the given `id`.
+ *
+ * @param {number} id - Id of the user to update.
+ * @param {object} user - User to save.
+ * @param {string} user.name - Name of the user.
+ *
+ * @returns {Promise<number>} - Id of the updated user.
+ */
+const updateById = async (id, {
+  name,
+  email,
+  salt,
+  hash,
+  companyId,
+  companyVerified,
+}) => {
+  try {
+    await getKnex()(tables.user)
+      .update({
+        name,
+        email,
+        salt,
+        hash,
+        companyId,
+        companyVerified,
+      })
+      .where('id', id);
+    return id;
+  } catch (error) {
+    const logger = getLogger();
+    logger.error('Error in updateById', {
+      error,
+    });
+    throw error;
+  }
+};
+
+/**
+ * Update a user with the given `id`.
+ *
+ * @param {string} id - Id of the user to delete.
+ */
+const deleteById = async (id) => {
+  try {
+    const rowsAffected = await getKnex()(tables.user)
+      .delete()
+      .where('id', id);
+    return rowsAffected > 0;
+  } catch (error) {
+    const logger = getLogger();
+    logger.error('Error in deleteById', {
+      error,
+    });
+    throw error;
+  }
+};
+
 module.exports = {
   findById,
   findByMail,
   create,
+  updateById,
+  deleteById,
 };

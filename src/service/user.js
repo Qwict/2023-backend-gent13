@@ -5,7 +5,8 @@ const {
 } = require('../core/logging');
 const ServiceError = require('../core/serviceError');
 
-const database = require('../repository/user');
+const userRepository = require('../repository/user');
+const companyService = require('./company');
 
 const debugLog = (message, meta = {}) => {
   if (!this.logger) this.logger = getLogger();
@@ -34,7 +35,7 @@ const register = async ({
     hash,
   };
   try {
-    const user = await database.create(newUser);
+    const user = await userRepository.create(newUser);
 
   const jwtPackage = {
     name: user.name,
@@ -63,7 +64,7 @@ const login = async ({
     token: undefined,
     validated: false,
   };
-  const user = await database.findByMail(email);
+  const user = await userRepository.findByMail(email);
 
   if (!user) {
     throw ServiceError.notFound(`There is no user with email ${email}`);
@@ -106,9 +107,31 @@ const verify = async ({
   return false;
 };
 
+const join = async ({
+  email,
+  companyVAT,
+}) => {
+  debugLog(`User ${email} wants to join ${companyVAT}`);
+  try {
+    const company = await companyService.findByVAT(companyVAT);
+    const user = await userRepository.findByMail(email);
+    const newUser = {
+      ...user,
+      companyId: company.id,
+    };
+    const updatedUserId = await userRepository.updateById(newUser.id, newUser);
+    const updatedUser = await userRepository.findById(updatedUserId);
+    debugLog(`User: ${updatedUser.email} is on waiting list to join companyId: ${updatedUser.companyId}`);
+  } catch (e) {
+    debugLog.error(e);
+    throw ServiceError.notFound(`${companyVAT} was not found`);
+  }
+};
+
 module.exports = {
   getByToken,
   register,
   login,
   verify,
+  join,
 };

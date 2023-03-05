@@ -34,7 +34,20 @@ const findCount = async () => {
   return count['count(*)'];
 };
 
+/**
+ * Find a specific company with a countryCode and vatNumber
+ */
+const findByVAT = async (countryCode, vatNumber) => {
+  const company = await getKnex()(tables.company)
+    .select()
+    .where('countryCode', countryCode)
+    .andWhere('vatNumber', vatNumber)
+    .first();
+  return company;
+};
+
 module.exports = {
   findAll,
   findCount,
+  findByVAT,
 };

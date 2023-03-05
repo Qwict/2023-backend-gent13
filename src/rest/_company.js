@@ -11,7 +11,6 @@ const {
 } = require('../core/auth');
 
 const register = async (ctx) => {
-  console.log(ctx.request.body);
   const response = await companyService.register(ctx.request.body);
   ctx.body = response;
   ctx.status = 201;
@@ -30,13 +29,22 @@ register.validationScheme = {
 };
 
 const join = async (ctx) => {
-  const response = await companyService.join(ctx.request.body);
+  const response = await userService.join(ctx.request.body);
+  ctx.body = response;
+  ctx.status = 204;
+};
+join.validationScheme = {
+  body: {
+    email: Joi.string(),
+    companyVAT: Joi.string(),
+  },
 };
 
 const getAll = async (ctx) => {
   const companies = await companyService.getAll();
   ctx.body = companies;
 };
+getAll.validationScheme = null;
 
 module.exports = function installUserRouter(app) {
   const router = new Router({
@@ -46,10 +54,11 @@ module.exports = function installUserRouter(app) {
   // router.post('/verify', validate(verify.validationScheme), verify);
   // router.post('/register', validate(register.validationScheme), authorization(permissions.loggedIn), register);
   router.post('/register', authorization(permissions.loggedIn), register);
-
+  // router.post('/join', validate(join.validationScheme), join);
+  router.put('/join', authorization(permissions.loggedIn), validate(join.validationScheme), join);
   // TODO how to get authorization right on this?
   // router.get('/', authorization(permissions.loggedIn), getAll);
-  router.get('/', getAll);
+  router.get('/', validate(getAll.validationScheme), getAll);
 
   app
     .use(router.routes())

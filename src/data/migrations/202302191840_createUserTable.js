@@ -17,12 +17,14 @@ module.exports = {
       table.string('hash', 255)
         .notNullable()
         .unique();
-      table.integer('companyId').unsigned().notNullable();
+      table.integer('companyId')
+        .defaultTo(null)
+        .unsigned();
       table.boolean('companyVerified')
         .defaultTo(false);
-      // must be employee | admin | warehouseman
+      // must be unemployed | employee | admin | warehouseman
       table.string('role', 16)
-        .defaultTo('employee');
+        .defaultTo('unemployed');
       table.foreign('companyId', 'fk_User_Company').references(`${tables.company}`);
     });
   },
