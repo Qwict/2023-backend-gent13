@@ -6,7 +6,7 @@ module.exports = {
   up: async (knex) => {
     await knex.schema.createTable(tables.user, (table) => {
       table.uuid('id').primary().unique();
-      table.string('name', 64)
+      table.string('name', 255)
         .defaultTo('anon');
       table.string('street', 64);
       table.string('streetNumber', 16);
@@ -22,11 +22,11 @@ module.exports = {
       table.string('hash', 255)
         .notNullable()
         .unique();
-      table.integer('companyId').unsigned().nullable();
-      table.boolean('verificated');
+      table.integer('companyId').defaultTo(null).unsigned();
+      table.boolean('companyVerified').defaultTo(false);
       // 0 is gewone aankoper, 1 is magazijnier, 2 is admin ...
-      table.integer('role').defaultTo(0);
-      table.foreign('companyId', 'fk_User_Company').references(`${tables.company}`);
+      table.string('role').defaultTo('unemployed');
+      table.foreign('companyId', 'fk_User_Company').references(`${tables.company}.id`);
     });
   },
   down: (knex) => knex.schema.dropTableIfExists(tables.user),

@@ -172,6 +172,7 @@ const tables = {
   notification: 'notification',
   delivery: 'delivery',
   deliveryService: 'deliveryservice',
+  packaging: 'packaging',
 };
 
 module.exports = {
