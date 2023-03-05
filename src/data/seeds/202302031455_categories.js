@@ -18,7 +18,7 @@ module.exports = {
         name: 'Hardware',
         description: "Various types of hardware, including servers with built in hardware",
         categoryImg: null,
-      }
+      },
     ]);
   },
 };

@@ -9,7 +9,7 @@ module.exports = {
         quantity: 1,
       },
       {
-        productId:  2,
+        productId: 2,
         currencyId: "EUR",
         price: 25.00,
         quantity: 1,
