@@ -19,7 +19,7 @@ module.exports = {
             table.integer('deliveryStatus');
             table.foreign('transporterId', 'fk_Delivery_Company').references(`${tables.deliveryService}.id`);
             table.foreign('orderId', 'fk_Delivery_Order').references(`${tables.order}.id`).onDelete('CASCADE');
-            table.foreign('packagingId', 'fk_Delivery_Packaging').references(`${tables.packaging}.id`).onDelete('SET NULL');
+            table.foreign('packagingId', 'fk_Delivery_Packaging').references(`${tables.packaging}.id`);
         });
     },
     down: (knex) => knex.schema.dropTableIfExists(tables.delivery),

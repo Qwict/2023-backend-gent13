@@ -4,7 +4,7 @@ const {
 
 module.exports = {
   up: async (knex) => {
-      await knex.schema.createTable(tables.company, (table) => {
+      await knex.schema.createTable(tables.deliveryService, (table) => {
           table.increments('id').unique();
           table.string('name', 128).unique().notNullable();
           table.string('phoneNumber', 64);
@@ -14,5 +14,5 @@ module.exports = {
           table.boolean('actief');
       });
   },
-  down: (knex) => knex.schema.dropTableIfExists(tables.company),
+  down: (knex) => knex.schema.dropTableIfExists(tables.deliveryService),
 };
