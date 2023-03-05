@@ -27,6 +27,7 @@ module.exports = {
       // 0 is gewone aankoper, 1 is magazijnier, 2 is admin ...
       table.string('role').defaultTo('unemployed');
       table.foreign('companyId', 'fk_User_Company').references(`${tables.company}.id`);
+
     });
   },
   down: (knex) => knex.schema.dropTableIfExists(tables.user),
