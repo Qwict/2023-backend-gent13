@@ -1,7 +1,10 @@
-// Seed only includes first 20 objects of dataset
+const {
+  tables,
+} = require('..');
+
 module.exports = {
   seed: async (knex) => {
-    await knex('productprice').insert([
+    await knex(tables.productPrice).insert([
       {
         productId: 1,
         currencyId: "EUR",

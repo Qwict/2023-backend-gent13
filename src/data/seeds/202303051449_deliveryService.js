@@ -1,6 +1,10 @@
+const {
+  tables,
+} = require('..');
+
 module.exports = {
   seed: async (knex) => {
-    await knex('deliveryservice').insert([
+    await knex(tables.deliveryService).insert([
       {
         id: 1,
         name: "PostNL",
