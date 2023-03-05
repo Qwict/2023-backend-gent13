@@ -15,25 +15,29 @@ function authorization(permission) {
     // const logger = getLogger();
     const token = ctx.headers.authorization;
     // logger.debug(`hasPermission: ${JSON.stringify(user)}`);
-
+    let user;
     if (!token) {
       throw ServiceError.unauthorized('No valid token');
     } else {
       // Throws error if verification fails
       try {
         // const decoded = // disabled for linting
-        jwt.verify(token, process.env.JWT_SECRET, {
+          user = jwt.verify(token, process.env.JWT_SECRET, {
           issuer: process.env.AUTH_ISSUER,
           audience: process.env.AUTH_AUDIENCE,
         });
       } catch (error) {
-        throw ServiceError.unauthorized('Token validation failed');
+        throw ServiceError.forbidden('Token validation failed');
       }
     }
 
-    if (token && permission === permissions.loggedIn) {
+    if (user && permission === permissions.loggedIn) {
       await next();
-    }
+    } else if (user && user.permissions && user.permissions.toLowerCase().includes(permission)) {
+      await next();
+  } else {
+    throw ServiceError.unauthorized(`You do not have the necessary permission of ${permission}`);
+  }
   };
 }
 

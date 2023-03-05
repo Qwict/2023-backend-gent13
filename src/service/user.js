@@ -37,15 +37,16 @@ const register = async ({
   try {
     const user = await userRepository.create(newUser);
 
-  const jwtPackage = {
-    name: user.name,
-    email: user.email,
-  };
-  return jwt.sign(jwtPackage, process.env.JWT_SECRET, {
-    expiresIn: 36000,
-    issuer: process.env.AUTH_ISSUER,
-    audience: process.env.AUTH_AUDIENCE,
-  });
+    const jwtPackage = {
+      name: user.name,
+      email: user.email,
+      permission: user.role,
+    };
+    return jwt.sign(jwtPackage, process.env.JWT_SECRET, {
+      expiresIn: 36000,
+      issuer: process.env.AUTH_ISSUER,
+      audience: process.env.AUTH_AUDIENCE,
+    });
   } catch (error) {
     if (error.message === 'DUPLICATE_ENTRY') {
       throw ServiceError.duplicate('DUPLICATE ENTRY');
@@ -74,6 +75,7 @@ const login = async ({
     const jwtPackage = {
       name: user.name,
       email: user.email,
+      permission: user.role,
     };
     const token = jwt.sign(jwtPackage, process.env.JWT_SECRET, {
       expiresIn: 36000,
@@ -93,18 +95,40 @@ const verify = async ({
   token,
 }) => {
   debugLog(`Verifying token ${token}`);
+  const verification = {
+    token: undefined,
+    validated: false,
+  };
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET, {
       issuer: process.env.AUTH_ISSUER,
       audience: process.env.AUTH_AUDIENCE,
     });
+    const user = await userRepository.findByMail(decoded.email);
+    if (user.role !== decoded.permission) {
+      const jwtPackage = {
+        name: user.name,
+        email: user.email,
+        permission: user.role,
+      };
+
+      const newToken = jwt.sign(jwtPackage, process.env.JWT_SECRET, {
+        expiresIn: 36000,
+        issuer: process.env.AUTH_ISSUER,
+        audience: process.env.AUTH_AUDIENCE,
+      });
+      verification.token = newToken;
+      verification.validated = true;
+      return verification;
+    }
     if (decoded) {
-      return true;
+      verification.validated = true;
+      return verification;
     }
   } catch (error) {
     throw ServiceError.forbidden(`Verification failed for token ${token}`);
   }
-  return false;
+  return verification;
 };
 
 const join = async ({
