@@ -160,6 +160,7 @@ function getKnex() {
 }
 
 const tables = {
+  category: 'category',
   company: 'company',
   user: 'user',
   userCompany: 'userCompany',
@@ -169,6 +170,7 @@ const tables = {
   productMeasure: 'productunitofmeasureconverion',
   order: 'order',
   orderItem: 'orderitem',
+  notification: 'notification',
 };
 
 module.exports = {

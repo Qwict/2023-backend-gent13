@@ -5,14 +5,12 @@ const {
 module.exports = {
     up: async (knex) => {
         await knex.schema.createTable(tables.productDescription, (table) => {
-            table.increments('id');
-            table.string('productId', 128).notNullable();
+            table.primary(['productId', 'languageId']);
+            table.integer('productId').unsigned().notNullable();
             table.string('languageId', 16).notNullable();
-            table.integer('syncId');
-            table.string('productName', 128);
-            table.string('productListerDescription', 256);
-            table.string('productShortDescritpion', 256);
-            table.string('productLongDescription', 512);
+            table.string('productName', 128).notNullable();
+            table.string('productShortDescription', 256);
+            table.string('productLongDescription', 1024);
             table.foreign('productId', 'fk_Description_Product').references(`${tables.product}.id`).onDelete('CASCADE');
         });
     },
