@@ -171,6 +171,7 @@ const tables = {
   orderItem: 'orderitem',
   notification: 'notification',
   delivery: 'delivery',
+  deliveryService: 'deliveryservice',
 };
 
 module.exports = {

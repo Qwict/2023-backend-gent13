@@ -6,7 +6,7 @@ module.exports = {
     up: async (knex) => {
         await knex.schema.createTable(tables.orderItem, (table) => {
             table.primary(['orderId', 'productId']);
-            table.integer('orderId').unsigned().notNullable();
+            table.uuid('orderId').notNullable();
             table.integer('productId').unsigned().notNullable();
             table.integer('quantity').notNullable();
             table.double('netPrice').notNullable();

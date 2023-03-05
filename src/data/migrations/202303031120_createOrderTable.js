@@ -7,7 +7,7 @@ module.exports = {
         await knex.schema.createTable(tables.order, (table) => {
             table.uuid('id').primary().unique();
             table.string('buyerId', 64).notNullable();
-            table.integer('customerId').notNullable();
+            table.integer('customerId').unsigned().notNullable();
             table.string('currencyId').notNullable();
             table.string('orderReference', 64).notNullable();
             table.datetime('orderDateTime').notNullable();
