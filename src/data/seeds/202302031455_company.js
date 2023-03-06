@@ -12,7 +12,7 @@ module.exports = {
           vatNumber: "0684579082",
           street: "Bekkemmeers",
           streetNumber: "26",
-          zip_code: "8740",
+          zipCode: "8740",
           city: "Pittem",
           country: "Belgium",
       }]);
