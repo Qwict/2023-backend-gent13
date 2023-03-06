@@ -6,6 +6,16 @@ const orderRepo = require('../repository/order');
 const orderItemRepo = require('../repository/orderItem');
 const productService = require("./product");
 
+function makeChars(length) {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
 const debugLog = (message, meta = {}) => {
   if (!this.logger) this.logger = getLogger();
   this.logger.debug(message, meta);
@@ -41,17 +51,70 @@ const getAllFromCompany = async (companyId) => {
         streetNumber: delivery.number,
         zipCode: delivery.postCode,
         country: delivery.country,
-        products: products,
+        products,
         totalPrice: orderItem.totalPrice,
         packaging: orderItem.packagingId,
         trackAndtrace: delivery.trackAndtrace,
       });
-    };
+    }
     return mainOrders;
-  } else {
-    throw ServiceError.notFound('No companyId provided');
   }
+    throw ServiceError.notFound('No companyId provided');
 };
+
+const create = async ({
+  buyerId,
+  customerId,
+  packagingId,
+  currencyId,
+  netPrice,
+  taxPrice,
+  totalPrice,
+  products,
+  street,
+  number,
+  postcode,
+  country,
+  additionalInformation,
+}) => {
+  const orderReference = `REF${makeChars(13)}`;
+  const orderId = orderRepo.create({
+    buyerId,
+    customerId,
+    packagingId,
+    currencyId,
+    orderReference,
+    orderDateTime: new Date().toString(),
+    netPrice,
+    taxPrice,
+    totalPrice,
+});
+  for (const product of products) {
+    orderItemRepo.create({
+      orderId,
+      productId: product.id,
+      quantity: product.quantity,
+      netPrice: product.netPrice,
+});
+  }
+
+  const trackAndtrace = `${Date.now()}${makeChars(5)}`;
+
+  deliveryRepo.create({
+    transporterId: null,
+    orderId,
+    packagingId,
+    street,
+    number,
+    postcode,
+    country,
+    additionalInformation,
+    trackAndtrace,
+    deliveryStatus: 0,
+  });
+};
+
 module.exports = {
   getAllFromCompany,
+  create,
 };
