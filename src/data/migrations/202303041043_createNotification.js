@@ -6,9 +6,9 @@ module.exports = {
   up: async (knex) => {
     await knex.schema.createTable(tables.notification, (table) => {
       table.increments('id').unique();
-      table.integer('orderId').unsigned().notNullable();
+      table.uuid('orderId').notNullable();
       table.integer('companyId').unsigned().notNullable();
-      table.datetime('date').notNullable();
+      table.string('date').notNullable();
       table.string('text', 128);
       table.boolean('status');
       table.foreign('orderId', 'fk_Notification_Order').references(`${tables.order}.id`).onDelete('CASCADE');

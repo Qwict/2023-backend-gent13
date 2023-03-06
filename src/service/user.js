@@ -147,7 +147,7 @@ const join = async ({
     const updatedUser = await userRepository.findById(updatedUserId);
     debugLog(`User: ${updatedUser.email} is on waiting list to join companyId: ${updatedUser.companyId}`);
   } catch (e) {
-    debugLog.error(e);
+    debugLog(e);
     throw ServiceError.notFound(`${companyVAT} was not found`);
   }
 };
