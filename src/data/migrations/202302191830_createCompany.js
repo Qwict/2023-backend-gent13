@@ -12,7 +12,7 @@ module.exports = {
           table.string('vatNumber', 64).notNullable();
           table.string('street', 64).notNullable();
           table.string('streetNumber', 32).notNullable();
-          table.string('zip_code', 32).notNullable();
+          table.string('zipCode', 32).notNullable();
           table.string('city', 64).notNullable();
           table.string('country', 64).notNullable();
       });

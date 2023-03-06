@@ -10,9 +10,9 @@ const getById = async (ctx) => {
 };
 
 getById.validationScheme = {
-    params: {
-        id: Joi.string(),
-    },
+  params: {
+    id: Joi.string(),
+  },
 };
 
 const getAll = async (ctx) => {
