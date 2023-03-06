@@ -1,3 +1,4 @@
+const uuid = require('uuid');
 const {
   tables,
   getKnex,
@@ -29,7 +30,9 @@ const findAllOfCompany = async (customerId) => {
 const create = async ({
  buyerId, customerId, packagingId, currencyId, orderReference, orderDateTime, netPrice, taxPrice, totalPrice, orderStatus,
 }) => {
-  const id = await getKnex(tables.order).insert({
+  const id = uuid.v4();
+  await getKnex()(tables.order).insert({
+    id,
     buyerId,
     customerId,
     packagingId,

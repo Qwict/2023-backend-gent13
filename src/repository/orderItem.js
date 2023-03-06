@@ -16,7 +16,7 @@ const findByProduct = async (productId) => {
 const create = async ({
  orderId, productId, quantity, netPrice,
 }) => {
-  const id = await getKnex(tables.order).insert({
+  const id = await getKnex()(tables.orderItem).insert({
     orderId,
     productId,
     quantity,

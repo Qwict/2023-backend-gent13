@@ -5,6 +5,7 @@ const deliveryRepo = require('../repository/delivery');
 const orderRepo = require('../repository/order');
 const orderItemRepo = require('../repository/orderItem');
 const productService = require("./product");
+const userService = require('./user');
 
 function makeChars(length) {
   let result = '';
@@ -22,9 +23,13 @@ const debugLog = (message, meta = {}) => {
 };
 const ServiceError = require('../core/serviceError');
 
-const getAllFromCompany = async (companyId) => {
+const getAllFromCompany = async (token) => {
+  const user = await userService.getByToken(token);
+  const { companyId } = user;
+  if (user.companyVerified === false) {
+    throw ServiceError.forbidden('You are not a valid employee of this company!');
+  }
   debugLog(`Fetching all orders of company with id: ${companyId}`);
-
   if (companyId) {
     const mainOrders = [];
     const orders = await orderRepo.findAllOfCompany(companyId);
@@ -62,9 +67,7 @@ const getAllFromCompany = async (companyId) => {
     throw ServiceError.notFound('No companyId provided');
 };
 
-const create = async ({
-  buyerId,
-  customerId,
+const create = async (token, {
   packagingId,
   currencyId,
   netPrice,
@@ -73,14 +76,16 @@ const create = async ({
   products,
   street,
   number,
-  postcode,
+  postCode,
   country,
   additionalInformation,
 }) => {
+  const user = await userService.getByToken(token);
+  // const user = { id: '4b09960e-0864-45e0-bab6-6cf8c7fc4626', companyId: 1 };
   const orderReference = `REF${makeChars(13)}`;
-  const orderId = orderRepo.create({
-    buyerId,
-    customerId,
+  const orderId = await orderRepo.create({
+    buyerId: user.id,
+    customerId: user.companyId,
     packagingId,
     currencyId,
     orderReference,
@@ -88,9 +93,11 @@ const create = async ({
     netPrice,
     taxPrice,
     totalPrice,
+    orderStatus: 0,
 });
+
   for (const product of products) {
-    orderItemRepo.create({
+    await orderItemRepo.create({
       orderId,
       productId: product.id,
       quantity: product.quantity,
@@ -100,18 +107,20 @@ const create = async ({
 
   const trackAndtrace = `${Date.now()}${makeChars(5)}`;
 
-  deliveryRepo.create({
+  await deliveryRepo.create({
     transporterId: null,
     orderId,
     packagingId,
     street,
     number,
-    postcode,
+    postCode,
     country,
     additionalInformation,
     trackAndtrace,
     deliveryStatus: 0,
   });
+
+  return "GREAT SUCCESS";
 };
 
 module.exports = {
