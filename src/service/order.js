@@ -19,34 +19,35 @@ const getAllFromCompany = async (companyId) => {
     const mainOrders = [];
     const orders = await orderRepo.findAllOfCompany(companyId);
     // const orderItems = [];
-    orders.forEach(async (order) => {
+    for (const order of orders) {
       const delivery = await deliveryRepo.findByOrder(order.id);
       const orderItem = await orderItemRepo.findByOrder(order.id);
       const products = [];
-      orderItem.forEach(async (element) => {
+      for (const element of orderItem) {
         const product = await productService.getById(element.productId);
         const newProduct = {
-          name: product.name,
-          quantity: orderItem.quantity,
+          name: product.productName,
+          quantity: element.quantity,
           unitPrice: product.price,
-          totalPrice: orderItem.netPrice,
+          totalPrice: element.netPrice,
         };
         products.push(newProduct);
-      });
+      }
       // orderItems.push(orderItem);
       mainOrders.push({
         orderId: order.id,
         date: order.orderDateTime,
         street: delivery.street,
-        streetNumber: delivery.streetNumber,
+        streetNumber: delivery.number,
         zipCode: delivery.postCode,
         country: delivery.country,
-        products,
+        products: products,
         totalPrice: orderItem.totalPrice,
         packaging: orderItem.packagingId,
         trackAndtrace: delivery.trackAndtrace,
       });
-    });
+    };
+    return mainOrders;
   } else {
     throw ServiceError.notFound('No companyId provided');
   }

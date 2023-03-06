@@ -20,8 +20,8 @@ const findAllOfBuyer = async (buyerId) => {
   return orders;
 };
 
-const findAllOfCompany = async (companyId) => {
-  const orders = await getKnex()(tables.order).where('companyId', companyId)
+const findAllOfCompany = async (customerId) => {
+  const orders = await getKnex()(tables.order).where('customerId', customerId)
   .orderBy('orderDateTime');
   return orders;
 };
