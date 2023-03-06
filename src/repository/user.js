@@ -8,6 +8,28 @@ const {
   getLogger,
 } = require('../core/logging');
 
+const formatUser = ({
+  city,
+  companyId,
+  companyVerified,
+  country,
+  email,
+  hash,
+  id,
+  name,
+  role,
+  salt,
+  street,
+  streetNumber,
+  zipCode,
+}) => ({
+  firstName: name,
+  lastName: name,
+  email,
+  role,
+  companyVerified,
+});
+
 async function findById(id) {
   const user = await getKnex()(tables.user).where('id', id).first();
   return user;
@@ -111,10 +133,42 @@ const deleteById = async (id) => {
   }
 };
 
+const getNumberOfEmployees = async (companyId) => {
+  try {
+    const [count] = await getKnex()(tables.user)
+      .count()
+      .where('companyId', companyId);
+    return count['count(*)'];
+  } catch (error) {
+    const logger = getLogger();
+    logger.error('Error in getNumberOfEmployees', {
+      error,
+    });
+    throw error;
+  }
+};
+
+const getAllEmployees = async (companyId) => {
+  try {
+    const employees = await getKnex()(tables.user)
+      .select()
+      .where('companyId', companyId);
+    return employees.map(formatUser);
+  } catch (error) {
+    const logger = getLogger();
+    logger.error('Error in getAllEmployees', {
+      error,
+    });
+    throw error;
+  }
+};
+
 module.exports = {
   findById,
   findByMail,
   create,
   updateById,
   deleteById,
+  getNumberOfEmployees,
+  getAllEmployees,
 };

@@ -13,9 +13,16 @@ const debugLog = (message, meta = {}) => {
   this.logger.debug(message, meta);
 };
 
+// useless function ?
 const getByToken = async (token) => {
   debugLog(`Decoding token ${token}`);
   const user = jwt.decode(token);
+  return user;
+};
+
+const getUserByEmail = async (email) => {
+  debugLog(`Getting user with email: ${email}`);
+  const user = userRepository.findByMail(email);
   return user;
 };
 
@@ -152,10 +159,22 @@ const join = async ({
   }
 };
 
+const getAllEmployees = async (companyID) => {
+  debugLog(`Fetching all employees with companyID ${companyID}`);
+  try {
+    const employees = await userRepository.getAllEmployees(companyID);
+    return employees;
+  } catch (e) {
+    throw ServiceError.notFound(`${companyID} was not found`);
+  }
+};
+
 module.exports = {
   getByToken,
   register,
   login,
   verify,
   join,
+  getAllEmployees,
+  getUserByEmail,
 };

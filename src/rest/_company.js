@@ -46,6 +46,14 @@ const getAll = async (ctx) => {
 };
 getAll.validationScheme = null;
 
+const getAllEmployees = async (ctx) => {
+  const decodedAdmin = await userService.getByToken(ctx.headers.authorization);
+  const admin = await userService.getUserByEmail(decodedAdmin.email);
+  const employeeData = await userService.getAllEmployees(admin.companyId);
+  ctx.body = employeeData;
+};
+getAllEmployees.validationScheme = null;
+
 module.exports = function installUserRouter(app) {
   const router = new Router({
     prefix: '/company',
@@ -59,6 +67,8 @@ module.exports = function installUserRouter(app) {
   // TODO how to get authorization right on this?
   // router.get('/', authorization(permissions.loggedIn), getAll);
   router.get('/', validate(getAll.validationScheme), getAll);
+  router.get('/employees', authorization(permissions.admin), validate(getAllEmployees), getAllEmployees);
+  // router.get('/employees', getAllEmployees);
 
   app
     .use(router.routes())

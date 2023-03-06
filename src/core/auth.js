@@ -8,6 +8,7 @@ const ServiceError = require('./serviceError');
 
 const permissions = Object.freeze({
   loggedIn: 'loggedIn',
+  admin: 'admin',
 });
 
 function authorization(permission) {
@@ -30,10 +31,10 @@ function authorization(permission) {
         throw ServiceError.forbidden('Token validation failed');
       }
     }
-
+    console.log(user.permission);
     if (user && permission === permissions.loggedIn) {
       await next();
-    } else if (user && user.permissions && user.permissions.toLowerCase().includes(permission)) {
+    } else if (user && user.permission && user.permission === permissions.admin) {
       await next();
   } else {
     throw ServiceError.unauthorized(`You do not have the necessary permission of ${permission}`);

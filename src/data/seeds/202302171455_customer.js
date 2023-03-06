@@ -18,7 +18,7 @@ module.exports = {
         hash: 'hQXWdE01+n+yibcH1LqjpuMUhcufBMBT2NkNmuV6x7DoeSPbFRvM3laXdIfnqyOi9rknLoBeok5m6y+4yHbsQQ==',
         companyId: 1,
         companyVerified: true,
-        role: 'admin',
+        role: 'employee',
       }, {
         id: '2b93f1c4-38bd-490d-a0ca-f7b81b9de171',
         name: 'qwertic',
