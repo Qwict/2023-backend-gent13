@@ -1,6 +1,4 @@
-const {
-  tables,
-} = require('..');
+const { tables } = require('..');
 
 module.exports = {
   seed: async (knex) => {
@@ -20,7 +18,6 @@ module.exports = {
         productCategoryId: 3,
         stock: 100,
       },
-
     ]);
   },
 };
