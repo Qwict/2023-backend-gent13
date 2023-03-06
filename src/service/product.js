@@ -34,6 +34,7 @@ const getById = async (id) => {
 
 const getAll = async () => {
   const products = await database.findAll();
+
   if (products.length === 0) {
     throw ServiceError.notFound('No products found');
   }

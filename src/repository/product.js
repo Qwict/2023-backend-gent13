@@ -14,7 +14,11 @@ async function findDescriptionById(id) {
 }
 
 const findAll = async () => {
-  const products = await getKnex()(tables.product).select().orderBy('id', 'DESC');
+  const products = await getKnex()(tables.product)
+    .select()
+    .join(tables.productDescription, `${tables.productDescription}`.userId, '=', `${tables.product}`.id)
+    .join(tables.productPrice, `${tables.productPrice}`.userId, '=', `${tables.product}`.id)
+    .orderBy('id', 'DESC');
   return products;
 };
 
