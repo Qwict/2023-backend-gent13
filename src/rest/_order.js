@@ -9,15 +9,21 @@ const {
   permissions,
 } = require('../core/auth');
 
+const getById = async (ctx) => {
+  ctx.body = await orderService.getById(ctx.params.id);
+  ctx.status = 200;
+};
+getById.validationScheme = {
+  params: {
+    id: Joi.string(),
+  },
+};
+
 const getAll = async (ctx) => {
   ctx.body = await orderService.getAllFromCompany(ctx.headers.authorization);
   ctx.status = 200;
 };
-getAll.validationScheme = {
-    params: {
-        companyId: Joi.any(),
-    },
-};
+getAll.validationScheme = null;
 
 const create = async (ctx) => {
   ctx.body = await orderService.create(ctx.headers.authorization, ctx.request.body);
@@ -39,13 +45,32 @@ create.validationScheme = {
   },
 };
 
+const updateById = async (ctx) => {
+  ctx.body = await orderService.updateById(ctx.params.id, ctx.request.body);
+  ctx.status = 204;
+};
+updateById.validationScheme = {
+  params: {
+    id: Joi.string(),
+  },
+  body: {
+    packagingId: Joi.number().integer(),
+    street: Joi.string(),
+    number: Joi.string(),
+    postCode: Joi.string(),
+    country: Joi.string(),
+  },
+};
+
 module.exports = function installOrderRouter(app) {
   const router = new Router({
     prefix: '/order',
   });
 // nog validation toevoegen
   router.get('/', authorization(permissions.employee), validate(getAll.validationScheme), getAll); // nog validation toevoegen
+  router.get('/:id', authorization(permissions.employee), validate(getById.validationScheme), getById);
   router.post('/', validate(create.validationScheme), create);
+  router.put('/:id', authorization(permissions.employee), validate(), updateById);
 
   app.use(router.routes()).use(router.allowedMethods());
 };

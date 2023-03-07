@@ -47,7 +47,7 @@ const create = async ({
   return id;
 };
 
-const updateById = async (id, { packagingId }) => {
+const updateById = async (id, packagingId) => {
   await getKnex()(tables.order).update({
     packagingId,
   }).where('id', id);

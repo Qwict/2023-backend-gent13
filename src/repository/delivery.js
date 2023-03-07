@@ -41,16 +41,21 @@ const create = async ({
   return id;
 };
 
-const updateById = async (id, {
- packagingId, street, number, postcode, country,
-}) => {
+const updateById = async (
+id,
+packagingId,
+street,
+number,
+postCode,
+country,
+) => {
    await getKnex()(tables.delivery).update({
     packagingId,
     street,
     number,
-    postcode,
+    postCode,
     country,
-  });
+  }).where('orderId', id);
   return id;
 };
 

@@ -23,6 +23,38 @@ const debugLog = (message, meta = {}) => {
 };
 const ServiceError = require('../core/serviceError');
 
+const getById = async (id) => {
+  const order = orderRepo.findById(id);
+  const orderItems = orderItemRepo.findByOrder(id);
+  const delivery = orderItemRepo.findByOrder(id);
+  const products = [];
+  for (const orderItem of orderItems) {
+    const product = await productService.getById(orderItem.productId);
+    const newProduct = {
+      name: product.productName,
+      quantity: orderItem.quantity,
+      unitPrice: product.price,
+      totalPrice: orderItem.netPrice,
+    };
+    products.push(newProduct);
+  }
+
+  const mainOrders = {
+    orderId: order.id,
+    date: order.orderDateTime,
+    street: delivery.street,
+    streetNumber: delivery.number,
+    zipCode: delivery.postCode,
+    country: delivery.country,
+    products,
+    totalPrice: order.totalPrice,
+    packaging: order.packagingId,
+    trackAndtrace: delivery.trackAndtrace,
+  };
+
+  return mainOrders;
+};
+
 const getAllFromCompany = async (token) => {
   const user = await userService.getByToken(token);
   const { companyId } = user;
@@ -57,8 +89,8 @@ const getAllFromCompany = async (token) => {
         zipCode: delivery.postCode,
         country: delivery.country,
         products,
-        totalPrice: orderItem.totalPrice,
-        packaging: orderItem.packagingId,
+        totalPrice: order.totalPrice,
+        packaging: order.packagingId,
         trackAndtrace: delivery.trackAndtrace,
       });
     }
@@ -123,7 +155,23 @@ const create = async (token, {
   return "GREAT SUCCESS";
 };
 
+const updateById = async (id, {
+  packagingId, street, number, postCode, country,
+ }) => {
+  const order = orderRepo.findById(id);
+  if (order.orderStatus === 0) {
+    await orderRepo.updateById(id, packagingId);
+    await deliveryRepo.updateById(id, packagingId, street, number, postCode, country);
+  } else {
+    throw ServiceError.forbidden(`You can not update this order. orderStatus = ${order.orderStatus}`);
+  }
+  const updatedOrder = await getById(id);
+  return updatedOrder;
+};
+
 module.exports = {
+  getById,
   getAllFromCompany,
   create,
+  updateById,
 };
