@@ -11,15 +11,9 @@ const getById = async (ctx) => {
 
 getById.validationScheme = {
   params: {
-    id: Joi.string(),
+    id: Joi.number().integer(),
   },
 };
-
-const getByCategoryId = async (ctx) => {
-  ctx.body = await productService.getByCategoryId(ctx.params.id);
-  ctx.status = 200;
-};
-getByCategoryId.validationScheme = null;
 
 const getAll = async (ctx) => {
   ctx.body = await productService.getAll();
@@ -33,7 +27,6 @@ module.exports = function installProductRouter(app) {
   });
 
   router.get('/:id', validate(getById.validationScheme), getById); // nog validation toevoegen
-  router.get('/category/:id', getByCategoryId); // nog validation toevoegen
   router.get('/', validate(getAll.validationScheme), getAll);
 
   app.use(router.routes()).use(router.allowedMethods());

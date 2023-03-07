@@ -11,6 +11,13 @@ module.exports = {
         productLongDescription: 'oioi',
       },
       {
+        productId: 1,
+        languageId: 'en',
+        productName: 'Ski slats',
+        productShortDescription: 'oi',
+        productLongDescription: 'oioi',
+      },
+      {
         productId: 2,
         languageId: 'nl',
         productName: 'Body lotion',
