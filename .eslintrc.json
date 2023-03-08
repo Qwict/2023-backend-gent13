@@ -9,6 +9,11 @@
   "plugins": ["import"],
   "rules": {
     "max-len": ["error", { "code": 200 }],
+    "no-plusplus": "off",
+    "no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"],
+    "no-await-in-loop": "off",
+    "no-inner-declarations": "off",
+    "no-shadow": "warn",
     // don't throw Assignment to function parameter
     //      I don't understand param-reassign -> so I disabled it (bad idea!?)
     "no-param-reassign": 1,

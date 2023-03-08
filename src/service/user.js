@@ -30,7 +30,9 @@ const generateJavaWebToken = async (user) => {
 
 const getByToken = async (token) => {
   debugLog(`Decoding token ${token}`);
-  const user = jwt.decode(token);
+  const decodedUser = jwt.decode(token);
+  const user = userRepository.findByMail(decodedUser.email);
+  const { salt, hash, ...rest } = user;
   return user;
 };
 
@@ -76,6 +78,17 @@ const register = async ({
       issuer: process.env.AUTH_ISSUER,
       audience: process.env.AUTH_AUDIENCE,
     });
+  // const jwtPackage = {
+  //   id: user.id,
+  //   name: user.name,
+  //   email: user.email,
+  //   companyId: user.companyId,
+  // };
+  // return jwt.sign(jwtPackage, process.env.JWT_SECRET, {
+  //   expiresIn: 36000,
+  //   issuer: process.env.AUTH_ISSUER,
+  //   audience: process.env.AUTH_AUDIENCE,
+  // });
   } catch (error) {
     if (error.message === 'DUPLICATE_ENTRY') {
       throw ServiceError.duplicate('DUPLICATE ENTRY');

@@ -9,6 +9,7 @@ const ServiceError = require('./serviceError');
 const permissions = Object.freeze({
   loggedIn: 'loggedIn',
   admin: 'admin',
+  employee: 'employee',
 });
 
 function authorization(permission) {
@@ -38,6 +39,11 @@ function authorization(permission) {
   } else {
     throw ServiceError.unauthorized(`You do not have the necessary permission of ${permission}`);
   }
+    // } else if (user && user.permission && user.permission.includes(permission)) {
+    //   await next();
+    // } else {
+    //   throw ServiceError.unauthorized(`You do not have the necessary permission of ${permission}`);
+    // }
   };
 }
 

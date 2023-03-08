@@ -5,7 +5,7 @@ const {
 module.exports = {
     up: async (knex) => {
         await knex.schema.createTable(tables.delivery, (table) => {
-            table.integer('transporterId').unsigned().notNullable();
+            table.integer('transporterId').unsigned().nullable();
             // orderId = verificationCode
             table.uuid('orderId', 128).notNullable();
             table.integer('packagingId').unsigned().notNullable();
