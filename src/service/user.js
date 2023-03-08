@@ -184,12 +184,6 @@ const update = async (token, {
   const decodedUser = await getByToken(token);
   const originalEmail = decodedUser.email;
   const user = await getUserByEmail(originalEmail);
-  // console.log({
-  //   name: (name ? name : user.name),
-  //   email: (email ? email : user.email),
-  //   firstName: (firstName ? firstName : user.firstName),
-  //   lastName: (lastName ? lastName : user.lastName),
-  // });
   debugLog(`updating user with id ${user.id}`);
   const updatedUserId = await userRepository.updateById(user.id, {
     name: (name || user.name),
@@ -204,8 +198,9 @@ const update = async (token, {
   };
   if (updatedUser) {
     const updatedToken = await generateJavaWebToken(updatedUser);
+    const formatedUpdatedUser = userRepository.formatUser(updatedUser);
     verification.token = updatedToken;
-    verification.updatedUser = updatedUser;
+    verification.updatedUser = formatedUpdatedUser;
     verification.validated = true;
   }
   return verification;

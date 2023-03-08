@@ -163,6 +163,7 @@ const getAllEmployees = async (companyId) => {
 };
 
 module.exports = {
+  formatUser,
   findById,
   findByMail,
   create,
