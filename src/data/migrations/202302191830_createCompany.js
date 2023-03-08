@@ -1,6 +1,4 @@
-const {
-  tables,
-} = require('..');
+const { tables } = require('..');
 
 module.exports = {
   up: async (knex) => {

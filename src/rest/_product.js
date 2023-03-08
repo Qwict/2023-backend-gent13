@@ -10,9 +10,9 @@ const getById = async (ctx) => {
 };
 
 getById.validationScheme = {
-    params: {
-        id: Joi.string(),
-    },
+  params: {
+    id: Joi.number().integer(),
+  },
 };
 
 const getAll = async (ctx) => {
@@ -27,7 +27,7 @@ module.exports = function installProductRouter(app) {
   });
 
   router.get('/:id', validate(getById.validationScheme), getById); // nog validation toevoegen
-  router.get('/', validate(getAll.validationScheme), getAll); // nog validation toevoegen
+  router.get('/', validate(getAll.validationScheme), getAll);
 
   app.use(router.routes()).use(router.allowedMethods());
 };

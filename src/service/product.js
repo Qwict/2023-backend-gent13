@@ -1,6 +1,4 @@
-const {
-  getLogger,
-} = require('../core/logging');
+const { getLogger } = require('../core/logging');
 const database = require('../repository/product');
 
 const debugLog = (message, meta = {}) => {
@@ -12,6 +10,18 @@ const ServiceError = require('../core/serviceError');
 const getById = async (id) => {
   debugLog(`Fetching product with id ${id}`);
   const product = await database.findById(id);
+   if (!product) {
+    throw ServiceError.notFound(`Product with id ${id} does not exist`, {
+      id,
+    });
+  }
+  return product;
+};
+
+const getByCategoryId = async (id) => {
+  debugLog(`Fetching product with id ${id}`);
+  const product = await database.findProductsByCategoryId(id);
+
   if (!product) {
     throw ServiceError.notFound(`Product with id ${id} does not exist`, {
       id,
@@ -22,6 +32,7 @@ const getById = async (id) => {
 
 const getAll = async () => {
   const products = await database.findAll();
+
   if (products.length === 0) {
     throw ServiceError.notFound('No products found');
   }
@@ -34,4 +45,5 @@ const getAll = async () => {
 module.exports = {
   getById,
   getAll,
+  getByCategoryId,
 };
