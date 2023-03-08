@@ -10,6 +10,12 @@ module.exports = {
         quantity: 1,
       },
       {
+        productId: 1,
+        currencyId: 'USD',
+        price: 49.99,
+        quantity: 1,
+      },
+      {
         productId: 2,
         currencyId: 'EUR',
         price: 25.0,

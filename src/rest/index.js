@@ -4,6 +4,7 @@ const installHealthRouter = require('./_health');
 const installOrderRouter = require('./_order');
 const installUserRouter = require('./_user');
 const installProductRouter = require('./_product');
+const installCategoryRouter = require('./_category');
 
 module.exports = (app) => {
   const router = new Router({
@@ -12,6 +13,7 @@ module.exports = (app) => {
 
   installHealthRouter(router);
   installOrderRouter(router);
+  installCategoryRouter(router);
   installProductRouter(router);
   installUserRouter(router);
 

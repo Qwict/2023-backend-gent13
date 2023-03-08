@@ -1,11 +1,11 @@
 const Joi = require('joi');
 const Router = require('@koa/router');
 
-const productService = require('../service/product');
+const categoryService = require('../service/category');
 const validate = require('./_validation');
 
 const getById = async (ctx) => {
-  ctx.body = await productService.getById(ctx.params.id);
+  ctx.body = await categoryService.getById(ctx.params.id);
   ctx.status = 200;
 };
 
@@ -16,14 +16,14 @@ getById.validationScheme = {
 };
 
 const getAll = async (ctx) => {
-  ctx.body = await productService.getAll();
+  ctx.body = await categoryService.getAll();
   ctx.status = 200;
 };
 getAll.validationScheme = null;
 
-module.exports = function installProductRouter(app) {
+module.exports = function installCategoryRouter(app) {
   const router = new Router({
-    prefix: '/product',
+    prefix: '/category',
   });
 
   router.get('/:id', validate(getById.validationScheme), getById); // nog validation toevoegen
