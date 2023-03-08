@@ -89,7 +89,7 @@ const updateById = async (id, {
   firstName,
   lastName,
   companyId,
-  // role,
+  role,
 }) => {
   try {
     await getKnex()(tables.user)
@@ -99,7 +99,7 @@ const updateById = async (id, {
         lastName,
         email,
         companyId,
-        // role,
+        role,
       })
       .where('id', id);
     return id;

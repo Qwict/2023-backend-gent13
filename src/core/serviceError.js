@@ -3,6 +3,7 @@ const VALIDATION_FAILED = 'VALIDATION_FAILED';
 const UNAUTHORIZED = 'UNAUTHORIZED';
 const FORBIDDEN = 'FORBIDDEN';
 const DUPLICATE = 'DUPLICATE ENTRY';
+const BAD_REQUEST = 'BAD_REQUEST';
 
 class ServiceError extends Error {
   constructor(code, message, details = {}) {
@@ -20,6 +21,10 @@ class ServiceError extends Error {
     return new ServiceError(VALIDATION_FAILED, message, details);
   }
 
+  static badRequest(message, details) {
+    return new ServiceError(BAD_REQUEST, message, details);
+  }
+
   static unauthorized(message, details) {
     return new ServiceError(UNAUTHORIZED, message, details);
   }
@@ -30,6 +35,10 @@ class ServiceError extends Error {
 
   static duplicate(message, details) {
     return new ServiceError(DUPLICATE, message, details);
+  }
+
+  get isBadRequest() {
+    return this.code === BAD_REQUEST;
   }
 
   get isNotFound() {

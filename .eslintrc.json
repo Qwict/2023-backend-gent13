@@ -14,7 +14,7 @@
     "no-param-reassign": 1,
     "no-unused-vars": "warn",
     // don't throw linting error on last empty line missing
-    "eol-last": ["warning", "never"],
+    "eol-last": ["warn", "never"],
     "quotes": "off",
     "linebreak-style": 0,
     "indent": 0

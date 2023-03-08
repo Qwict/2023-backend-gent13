@@ -31,7 +31,6 @@ function authorization(permission) {
         throw ServiceError.forbidden('Token validation failed');
       }
     }
-    console.log(user.permission);
     if (user && permission === permissions.loggedIn) {
       await next();
     } else if (user && user.permission && user.permission === permissions.admin) {

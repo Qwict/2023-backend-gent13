@@ -18,13 +18,13 @@ const register = async (ctx) => {
 register.validationScheme = {
   body: {
     name: Joi.string(),
-    countryCode: Joi.string(),
-    vatNumber: Joi.string(),
-    street: Joi.string(),
-    streetNumber: Joi.string(),
-    zipCode: Joi.string(),
-    city: Joi.string(),
-    country: Joi.string(),
+    countryCode: Joi.string().allow(''),
+    vatNumber: Joi.string().allow(''),
+    street: Joi.string().allow(''),
+    streetNumber: Joi.string().allow(''),
+    zipCode: Joi.string().allow(''),
+    city: Joi.string().allow(''),
+    country: Joi.string().allow(''),
   },
 };
 
@@ -61,15 +61,13 @@ module.exports = function installUserRouter(app) {
   });
 
   // router.post('/verify', validate(verify.validationScheme), verify);
-  // router.post('/register', validate(register.validationScheme), authorization(permissions.loggedIn), register);
-  router.post('/register', authorization(permissions.loggedIn), register);
+  router.post('/', authorization(permissions.loggedIn), validate(register.validationScheme), register);
   // router.post('/join', validate(join.validationScheme), join);
   router.put('/join', authorization(permissions.loggedIn), validate(join.validationScheme), join);
   // TODO how to get authorization right on this?
   // router.get('/', authorization(permissions.loggedIn), getAll);
   router.get('/', validate(getAll.validationScheme), getAll);
   router.get('/employees', authorization(permissions.admin), validate(getAllEmployees), getAllEmployees);
-  // router.get('/employees', getAllEmployees);
 
   app
     .use(router.routes())

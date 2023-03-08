@@ -76,6 +76,26 @@ const getUser = async (ctx) => {
   ctx.status = 200;
 };
 
+const promote = async (ctx) => {
+  const { email, role } = ctx.request.body;
+  // try {
+  const token = ctx.headers.authorization;
+  const promoted = await userService.promote({ token, email, role });
+  ctx.status = 204;
+  // } catch (ServiceError) {
+  //   ctx.throw(400, 'Unable to find user with given email', {
+  //     code: 'BAD_REQUEST',
+  //     details: ServiceError,
+  //   })
+  // }
+};
+promote.validationScheme = {
+  body: {
+    email: Joi.string(),
+    role: Joi.string(),
+  },
+};
+
 module.exports = function installUserRouter(app) {
   const router = new Router({
     prefix: '/user',
@@ -87,6 +107,7 @@ module.exports = function installUserRouter(app) {
   router.post('/update', authorization(permissions.loggedIn), update);
   // router.put('/update', validate(getByToken.validationScheme), authorization(permissions.loggedIn), update);
   router.post('/register', validate(register.validationScheme), register);
+  router.put('/promote', authorization(permissions.admin), validate(promote.validationScheme), promote);
 
   app
     .use(router.routes())

@@ -165,6 +165,7 @@ const join = async ({
     const newUser = {
       ...user,
       companyId: company.id,
+      role: 'pending',
     };
     const updatedUserId = await userRepository.updateById(newUser.id, newUser);
     const updatedUser = await userRepository.findById(updatedUserId);
@@ -198,7 +199,7 @@ const update = async (token, {
   };
   if (updatedUser) {
     const updatedToken = await generateJavaWebToken(updatedUser);
-    const formatedUpdatedUser = userRepository.formatUser(updatedUser);
+    const formatedUpdatedUser = await userRepository.formatUser(updatedUser);
     verification.token = updatedToken;
     verification.updatedUser = formatedUpdatedUser;
     verification.validated = true;
@@ -216,6 +217,26 @@ const getAllEmployees = async (companyID) => {
   }
 };
 
+const promote = async ({ token, email, role }) => {
+  debugLog(`Promoting user with ${email} to ${role}`);
+  // try {
+  const decodedAdmin = await getByToken(token);
+  const admin = await getUserByEmail(decodedAdmin.email);
+  const user = await getUserByEmail(email);
+  if (user.companyId === admin.companyId) {
+    let { companyId } = user;
+    if (role === 'unemployed') {
+      companyId = null;
+    }
+    promotedUserId = await userRepository.updateById(user.id, {
+      ...user,
+      role,
+      companyId,
+    });
+    promotedUser = await userRepository.getUser(promotedUserId);
+  }
+};
+
 module.exports = {
   getByToken,
   register,
@@ -226,4 +247,5 @@ module.exports = {
   getAllEmployees,
   getUserByEmail,
   getUser,
+  promote,
 };
