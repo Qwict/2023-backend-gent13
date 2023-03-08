@@ -24,9 +24,9 @@ const debugLog = (message, meta = {}) => {
 const ServiceError = require('../core/serviceError');
 
 const getById = async (id) => {
-  const order = orderRepo.findById(id);
-  const orderItems = orderItemRepo.findByOrder(id);
-  const delivery = orderItemRepo.findByOrder(id);
+  const order = await orderRepo.findById(id);
+  const orderItems = await orderItemRepo.findByOrder(id);
+  const delivery = await deliveryRepo.findByOrder(id);
   const products = [];
   for (const orderItem of orderItems) {
     const product = await productService.getById(orderItem.productId);
@@ -51,7 +51,6 @@ const getById = async (id) => {
     packaging: order.packagingId,
     trackAndtrace: delivery.trackAndtrace,
   };
-
   return mainOrders;
 };
 
@@ -158,7 +157,7 @@ const create = async (token, {
 const updateById = async (id, {
   packagingId, street, number, postCode, country,
  }) => {
-  const order = orderRepo.findById(id);
+  const order = await orderRepo.findById(id);
   if (order.orderStatus === 0) {
     await orderRepo.updateById(id, packagingId);
     await deliveryRepo.updateById(id, packagingId, street, number, postCode, country);
