@@ -119,11 +119,15 @@ const verify = async ({
     token: undefined,
     validated: false,
   };
+  let decoded;
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+    decoded = jwt.verify(token, process.env.JWT_SECRET, {
       issuer: process.env.AUTH_ISSUER,
       audience: process.env.AUTH_AUDIENCE,
     });
+  } catch (error) {
+    throw ServiceError.forbidden(`Verification failed for token ${token}`);
+  }
     const user = await userRepository.findByMail(decoded.email);
     if (user.role !== decoded.permission) {
       const jwtPackage = {
@@ -145,9 +149,7 @@ const verify = async ({
       verification.validated = true;
       return verification;
     }
-  } catch (error) {
-    throw ServiceError.forbidden(`Verification failed for token ${token}`);
-  }
+
   return verification;
 };
 
@@ -190,10 +192,10 @@ const update = async (token, {
   // });
   debugLog(`updating user with id ${user.id}`);
   const updatedUserId = await userRepository.updateById(user.id, {
-    name: (name ? name : user.name),
-    email: (email ? email : user.email),
-    firstName: (firstName ? firstName : user.firstName),
-    lastName: (lastName ? lastName : user.lastName),
+    name: (name || user.name),
+    email: (email || user.email),
+    firstName: (firstName || user.firstName),
+    lastName: (lastName || user.lastName),
   });
   const updatedUser = await userRepository.findById(updatedUserId);
   const verification = {
@@ -201,9 +203,8 @@ const update = async (token, {
     validated: false,
   };
   if (updatedUser) {
-    const updatedToken = await generateJavaWebToken(user);
+    const updatedToken = await generateJavaWebToken(updatedUser);
     verification.token = updatedToken;
-    console.log(verification.token);
     verification.updatedUser = updatedUser;
     verification.validated = true;
   }
