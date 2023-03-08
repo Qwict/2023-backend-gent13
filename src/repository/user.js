@@ -9,22 +9,16 @@ const {
 } = require('../core/logging');
 
 const formatUser = ({
-  city,
-  companyId,
   companyVerified,
-  country,
   email,
-  hash,
-  id,
   name,
+  firstName,
+  lastName,
   role,
-  salt,
-  street,
-  streetNumber,
-  zipCode,
 }) => ({
-  firstName: name,
-  lastName: name,
+  firstName,
+  lastName,
+  name,
   email,
   role,
   companyVerified,
@@ -38,6 +32,11 @@ async function findById(id) {
 async function findByMail(email) {
   const user = await getKnex()(tables.user).where('email', email).first();
   return user;
+}
+
+async function getUser(id) {
+  const user = await getKnex()(tables.user).where('id', id).first();
+  return formatUser(user);
 }
 
 async function create({
@@ -87,20 +86,20 @@ async function create({
 const updateById = async (id, {
   name,
   email,
-  salt,
-  hash,
+  firstName,
+  lastName,
   companyId,
-  companyVerified,
+  role,
 }) => {
   try {
     await getKnex()(tables.user)
       .update({
         name,
+        firstName,
+        lastName,
         email,
-        salt,
-        hash,
         companyId,
-        companyVerified,
+        role,
       })
       .where('id', id);
     return id;
@@ -171,4 +170,5 @@ module.exports = {
   deleteById,
   getNumberOfEmployees,
   getAllEmployees,
+  getUser,
 };

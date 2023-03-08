@@ -13,7 +13,21 @@ const debugLog = (message, meta = {}) => {
   this.logger.debug(message, meta);
 };
 
-// useless function ?
+const generateJavaWebToken = async (user) => {
+  debugLog(`Generating JWT for ${user.email}`);
+  const jwtPackage = {
+    name: user.name,
+    email: user.email,
+    permission: user.role,
+  };
+  const token = jwt.sign(jwtPackage, process.env.JWT_SECRET, {
+    expiresIn: 36000,
+    issuer: process.env.AUTH_ISSUER,
+    audience: process.env.AUTH_AUDIENCE,
+  });
+  return token;
+};
+
 const getByToken = async (token) => {
   debugLog(`Decoding token ${token}`);
   const user = jwt.decode(token);
@@ -22,8 +36,16 @@ const getByToken = async (token) => {
 
 const getUserByEmail = async (email) => {
   debugLog(`Getting user with email: ${email}`);
-  const user = userRepository.findByMail(email);
+  const user = await userRepository.findByMail(email);
   return user;
+};
+
+const getUser = async (token) => {
+  const { email } = await getByToken(token);
+  debugLog(`Getting formatted user with email: ${email}`);
+  const user = await userRepository.findByMail(email);
+  const formattedUser = await userRepository.getUser(user.id);
+  return formattedUser;
 };
 
 const register = async ({
@@ -79,16 +101,7 @@ const login = async ({
   }
   const result = user.hash === crypto.pbkdf2Sync(password, user.salt, 10000, 64, 'sha256').toString('base64');
   if (result) {
-    const jwtPackage = {
-      name: user.name,
-      email: user.email,
-      permission: user.role,
-    };
-    const token = jwt.sign(jwtPackage, process.env.JWT_SECRET, {
-      expiresIn: 36000,
-      issuer: process.env.AUTH_ISSUER,
-      audience: process.env.AUTH_AUDIENCE,
-    });
+    const token = await generateJavaWebToken(user);
     verification.token = token;
     verification.validated = true;
   } else {
@@ -139,9 +152,10 @@ const verify = async ({
 };
 
 const join = async ({
-  email,
+  token,
   companyVAT,
 }) => {
+  const { email } = await getByToken(token);
   debugLog(`User ${email} wants to join ${companyVAT}`);
   try {
     const company = await companyService.findByVAT(companyVAT);
@@ -157,6 +171,43 @@ const join = async ({
     debugLog(e);
     throw ServiceError.notFound(`${companyVAT} was not found`);
   }
+};
+
+const update = async (token, {
+  name,
+  email,
+  firstName,
+  lastName,
+}) => {
+  const decodedUser = await getByToken(token);
+  const originalEmail = decodedUser.email;
+  const user = await getUserByEmail(originalEmail);
+  // console.log({
+  //   name: (name ? name : user.name),
+  //   email: (email ? email : user.email),
+  //   firstName: (firstName ? firstName : user.firstName),
+  //   lastName: (lastName ? lastName : user.lastName),
+  // });
+  debugLog(`updating user with id ${user.id}`);
+  const updatedUserId = await userRepository.updateById(user.id, {
+    name: (name ? name : user.name),
+    email: (email ? email : user.email),
+    firstName: (firstName ? firstName : user.firstName),
+    lastName: (lastName ? lastName : user.lastName),
+  });
+  const updatedUser = await userRepository.findById(updatedUserId);
+  const verification = {
+    token: undefined,
+    validated: false,
+  };
+  if (updatedUser) {
+    const updatedToken = await generateJavaWebToken(user);
+    verification.token = updatedToken;
+    console.log(verification.token);
+    verification.updatedUser = updatedUser;
+    verification.validated = true;
+  }
+  return verification;
 };
 
 const getAllEmployees = async (companyID) => {
@@ -175,6 +226,8 @@ module.exports = {
   login,
   verify,
   join,
+  update,
   getAllEmployees,
   getUserByEmail,
+  getUser,
 };

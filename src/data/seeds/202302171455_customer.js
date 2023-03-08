@@ -8,6 +8,8 @@ module.exports = {
       {
         id: '4b09960e-0864-45e0-bab6-6cf8c7fc4626',
         name: 'joris',
+        firstName: 'Joris',
+        lastName: 'Van Duyse',
         street: "Voskenslaan",
         streetNumber: "34",
         zipCode: "9000",
@@ -22,6 +24,8 @@ module.exports = {
       }, {
         id: '2b93f1c4-38bd-490d-a0ca-f7b81b9de171',
         name: 'qwertic',
+        firstName: 'Joris',
+        lastName: 'Van Duyse',
         street: "Voskenslaan",
         streetNumber: "34",
         zipCode: "9000",
@@ -36,6 +40,8 @@ module.exports = {
       }, {
         id: '95e3745e-7a8d-4947-9ff1-59f76544564b',
         name: 'joris',
+        firstName: 'Joris',
+        lastName: 'Van Duyse',
         street: "Voskenslaan",
         streetNumber: "34",
         zipCode: "9000",

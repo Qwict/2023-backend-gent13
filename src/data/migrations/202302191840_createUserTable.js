@@ -6,8 +6,9 @@ module.exports = {
   up: async (knex) => {
     await knex.schema.createTable(tables.user, (table) => {
       table.uuid('id').primary().unique();
-      table.string('name', 255)
-        .defaultTo('anon');
+      table.string('name', 255);
+      table.string('firstName', 128);
+      table.string('lastName', 128);
       table.string('street', 64);
       table.string('streetNumber', 16);
       table.string('zipCode', 16);
