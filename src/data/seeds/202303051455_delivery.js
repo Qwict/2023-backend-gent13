@@ -14,7 +14,7 @@ module.exports = {
         postCode: "9000",
         country: "Belgium",
         additionalInformation: "",
-        trackAndtrace: `${new Date().toString()}DCJOP`,
+        trackAndtrace: `${Date.now()}DCJOP`,
         deliveryStatus: 0,
       },
     ]);

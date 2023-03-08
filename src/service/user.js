@@ -14,8 +14,10 @@ const debugLog = (message, meta = {}) => {
 
 const getByToken = async (token) => {
   debugLog(`Decoding token ${token}`);
-  const user = jwt.decode(token);
-  return user;
+  const decodedUser = jwt.decode(token);
+  const user = database.findByMail(decodedUser.email);
+  const { salt, hash, ...rest } = user;
+  return rest;
 };
 
 const register = async ({
@@ -37,8 +39,10 @@ const register = async ({
     const user = await database.create(newUser);
 
   const jwtPackage = {
+    id: user.id,
     name: user.name,
     email: user.email,
+    companyId: user.companyId,
   };
   return jwt.sign(jwtPackage, process.env.JWT_SECRET, {
     expiresIn: 36000,

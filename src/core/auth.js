@@ -8,6 +8,8 @@ const ServiceError = require('./serviceError');
 
 const permissions = Object.freeze({
   loggedIn: 'loggedIn',
+  admin: 'admin',
+  employee: 'employee',
 });
 
 function authorization(permission) {
@@ -15,14 +17,14 @@ function authorization(permission) {
     // const logger = getLogger();
     const token = ctx.headers.authorization;
     // logger.debug(`hasPermission: ${JSON.stringify(user)}`);
-
+    let user;
     if (!token) {
       throw ServiceError.unauthorized('No valid token');
     } else {
       // Throws error if verification fails
       try {
         // const decoded = // disabled for linting
-        jwt.verify(token, process.env.JWT_SECRET, {
+        user = jwt.verify(token, process.env.JWT_SECRET, {
           issuer: process.env.AUTH_ISSUER,
           audience: process.env.AUTH_AUDIENCE,
         });
@@ -33,6 +35,10 @@ function authorization(permission) {
 
     if (token && permission === permissions.loggedIn) {
       await next();
+    } else if (user && user.permission && user.permission.includes(permission)) {
+      await next();
+    } else {
+      throw ServiceError.unauthorized(`You do not have the necessary permission of ${permission}`);
     }
   };
 }
