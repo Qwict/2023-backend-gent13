@@ -15,6 +15,11 @@ const formatUser = ({
   firstName,
   lastName,
   role,
+  street,
+  streetNumber,
+  zipCode,
+  city,
+  country,
 }) => ({
   firstName,
   lastName,
@@ -22,6 +27,13 @@ const formatUser = ({
   email,
   role,
   companyVerified,
+  address: {
+    street,
+    streetNumber,
+    zipCode,
+    city,
+    country,
+  },
 });
 
 async function findById(id) {
@@ -90,6 +102,11 @@ const updateById = async (id, {
   lastName,
   companyId,
   role,
+  street,
+  streetNumber,
+  zipCode,
+  city,
+  country,
 }) => {
   try {
     await getKnex()(tables.user)
@@ -100,6 +117,11 @@ const updateById = async (id, {
         email,
         companyId,
         role,
+        street,
+        streetNumber,
+        zipCode,
+        city,
+        country,
       })
       .where('id', id);
     return id;
