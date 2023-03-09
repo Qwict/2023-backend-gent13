@@ -67,6 +67,11 @@ update.validationScheme = {
     email: Joi.string().allow(''),
     firstName: Joi.string().allow(''),
     lastName: Joi.string().allow(''),
+    street: Joi.string().allow(''),
+    streetNumber: Joi.string().allow(''),
+    zipCode: Joi.string().allow(''),
+    city: Joi.string().allow(''),
+    country: Joi.string().allow(''),
   },
 };
 

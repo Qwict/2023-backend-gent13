@@ -194,6 +194,11 @@ const update = async (token, {
   email,
   firstName,
   lastName,
+  street,
+  streetNumber,
+  zipCode,
+  city,
+  country,
 }) => {
   const decodedUser = await getByToken(token);
   const originalEmail = decodedUser.email;
@@ -204,6 +209,11 @@ const update = async (token, {
     email: (email || user.email),
     firstName: (firstName || user.firstName),
     lastName: (lastName || user.lastName),
+    street: (street || user.street),
+    streetNumber: (streetNumber || user.streetNumber),
+    zipCode: (zipCode || user.zipCode),
+    city: (city || user.city),
+    country: (country || user.country),
   });
   const updatedUser = await userRepository.findById(updatedUserId);
   const verification = {
