@@ -6,7 +6,7 @@ const installUserRouter = require('./_user');
 const installCompanyRouter = require('./_company');
 const installProductRouter = require('./_product');
 const installCategoryRouter = require('./_category');
-const installNotificationRouter = require('./_category');
+const installNotificationRouter = require('./_notification');
 
 module.exports = (app) => {
   const router = new Router({

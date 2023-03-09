@@ -10,8 +10,9 @@ module.exports = {
             table.uuid('orderId', 128).notNullable();
             table.integer('packagingId').unsigned().notNullable();
             table.string('street', 64).notNullable();
-            table.integer('number').notNullable();
-            table.integer('postCode').notNullable();
+            table.string('number').notNullable();
+            table.string('zipCode').notNullable();
+            table.string('city', 64).notNullable();
             table.string('country', 32).notNullable();
             table.string('additionalInformation', 1024);
             table.string('trackAndtrace', 128);

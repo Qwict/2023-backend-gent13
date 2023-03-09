@@ -24,7 +24,7 @@ const findAll = async () => {
 };
 
 const create = async ({
- transporterId, orderId, packagingId, street, number, postCode, country, additionalInformation, trackAndtrace, deliveryStatus,
+ transporterId, orderId, packagingId, street, number, zipCode, city, country, additionalInformation, trackAndtrace, deliveryStatus,
 }) => {
   const id = await getKnex()(tables.delivery).insert({
     transporterId,
@@ -32,7 +32,8 @@ const create = async ({
     packagingId,
     street,
     number,
-    postCode,
+    zipCode,
+    city,
     country,
     additionalInformation,
     trackAndtrace,
@@ -46,14 +47,16 @@ id,
 packagingId,
 street,
 number,
-postCode,
+zipCode,
+city,
 country,
 ) => {
    await getKnex()(tables.delivery).update({
     packagingId,
     street,
     number,
-    postCode,
+    zipCode,
+    city,
     country,
   }).where('orderId', id);
   return id;

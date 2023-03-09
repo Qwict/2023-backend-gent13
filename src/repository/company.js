@@ -2,9 +2,6 @@ const {
   tables,
   getKnex,
 } = require('../data');
-const {
-  getLogger,
-} = require('../core/logging');
 
 const formatCompanyPrivacy = ({
   name,

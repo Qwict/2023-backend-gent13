@@ -18,18 +18,6 @@ const getById = async (id) => {
   return product;
 };
 
-const getByCategoryId = async (id) => {
-  debugLog(`Fetching product with id ${id}`);
-  const product = await database.findProductsByCategoryId(id);
-
-  if (!product) {
-    throw ServiceError.notFound(`Product with id ${id} does not exist`, {
-      id,
-    });
-  }
-  return product;
-};
-
 const getAll = async () => {
   const products = await database.findAll();
 
@@ -45,5 +33,4 @@ const getAll = async () => {
 module.exports = {
   getById,
   getAll,
-  getByCategoryId,
 };

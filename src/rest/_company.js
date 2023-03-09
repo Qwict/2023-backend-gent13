@@ -49,7 +49,7 @@ getAll.validationScheme = null;
 
 const getAllEmployees = async (ctx) => {
   const decodedAdmin = await userService.getByToken(ctx.headers.authorization);
-  console.log(decodedAdmin)
+  console.log(decodedAdmin);
   const admin = await userService.getUserByEmail(decodedAdmin.email);
   const employeeData = await userService.getAllEmployees(admin.companyId);
   ctx.body = employeeData;

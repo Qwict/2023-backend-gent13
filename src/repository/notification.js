@@ -1,60 +1,63 @@
 const { tables, getKnex } = require('../data');
 
 async function findById(id) {
-  const notification = await getKnex()(tables.notification).where('id', id).first()
+  const notification = await getKnex()(tables.notification).where('id', id).first();
    return notification;
 }
-const findAll = async () => {
-  const notifications = await getKnex()(tables.notification)
-    .select()
-    .orderBy('id', 'ASC');
+const findAllByCompany = async (companyId) => {
+  const notifications = await getKnex()(tables.notification).select()
+    .where('companyId', companyId)
+    .orderBy('date', 'ASC');
+  return notifications;
+};
+
+const findAllByUser = async (buyerId) => {
+  const notifications = await getKnex()(tables.notification).select()
+    .where('buyerId', buyerId)
+    .orderBy('date', 'ASC');
   return notifications;
 };
 
 const create = async ({
-    date,
-    text,
-    status,
-    orderid,
-    companyid,
+  orderid,
+  buyerId,
+  companyid,
+  date,
+  text,
+  status,
   }) => {
-    try {
       const [id] = await getKnex()(tables.notification)
         .insert({
-            date,
-            text,
-            status,
-            orderid: orderid,
-            companyid: companyid,
+          orderid,
+          buyerId,
+          companyid,
+          date,
+          text,
+          status,
         });
-        console.log(tables.notification)
       return id;
-    } catch (error) {
-      const logger = getLogger();
-      logger.error('Error in create', {
-        error,
-      });
-      throw error;
-    }
   };
+
+const updateById = async (id, status) => {
+  await getKnex()(tables.notification)
+  .insert({
+    status,
+  });
+  return id;
+};
+
   const deleteById = async (id) => {
-    try {
       const rowsAffected = await getKnex()(tables.notification)
         .delete()
         .where('id', id);
-  
+
       return rowsAffected > 0;
-    } catch (error) {
-      const logger = getLogger();
-      logger.error('Error in deleteById', {
-        error,
-      });
-      throw error;
-    }
   };
 module.exports = {
   findById,
-  findAll,
+  findAllByCompany,
+  findAllByUser,
   create,
+  updateById,
   deleteById,
 };

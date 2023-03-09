@@ -1,5 +1,6 @@
 const { getLogger } = require('../core/logging');
 const database = require('../repository/notification');
+const userService = require('./user');
 
 const debugLog = (message, meta = {}) => {
   if (!this.logger) this.logger = getLogger();
@@ -18,52 +19,60 @@ const getById = async (id) => {
   return notification;
 };
 
-const getAll = async () => {
-  const notifications = await database.findAll();
+const getAll = async (token) => {
+  const user = await userService.getByToken(token);
+  let notifications = [];
+
+  if (user.companyId) {
+    notifications = await database.findAllByCompany(user.companyId);
+  } else if (user.buyerId) {
+    notifications = await database.findAllByUser(user.buyerId);
+  }
 
   if (notifications.length === 0) {
-    throw ServiceError.notFound('No notifictions found');
+    throw ServiceError.notFound('No notifications found');
   }
   return {
-    notifications,
+    items: notifications,
     count: notifications.length,
   };
 };
 
-const register = async ({
+const create = async ({
+    orderid,
+    buyerId,
+    companyId,
     date,
     text,
     status,
-    orderid,
-    companyid,
   }) => {
     const newNotification = {
-        date,
-        text,
-        status,
-        orderid,
-        companyid,
+      orderid,
+      buyerId,
+      companyId,
+      date,
+      text,
+      status,
     };
-    debugLog('Creating new product', newNotification);
-    const id = await database.create({
-        date,
-        text,
-        status,
-        orderid,
-        companyid,
-    });
+    debugLog('Creating new notification', newNotification);
+    const id = await database.create(newNotification);
     return getById(id);
   };
-  
 
   const deleteById = async (id) => {
     debugLog(`Deleting notification with id ${id}`);
     await database.deleteById(id);
   };
 
+  const updateById = async (id, { status }) => {
+    debugLog(`Updating notification with id ${id}`);
+    await database.updateById(id, status);
+  };
+
 module.exports = {
   getById,
   getAll,
-  register,
-  deleteById
+  create,
+  updateById,
+  deleteById,
 };

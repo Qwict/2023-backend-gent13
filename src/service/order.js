@@ -31,7 +31,7 @@ const getById = async (id) => {
   for (const orderItem of orderItems) {
     const product = await productService.getById(orderItem.productId);
     const newProduct = {
-      name: product.productName,
+      name: product.name,
       quantity: orderItem.quantity,
       unitPrice: product.price,
       totalPrice: orderItem.netPrice,
@@ -44,7 +44,8 @@ const getById = async (id) => {
     date: order.orderDateTime,
     street: delivery.street,
     streetNumber: delivery.number,
-    zipCode: delivery.postCode,
+    zipCode: delivery.zipCode,
+    city: delivery.city,
     country: delivery.country,
     products,
     totalPrice: order.totalPrice,
@@ -72,7 +73,7 @@ const getAllFromCompany = async (token) => {
       for (const element of orderItem) {
         const product = await productService.getById(element.productId);
         const newProduct = {
-          name: product.productName,
+          name: product.name,
           quantity: element.quantity,
           unitPrice: product.price,
           totalPrice: element.netPrice,
@@ -85,7 +86,8 @@ const getAllFromCompany = async (token) => {
         date: order.orderDateTime,
         street: delivery.street,
         streetNumber: delivery.number,
-        zipCode: delivery.postCode,
+        zipCode: delivery.zipCode,
+        city: delivery.city,
         country: delivery.country,
         products,
         totalPrice: order.totalPrice,
@@ -107,7 +109,8 @@ const create = async (token, {
   products,
   street,
   number,
-  postCode,
+  zipCode,
+  city,
   country,
   additionalInformation,
 }) => {
@@ -144,7 +147,8 @@ const create = async (token, {
     packagingId,
     street,
     number,
-    postCode,
+    zipCode,
+    city,
     country,
     additionalInformation,
     trackAndtrace,
@@ -155,12 +159,12 @@ const create = async (token, {
 };
 
 const updateById = async (id, {
-  packagingId, street, number, postCode, country,
+  packagingId, street, number, zipCode, city, country,
  }) => {
   const order = await orderRepo.findById(id);
   if (order.orderStatus === 0) {
     await orderRepo.updateById(id, packagingId);
-    await deliveryRepo.updateById(id, packagingId, street, number, postCode, country);
+    await deliveryRepo.updateById(id, packagingId, street, number, zipCode, city, country);
   } else {
     throw ServiceError.forbidden(`You can not update this order. orderStatus = ${order.orderStatus}`);
   }
