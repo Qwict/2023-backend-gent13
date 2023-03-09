@@ -71,7 +71,7 @@ module.exports = function installOrderRouter(app) {
 // nog validation toevoegen
   router.get('/', authorization(permissions.employee), validate(getAll.validationScheme), getAll); // nog validation toevoegen
   router.get('/:id', authorization(permissions.employee), validate(getById.validationScheme), getById);
-  router.post('/', authorization(permissions.employee), validate(create.validationScheme), create);
+  router.post('/', authorization(permissions.loggedIn), validate(create.validationScheme), create);
   router.put('/:id', authorization(permissions.employee), validate(updateById.validationScheme), updateById);
 
   app.use(router.routes()).use(router.allowedMethods());

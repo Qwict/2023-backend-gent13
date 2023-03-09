@@ -5,6 +5,7 @@ const deliveryRepo = require('../repository/delivery');
 const orderRepo = require('../repository/order');
 const orderItemRepo = require('../repository/orderItem');
 const productService = require("./product");
+const orderFactory = require('../repository/completeOrderCreation');
 const userService = require('./user');
 
 function makeChars(length) {
@@ -114,37 +115,21 @@ const create = async (token, {
   country,
   additionalInformation,
 }) => {
+  debugLog('Creating new order');
   const user = await userService.getByToken(token);
   // const user = { id: '4b09960e-0864-45e0-bab6-6cf8c7fc4626', companyId: 1 };
   const orderReference = `REF${makeChars(13)}`;
-  const orderId = await orderRepo.create({
-    buyerId: user.id,
-    customerId: user.companyId,
-    packagingId,
-    currencyId,
-    orderReference,
-    orderDateTime: new Date().toString(),
-    netPrice,
-    taxPrice,
-    totalPrice,
-    orderStatus: 0,
-});
-
-  for (const product of products) {
-    await orderItemRepo.create({
-      orderId,
-      productId: product.id,
-      quantity: product.quantity,
-      netPrice: product.netPrice,
-});
-  }
 
   const trackAndtrace = `${Date.now()}${makeChars(5)}`;
 
-  await deliveryRepo.create({
-    transporterId: null,
-    orderId,
+  const id = await orderFactory.create(user, {
     packagingId,
+    currencyId,
+    orderReference,
+    netPrice,
+    taxPrice,
+    totalPrice,
+    products,
     street,
     number,
     zipCode,
@@ -152,10 +137,10 @@ const create = async (token, {
     country,
     additionalInformation,
     trackAndtrace,
-    deliveryStatus: 0,
   });
-
-  return "GREAT SUCCESS";
+  console.log('oi');
+  const mainOrder = await getById(id);
+  return mainOrder;
 };
 
 const updateById = async (id, {
