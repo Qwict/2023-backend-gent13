@@ -56,6 +56,7 @@ verify.validationScheme = {
 };
 
 const update = async (ctx) => {
+  // console.log(ctx.request.body)
   const token = ctx.headers.authorization;
   const verification = await userService.update(token, ctx.request.body);
   ctx.body = verification;
@@ -63,15 +64,15 @@ const update = async (ctx) => {
 };
 update.validationScheme = {
   body: {
-    name: Joi.string().allow(''),
-    email: Joi.string().allow(''),
-    firstName: Joi.string().allow(''),
-    lastName: Joi.string().allow(''),
-    street: Joi.string().allow(''),
-    streetNumber: Joi.string().allow(''),
-    zipCode: Joi.string().allow(''),
-    city: Joi.string().allow(''),
-    country: Joi.string().allow(''),
+    name: Joi.string().allow(null),
+    email: Joi.string().allow(null),
+    firstName: Joi.string().allow(null),
+    lastName: Joi.string().allow(null),
+    street: Joi.string().allow(null),
+    streetNumber: Joi.string().allow(null),
+    zipCode: Joi.string().allow(null),
+    city: Joi.string().allow(null),
+    country: Joi.string().allow(null),
   },
 };
 
@@ -79,6 +80,15 @@ const getUser = async (ctx) => {
   const user = await userService.getUser(ctx.headers.authorization);
   ctx.body = user;
   ctx.status = 200;
+};
+
+const deleteUser = async (ctx) => {
+  try {
+    await userService.deleteUser(ctx.headers.authorization);
+    ctx.status = 204;
+  } catch (ServiceError) {
+    ctx.status = 400;
+  }
 };
 
 const promote = async (ctx) => {
@@ -108,9 +118,14 @@ module.exports = function installUserRouter(app) {
 
   router.post('/login', validate(login.validationScheme), login);
   router.post('/verify', validate(verify.validationScheme), verify);
+
   router.get('/', validate(getUser.validationScheme), authorization(permissions.loggedIn), getUser);
+  router.delete('/', authorization(permissions.loggedIn), deleteUser);
+
   router.post('/update', authorization(permissions.loggedIn), update);
-  // router.put('/update', validate(getByToken.validationScheme), authorization(permissions.loggedIn), update);
+  // TODO can't get this validation scheme to work
+  // router.post('/update', validate(getByToken.validationScheme), authorization(permissions.loggedIn), update);
+
   router.post('/register', validate(register.validationScheme), register);
   router.put('/promote', authorization(permissions.admin), validate(promote.validationScheme), promote);
 

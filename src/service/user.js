@@ -48,12 +48,68 @@ const getById = async (id) => {
   return user;
 };
 
+const getAllEmployees = async (companyID) => {
+  debugLog(`Fetching all employees with companyID ${companyID}`);
+  try {
+    const employees = await userRepository.getAllEmployees(companyID);
+    return employees;
+  } catch (e) {
+    throw ServiceError.notFound(`${companyID} was not found`);
+  }
+};
+
+const promote = async ({ token, email, role }) => {
+  debugLog(`Promoting user with ${email} to ${role}`);
+  // try {
+  const decodedAdmin = await getByToken(token);
+  const admin = await getUserByEmail(decodedAdmin.email);
+  const user = await getUserByEmail(email);
+  if (user.companyId === admin.companyId) {
+    let { companyId } = user;
+    if (role === 'unemployed') {
+      companyId = null;
+    }
+    const promotedUserId = await userRepository.updateById(user.id, {
+      ...user,
+      role,
+      companyId,
+    });
+    const promotedUser = await userRepository.getUser(promotedUserId);
+  }
+};
+
 const getUser = async (token) => {
   const { email } = await getByToken(token);
   debugLog(`Getting formatted user with email: ${email}`);
   const user = await userRepository.findByMail(email);
   const formattedUser = await userRepository.getUser(user.id);
   return formattedUser;
+};
+
+const deleteUser = async (token) => {
+  const {
+    id, email, role, companyId,
+  } = await getByToken(token);
+  if (role !== 'admin') {
+    debugLog(`Deleting ${role} user ${email}`);
+    const deleted = await userRepository.deleteById(id);
+    if (!deleted) {
+      throw ServiceError.notFound(`There is no user with email ${email}`);
+    }
+  } else {
+    const employees = await getAllEmployees(companyId);
+    const admins = employees.filter(employee => employee.role === 'admin');
+    if (admins.length > 1) {
+      debugLog(`Deleting ADMIN user ${email}`);
+      const deleted = await userRepository.deleteById(id);
+      console.log(deleted);
+      if (!deleted) {
+        throw ServiceError.notFound(`There is no user with email ${email}`);
+      }
+    } else {
+      throw ServiceError.badRequest(`The ${role} - ${email} is the only admin in the company and can not be deleted`);
+    }
+  }
 };
 
 const register = async ({
@@ -236,36 +292,6 @@ const update = async (token, {
   return verification;
 };
 
-const getAllEmployees = async (companyID) => {
-  debugLog(`Fetching all employees with companyID ${companyID}`);
-  try {
-    const employees = await userRepository.getAllEmployees(companyID);
-    return employees;
-  } catch (e) {
-    throw ServiceError.notFound(`${companyID} was not found`);
-  }
-};
-
-const promote = async ({ token, email, role }) => {
-  debugLog(`Promoting user with ${email} to ${role}`);
-  // try {
-  const decodedAdmin = await getByToken(token);
-  const admin = await getUserByEmail(decodedAdmin.email);
-  const user = await getUserByEmail(email);
-  if (user.companyId === admin.companyId) {
-    let { companyId } = user;
-    if (role === 'unemployed') {
-      companyId = null;
-    }
-    promotedUserId = await userRepository.updateById(user.id, {
-      ...user,
-      role,
-      companyId,
-    });
-    promotedUser = await userRepository.getUser(promotedUserId);
-  }
-};
-
 module.exports = {
   getById,
   getByToken,
@@ -277,5 +303,6 @@ module.exports = {
   getAllEmployees,
   getUserByEmail,
   getUser,
+  deleteUser,
   promote,
 };
