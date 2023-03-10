@@ -42,6 +42,12 @@ const getUserByEmail = async (email) => {
   return user;
 };
 
+const getById = async (id) => {
+  debugLog(`Fetching user with id: ${id}`);
+  const user = await userRepository.findById(id);
+  return user;
+};
+
 const getUser = async (token) => {
   const { email } = await getByToken(token);
   debugLog(`Getting formatted user with email: ${email}`);
@@ -261,6 +267,7 @@ const promote = async ({ token, email, role }) => {
 };
 
 module.exports = {
+  getById,
   getByToken,
   register,
   login,

@@ -20,7 +20,8 @@ getById.validationScheme = {
 };
 
 const getAll = async (ctx) => {
-  ctx.body = await orderService.getAllFromCompany(ctx.headers.authorization);
+  const orders = await orderService.getAll(ctx.headers.authorization);
+  ctx.body = orders;
   ctx.status = 200;
 };
 getAll.validationScheme = null;
@@ -69,10 +70,10 @@ module.exports = function installOrderRouter(app) {
     prefix: '/order',
   });
 // nog validation toevoegen
-  router.get('/', authorization(permissions.employee), validate(getAll.validationScheme), getAll); // nog validation toevoegen
-  router.get('/:id', authorization(permissions.employee), validate(getById.validationScheme), getById);
+  router.get('/', authorization(permissions.loggedIn), validate(getAll.validationScheme), getAll); // nog validation toevoegen
+  router.get('/:id', authorization(permissions.loggedIn), validate(getById.validationScheme), getById);
   router.post('/', authorization(permissions.loggedIn), validate(create.validationScheme), create);
-  router.put('/:id', authorization(permissions.employee), validate(updateById.validationScheme), updateById);
+  router.put('/:id', authorization(permissions.loggedIn), validate(updateById.validationScheme), updateById);
 
   app.use(router.routes()).use(router.allowedMethods());
 };

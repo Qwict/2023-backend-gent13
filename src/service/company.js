@@ -36,6 +36,12 @@ const getAll = async () => {
   };
 };
 
+const getById = async (id) => {
+  debugLog(`Fetching company with id ${id}`);
+  const company = companyRepository.findById(id);
+  return company;
+};
+
 const findByVAT = async (companyVAT) => {
   const countryCode = companyVAT.slice(0, 2);
   const vatNumber = companyVAT.slice(2);
@@ -45,6 +51,7 @@ const findByVAT = async (companyVAT) => {
 };
 
 module.exports = {
+  getById,
   register,
   findByVAT,
   // verify,

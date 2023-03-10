@@ -22,6 +22,12 @@ const findAll = async () => {
   return companies.map(formatCompanyPrivacy);
 };
 
+const findById = async (id) => {
+  const company = await getKnex()(tables.company)
+  .where('id', id).first();
+  return company;
+};
+
 /**
  * Calculate the total number of companies.
  */
@@ -44,6 +50,7 @@ const findByVAT = async (countryCode, vatNumber) => {
 };
 
 module.exports = {
+  findById,
   findAll,
   findCount,
   findByVAT,

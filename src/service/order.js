@@ -2,11 +2,14 @@ const {
   getLogger,
 } = require('../core/logging');
 const deliveryRepo = require('../repository/delivery');
+const deliveryServiceRepo = require('../repository/deliveryService');
 const orderRepo = require('../repository/order');
 const orderItemRepo = require('../repository/orderItem');
 const productService = require("./product");
 const orderFactory = require('../repository/completeOrderCreation');
 const userService = require('./user');
+const companyService = require('./company');
+const pacakgingService = require('./packaging');
 
 function makeChars(length) {
   let result = '';
@@ -32,13 +35,18 @@ const getById = async (id) => {
   for (const orderItem of orderItems) {
     const product = await productService.getById(orderItem.productId);
     const newProduct = {
-      name: product.name,
+      name: product[0].name,
       quantity: orderItem.quantity,
-      unitPrice: product.price,
+      unitPrice: product[0].price,
       totalPrice: orderItem.netPrice,
     };
     products.push(newProduct);
   }
+
+  const deliveryService = await deliveryServiceRepo.findById(delivery.transporterId);
+  const user = await userService.getById(order.buyerId);
+  const company = await companyService.getById(order.customerId);
+  const packaging = await pacakgingService.getById(order.packagingId);
 
   const mainOrders = {
     orderId: order.id,
@@ -48,16 +56,30 @@ const getById = async (id) => {
     zipCode: delivery.zipCode,
     city: delivery.city,
     country: delivery.country,
+    user: {
+      name: user.name,
+      email: user.email,
+    },
+    company: {
+      name: company ? company.name : "No company",
+    },
     products,
     totalPrice: order.totalPrice,
-    packaging: order.packagingId,
+    status: order.orderStatus,
+    packaging: {
+      name: packaging.name,
+      type: packaging.type,
+      width: packaging.width,
+      height: packaging.height,
+      length: packaging.length,
+    },
+    transportService: deliveryService.name,
     trackAndtrace: delivery.trackAndtrace,
   };
   return mainOrders;
 };
 
-const getAllFromCompany = async (token) => {
-  const user = await userService.getByToken(token);
+const getAllFromCompany = async (user) => {
   const { companyId } = user;
   if (user.companyVerified === false) {
     throw ServiceError.forbidden('You are not a valid employee of this company!');
@@ -68,13 +90,14 @@ const getAllFromCompany = async (token) => {
     const orders = await orderRepo.findAllOfCompany(companyId);
     // const orderItems = [];
     for (const order of orders) {
-      const delivery = await deliveryRepo.findByOrder(order.id);
+      // const delivery = await deliveryRepo.findByOrder(order.id);
+      const blameUser = await userService.getById(order.buyerId);
       const orderItem = await orderItemRepo.findByOrder(order.id);
       const products = [];
       for (const element of orderItem) {
         const product = await productService.getById(element.productId);
         const newProduct = {
-          name: product.name,
+          name: product[0].name,
           quantity: element.quantity,
           unitPrice: product.price,
           totalPrice: element.netPrice,
@@ -84,21 +107,65 @@ const getAllFromCompany = async (token) => {
       // orderItems.push(orderItem);
       mainOrders.push({
         orderId: order.id,
+        user: blameUser.email,
         date: order.orderDateTime,
-        street: delivery.street,
-        streetNumber: delivery.number,
-        zipCode: delivery.zipCode,
-        city: delivery.city,
-        country: delivery.country,
-        products,
+        productCount: products.length,
+        status: order.orderStatus,
         totalPrice: order.totalPrice,
-        packaging: order.packagingId,
-        trackAndtrace: delivery.trackAndtrace,
       });
     }
     return mainOrders;
   }
     throw ServiceError.notFound('No companyId provided');
+};
+
+const getAllFromUser = async (user) => {
+  const { buyerId } = user;
+  debugLog(`Fetching all orders of user with id: ${buyerId}`);
+  if (buyerId) {
+    const mainOrders = [];
+    const orders = await orderRepo.findAllOfBuyer(buyerId);
+    // const orderItems = [];
+    for (const order of orders) {
+      // const delivery = await deliveryRepo.findByOrder(order.id);
+      const blameUser = await userService.getById(order.buyerId);
+      const orderItem = await orderItemRepo.findByOrder(order.id);
+      const products = [];
+      for (const element of orderItem) {
+        const product = await productService.getById(element.productId);
+        const newProduct = {
+          name: product[0].name,
+          quantity: element.quantity,
+          unitPrice: product[0].price,
+          totalPrice: element.netPrice,
+        };
+        products.push(newProduct);
+      }
+      // orderItems.push(orderItem);
+      mainOrders.push({
+        orderId: order.id,
+        user: blameUser.email,
+        date: order.orderDateTime,
+        productCount: products.length,
+        status: order.orderStatus,
+        totalPrice: order.totalPrice,
+      });
+    }
+    return mainOrders;
+  }
+    throw ServiceError.notFound('No userId provided');
+};
+
+const getAll = async (token) => {
+  const user = await userService.getByToken(token);
+  if (user.companyId) {
+   const orders = await getAllFromCompany(user);
+   return orders;
+  } if (user) {
+    const orders = await getAllFromUser(user);
+    return orders;
+  }
+    throw ServiceError.unauthorized('You are not allowed to view orders');
 };
 
 const create = async (token, {
@@ -138,7 +205,6 @@ const create = async (token, {
     additionalInformation,
     trackAndtrace,
   });
-  console.log('oi');
   const mainOrder = await getById(id);
   return mainOrder;
 };
@@ -158,8 +224,9 @@ const updateById = async (id, {
 };
 
 module.exports = {
+  getAll,
   getById,
-  getAllFromCompany,
+  // getAllFromCompany,
   create,
   updateById,
 };
