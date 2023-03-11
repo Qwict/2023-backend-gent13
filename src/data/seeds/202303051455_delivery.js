@@ -15,7 +15,7 @@ module.exports = {
         city: "Gent",
         country: "Belgium",
         additionalInformation: "",
-        trackAndtrace: `${Date.now()}DCJOP`,
+        trackAndtrace: `1678526829969DCJOP`,
         deliveryStatus: 0,
       },
     ]);

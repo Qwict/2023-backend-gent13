@@ -3,8 +3,13 @@ const {
   getKnex,
 } = require('../data');
 
+const findByTrackAndTrace = async (trackAndtrace) => {
+    const delivery = await getKnex()(tables.delivery).where('trackAndtrace', trackAndtrace).first();
+    return delivery;
+};
+
 const findByPackaging = async (packagingId) => {
-  const deliveries = await getKnex(tables.delivery).where('packagingId', packagingId);
+  const deliveries = await getKnex()(tables.delivery).where('packagingId', packagingId);
   return deliveries;
 };
 
@@ -63,6 +68,7 @@ country,
 };
 
 module.exports = {
+  findByTrackAndTrace,
   findByOrder,
   findAll,
   findByTransporter,
