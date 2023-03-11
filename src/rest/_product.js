@@ -21,6 +21,19 @@ const getAll = async (ctx) => {
 };
 getAll.validationScheme = null;
 
+const updateStock = async (ctx) => {
+  ctx.body = await productService.updateById(ctx.params.id, ctx.request.body);
+  ctx.status = 204;
+};
+updateStock.validationScheme = {
+  params: {
+    id: Joi.number().integer(),
+  },
+  body: {
+    amount: Joi.number(),
+  },
+};
+
 module.exports = function installProductRouter(app) {
   const router = new Router({
     prefix: '/product',
@@ -28,6 +41,7 @@ module.exports = function installProductRouter(app) {
 
   router.get('/:id', validate(getById.validationScheme), getById); // nog validation toevoegen
   router.get('/', validate(getAll.validationScheme), getAll);
+  router.put('/:id', validate(updateStock.validationScheme), updateStock);
 
   app.use(router.routes()).use(router.allowedMethods());
 };

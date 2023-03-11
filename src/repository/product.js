@@ -17,7 +17,13 @@ const findAll = async () => {
   return products;
 };
 
+const update = async (id, stock) => {
+   await getKnex()(tables.product).update({
+    stock,
+  }).where('id', id);
+};
 module.exports = {
   findById,
   findAll,
+  update,
 };

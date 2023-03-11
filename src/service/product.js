@@ -30,7 +30,17 @@ const getAll = async () => {
   };
 };
 
+const updateById = async (id, { amount }) => {
+  const product = await getById(id);
+  const stock = product.stock - Number(amount);
+  if (stock < 0) {
+    throw ServiceError.forbidden('There is not enough stock!');
+  }
+  await database.update(id, stock);
+};
+
 module.exports = {
   getById,
   getAll,
+  updateById,
 };

@@ -98,7 +98,7 @@ const deleteUser = async (token) => {
     }
   } else {
     const employees = await getAllEmployees(companyId);
-    const admins = employees.filter(employee => employee.role === 'admin');
+    const admins = employees.filter((employee) => employee.role === 'admin');
     if (admins.length > 1) {
       debugLog(`Deleting ADMIN user ${email}`);
       const deleted = await userRepository.deleteById(id);
