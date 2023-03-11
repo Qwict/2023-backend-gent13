@@ -29,9 +29,6 @@ const getAll = async (token) => {
     notifications = await database.findAllByUser(user.buyerId);
   }
 
-  if (notifications.length === 0) {
-    throw ServiceError.notFound('No notifications found');
-  }
   return {
     items: notifications,
     count: notifications.length,
