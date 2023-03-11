@@ -50,6 +50,7 @@ const getById = async (id) => {
 
   const mainOrders = {
     orderId: order.id,
+    orderReference: order.orderReference,
     date: order.orderDateTime,
     street: delivery.street,
     streetNumber: delivery.number,
