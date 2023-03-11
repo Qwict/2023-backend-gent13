@@ -3,6 +3,10 @@ const {
   getKnex,
 } = require('../data');
 
+const {
+  getLogger,
+} = require('../core/logging');
+
 const formatCompanyPrivacy = ({
   name,
   vatNumber,
@@ -48,10 +52,56 @@ const findByVAT = async (countryCode, vatNumber) => {
     .first();
   return company;
 };
+/**
+ * Create a company.
+ *
+ * @param {string} name
+ * @param {string} countryCode
+ * @param {string} vatNumber
+ * @param {string} street
+ * @param {string} streetNumber
+ * @param {string} zipCode
+ * @param {string} city
+ * @param {string} country
+ *
+ * @returns {Promise<object>} - the created company.
+ */
+async function create({
+  name,
+  countryCode,
+  vatNumber,
+  street,
+  streetNumber,
+  zipCode,
+  city,
+  country,
+}) {
+  try {
+    const [id] = await getKnex()(tables.company)
+      .insert({
+        name,
+        countryCode,
+        vatNumber,
+        street,
+        streetNumber,
+        zipCode,
+        city,
+        country,
+      });
+    return await findById(id);
+  } catch (error) {
+    const logger = getLogger();
+    logger.error('Error in create company', {
+      error,
+    });
+    throw error;
+  }
+}
 
 module.exports = {
   findById,
   findAll,
   findCount,
   findByVAT,
+  create,
 };
