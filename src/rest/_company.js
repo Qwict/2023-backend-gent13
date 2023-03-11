@@ -11,7 +11,9 @@ const {
 } = require('../core/auth');
 
 const register = async (ctx) => {
-  const response = await companyService.register(ctx.request.body);
+  const newAdminToken = ctx.headers.authorization;
+  const company = ctx.request.body;
+  const response = await companyService.register(company, newAdminToken);
   ctx.body = response;
   ctx.status = 201;
 };
@@ -49,12 +51,23 @@ getAll.validationScheme = null;
 
 const getAllEmployees = async (ctx) => {
   const decodedAdmin = await userService.getByToken(ctx.headers.authorization);
-  console.log(decodedAdmin);
   const admin = await userService.getUserByEmail(decodedAdmin.email);
   const employeeData = await userService.getAllEmployees(admin.companyId);
   ctx.body = employeeData;
 };
 getAllEmployees.validationScheme = null;
+
+const getCompanyByVAT = async (ctx) => {
+  const companyVAT = ctx.params.id;
+  const company = await companyService.getCompanyByVAT(companyVAT);
+  ctx.body = company;
+  ctx.status = 200;
+};
+getCompanyByVAT.validationScheme = {
+  params: {
+    id: Joi.string(),
+  },
+};
 
 module.exports = function installUserRouter(app) {
   const router = new Router({
@@ -62,13 +75,15 @@ module.exports = function installUserRouter(app) {
   });
 
   // router.post('/verify', validate(verify.validationScheme), verify);
-  router.post('/', authorization(permissions.loggedIn), validate(register.validationScheme), register);
+  router.post('/', authorization(permissions.loggedIn), register);
+  // router.post('/', authorization(permissions.loggedIn), validate(register.validationScheme), register);
   // router.post('/join', validate(join.validationScheme), join);
   router.put('/join', authorization(permissions.loggedIn), validate(join.validationScheme), join);
   // TODO how to get authorization right on this?
   // router.get('/', authorization(permissions.loggedIn), getAll);
   router.get('/', validate(getAll.validationScheme), getAll);
-  router.get('/employees', authorization(permissions.admin), validate(getAllEmployees), getAllEmployees);
+  router.get('/employee', authorization(permissions.admin), validate(getAllEmployees), getAllEmployees);
+  router.get('/vat/:id', authorization(permissions.loggedIn), validate(getCompanyByVAT), getCompanyByVAT);
 
   app
     .use(router.routes())
