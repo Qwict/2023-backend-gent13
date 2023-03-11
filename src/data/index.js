@@ -48,7 +48,7 @@ async function initializeData() {
   const sslCheck = checkIfValidIP(DATABASE_HOST);
 
   let ssl = {};
-  if (DATABASE_HOST === 'localhost') {
+  if (DATABASE_HOST === 'localhost' && NODE_ENV !== 'production') {
     ssl = undefined;
   } else {
     ssl = {
