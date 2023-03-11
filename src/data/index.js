@@ -46,40 +46,72 @@ async function initializeData() {
   const logger = getLogger();
   logger.info('Initializing connection to the database');
   const sslCheck = checkIfValidIP(DATABASE_HOST);
+  console.log(sslCheck);
+  let knexOptions = {};
 
-  const knexOptions = {
-    client: DATABASE_CLIENT,
-    connection: {
-      host: DATABASE_HOST,
-      port: DATABASE_PORT,
-      user: DATABASE_USERNAME,
-      password: DATABASE_PASSWORD,
-      insecureAuth: isDevelopment,
-      ssl: {
-        rejectUnauthorized: sslCheck,
-        ca: fs.readFileSync(path.join(__dirname, '/certs/ca-cert.pem')).toString(),
-        key: DATABASE_SSL_PRIVATE_KEY,
-        cert: fs.readFileSync(path.join(__dirname, '/certs/client-cet.pem')).toString(),
+  if (DATABASE_HOST === "localhost") {
+    knexOptions = {
+      client: DATABASE_CLIENT,
+      connection: {
+        host: DATABASE_HOST,
+        port: DATABASE_PORT,
+        user: DATABASE_USERNAME,
+        password: DATABASE_PASSWORD,
+        insecureAuth: isDevelopment,
       },
-    },
-    debug: isDevelopment,
-    log: {
-      debug: getKnexLogger(logger, 'debug'),
-      error: getKnexLogger(logger, 'error'),
-      warn: getKnexLogger(logger, 'warn'),
-      deprecate: (method, alternative) => logger.warn('Knex reported something deprecated', {
-        method,
-        alternative,
-      }),
-    },
-    migrations: {
-      tableName: 'knex_meta',
-      directory: join('src', 'data', 'migrations'),
-    },
-    seeds: {
-      directory: join('src', 'data', 'seeds'),
-    },
-  };
+      debug: isDevelopment,
+      log: {
+        debug: getKnexLogger(logger, 'debug'),
+        error: getKnexLogger(logger, 'error'),
+        warn: getKnexLogger(logger, 'warn'),
+        deprecate: (method, alternative) => logger.warn('Knex reported something deprecated', {
+          method,
+          alternative,
+        }),
+      },
+      migrations: {
+        tableName: 'knex_meta',
+        directory: join('src', 'data', 'migrations'),
+      },
+      seeds: {
+        directory: join('src', 'data', 'seeds'),
+      },
+    };
+  } else {
+    knexOptions = {
+      client: DATABASE_CLIENT,
+      connection: {
+        host: DATABASE_HOST,
+        port: DATABASE_PORT,
+        user: DATABASE_USERNAME,
+        password: DATABASE_PASSWORD,
+        insecureAuth: isDevelopment,
+        ssl: {
+          rejectUnauthorized: sslCheck,
+          ca: fs.readFileSync(path.join(__dirname, '/certs/ca-cert.pem')).toString(),
+          key: DATABASE_SSL_PRIVATE_KEY,
+          cert: fs.readFileSync(path.join(__dirname, '/certs/client-cet.pem')).toString(),
+        },
+      },
+      debug: isDevelopment,
+      log: {
+        debug: getKnexLogger(logger, 'debug'),
+        error: getKnexLogger(logger, 'error'),
+        warn: getKnexLogger(logger, 'warn'),
+        deprecate: (method, alternative) => logger.warn('Knex reported something deprecated', {
+          method,
+          alternative,
+        }),
+      },
+      migrations: {
+        tableName: 'knex_meta',
+        directory: join('src', 'data', 'migrations'),
+      },
+      seeds: {
+        directory: join('src', 'data', 'seeds'),
+      },
+    };
+  }
 
   knexInstance = knex(knexOptions);
 
