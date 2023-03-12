@@ -14,7 +14,8 @@ module.exports = {
         zipCode: "8740",
         city: "Pittem",
         country: "Belgium",
-      }, {
+      },
+      {
         id: 2,
         name: 'Qwict',
         logoImg: null,

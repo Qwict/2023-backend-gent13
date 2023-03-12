@@ -7,17 +7,40 @@ const {
 } = require('../../src/data');
 
 const data = {
+  company: {
+    id: 1,
+    name: 'BVBA MILJAAR',
+    logoImg: null,
+    countryCode: "BE",
+    vatNumber: "0684579082",
+    street: "Bekkemmeers",
+    streetNumber: "26",
+    zipCode: "8740",
+    city: "Pittem",
+    country: "Belgium",
+  },
   user: {
-    id: '4b09960e-0864-45e0-bab6-6cf8c7fc4626',
-    name: 'joris',
-    email: 'test@gmail.com',
-    salt: 'D4skUAZuGs3w5uJGJb+nOBUQNrPaXkzkNY6K/sMNZu8/KKl2+yhSrxjFnMMe2pdrFAqm9iOFNBiiilFBInjPssBq/WSMc76yKNLJSiTTkk8DV9tQuKg3LVVlEGrTjcx9UiKMh/3tjOBvkdNE1M/7fz/2nh70nl3WAqod226eccQ=',
-    hash: 'LKv3O/M6q5qdkyfgzpdJCStanWC4AZLGdVeC+g0ZEye8FAsA/gubfV3Nl29GaYXfSrrPnhg+6+joU69OBDoB2Q==',
+    id: '2b93f1c4-38bd-490d-a0ca-f7b81b9de171',
+    name: 'qwertic',
+    firstName: 'Joris',
+    lastName: 'Van Duyse',
+    street: "Voskenslaan",
+    streetNumber: "34",
+    zipCode: "9000",
+    city: "Gent",
+    country: "Belgium",
+    email: 'qwertic@qwict.com',
+    salt: '9E0GXD66M8RELO3TmF5u4fwH00m6d/lgr/uwtOAn2ZZOH2GkCcCTGAqOBX/lBbQyURzzXX62su3mDv/AIVq2HH6x2anecMeV74TAgTeugqG3vclg06ihthA0JpRX+TSxTbNqeHiSrEzQjRdi3ffExXO3Ctt7xZm6dMy8BinXBZo=',
+    hash: 'YKFJWMM9fJRy3+3ki/rOGfO1dFTIfOoRNZ1KHow3jSpGoUcPXwIuOmcootFFp8k4Xpgy4gxR/9sn2+l8ejFZNQ==',
+    companyId: 1,
+    companyVerified: true,
+    role: 'admin',
   },
 };
 
 const dataToDelete = {
-  user: '4b09960e-0864-45e0-bab6-6cf8c7fc4626',
+  company: 1,
+  user: '2b93f1c4-38bd-490d-a0ca-f7b81b9de171',
 };
 
 describe('Users', () => {
@@ -35,7 +58,8 @@ describe('Users', () => {
   const url = '/api/user';
   describe('GET /api/user/:id', () => {
     beforeAll(async () => {
-      await knex(tables.user).delete();
+      // await knex(tables.user).delete();
+      await knex(tables.company).insert(data.company);
       await knex(tables.user).insert(data.user);
     });
 
@@ -43,6 +67,7 @@ describe('Users', () => {
       await knex(tables.user)
         .where('id', dataToDelete.user)
         .delete();
+      await knex(tables.company).where('id', dataToDelete.company).delete();
     });
 
     test('it should 200 and return the requested user', async () => {
@@ -59,8 +84,13 @@ describe('Users', () => {
   });
 
   describe('POST /api/user/register', () => {
+    beforeAll(async () => {
+      await knex(tables.company).insert(data.company);
+    });
+
     afterAll(async () => {
       await knex(tables.user).delete();
+      await knex(tables.company).delete();
     });
 
     test('It should 201, create a new user and return a token', async () => {
@@ -77,6 +107,7 @@ describe('Users', () => {
 
   describe('POST /api/user/login', () => {
     beforeAll(async () => {
+      await knex(tables.company).insert(data.company);
       await knex(tables.user).insert(data.user);
     });
 
@@ -84,12 +115,13 @@ describe('Users', () => {
       await knex(tables.user)
         .where('id', dataToDelete.user)
         .delete();
+      await knex(tables.company).where('id', dataToDelete.company).delete();
     });
 
     test('It should 201 and return a token', async () => {
       const response = await request.post(`${url}/login`).send({
         email: data.user.email,
-        password: 'WayTooStrong',
+        password: data.user.email,
       });
 
       expect(response.status).toBe(201);
@@ -100,6 +132,7 @@ describe('Users', () => {
 
   describe('POST /api/user/verify', () => {
     beforeAll(async () => {
+      await knex(tables.company).insert(data.company);
       await knex(tables.user).insert(data.user);
     });
 
@@ -107,6 +140,7 @@ describe('Users', () => {
       await knex(tables.user)
         .where('id', dataToDelete.user)
         .delete();
+      await knex(tables.company).where('id', dataToDelete.company).delete();
     });
 
     test('It should 201 and return true', async () => {
@@ -120,7 +154,7 @@ describe('Users', () => {
         token,
       });
       expect(response.status).toBe(201);
-      expect(response.body).toBe(true);
+      expect(response.body.validated).toBe(true);
     });
   });
 });

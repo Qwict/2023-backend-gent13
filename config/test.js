@@ -2,7 +2,7 @@ module.exports = {
   port: 9000,
   log: {
     level: 'silly',
-    disabled: true,
+    disabled: false,
   },
   cors: {
     origins: ['http://localhost:3000'],
