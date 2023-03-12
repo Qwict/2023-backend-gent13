@@ -84,7 +84,7 @@ const update = async (id, {
         zipCode,
         city,
         country,
-      });
+      }).where('orderId', id);
     });
   } catch (error) {
     throw Error(error);
