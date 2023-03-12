@@ -13,11 +13,15 @@ const debugLog = (message, meta = {}) => {
 };
 
 const decodeToken = async (token) => {
+  try {
   const decoded = jwt.verify(token, process.env.JWT_SECRET, {
     issuer: process.env.AUTH_ISSUER,
     audience: process.env.AUTH_AUDIENCE,
   });
   return decoded;
+  } catch (error) {
+    throw ServiceError.validationFailed('Token verification failed');
+  }
 };
 
 // local vat check
@@ -26,6 +30,9 @@ const findByVAT = async (companyVAT) => {
   const vatNumber = companyVAT;
   debugLog(`Fetching company with countryCode ${countryCode} and vatNumber ${vatNumber}`);
   const company = await companyRepository.findByVAT(countryCode, vatNumber);
+  if (!company) {
+    throw ServiceError.notFound(`No company was found with VAT ${companyVAT}`);
+  }
   return company;
 };
 
@@ -79,6 +86,9 @@ const getAll = async () => {
   debugLog('Fetching all companies');
   const data = await companyRepository.findAll();
   const totalCount = await companyRepository.findCount();
+  if (!data) {
+    throw ServiceError.notFound('No companies were found');
+  }
   return {
     data,
     count: totalCount,
@@ -88,6 +98,9 @@ const getAll = async () => {
 const getById = async (id) => {
   debugLog(`Fetching company with id ${id}`);
   const company = companyRepository.findById(id);
+  if (!company) {
+    throw ServiceError.notFound(`There is no company with id ${id}`);
+  }
   return company;
 };
 

@@ -29,6 +29,7 @@ const ServiceError = require('../core/serviceError');
 
 const getById = async (id) => {
   const order = await orderRepo.findById(id);
+  if (order) {
   const orderItems = await orderItemRepo.findByOrder(id);
   const delivery = await deliveryRepo.findByOrder(id);
   const products = [];
@@ -78,6 +79,8 @@ const getById = async (id) => {
     trackAndtrace: delivery.trackAndtrace,
   };
   return mainOrders;
+  }
+  throw ServiceError.notFound(`There is no order with id ${id}`);
 };
 
 const getAllFromCompany = async (user) => {
@@ -215,8 +218,17 @@ const updateById = async (id, {
  }) => {
   const order = await orderRepo.findById(id);
   if (order.orderStatus === 0) {
-    await orderRepo.updateById(id, packagingId);
-    await deliveryRepo.updateById(id, packagingId, street, number, zipCode, city, country);
+    const updateParams = {
+      packagingId,
+      street,
+      number,
+      zipCode,
+      city,
+      country,
+    };
+    await orderFactory.update(id, updateParams);
+    // await orderRepo.updateById(id, packagingId);
+    // await deliveryRepo.updateById(id, packagingId, street, number, zipCode, city, country);
   } else {
     throw ServiceError.forbidden(`You can not update this order. orderStatus = ${order.orderStatus}`);
   }

@@ -64,11 +64,34 @@ const create = async (user, {
     return orderId;
     });
   } catch (error) {
-    console.log(error);
+    throw Error(error);
   }
   return orderId;
 };
 
+const update = async (id, {
+ packagingId, street, number, zipCode, city, country,
+}) => {
+  try {
+    await getKnex().transaction(async (trx) => {
+      await trx(tables.order).update({
+        packagingId,
+      }).where('id', id);
+      await trx(tables.delivery).update({
+        packagingId,
+        street,
+        number,
+        zipCode,
+        city,
+        country,
+      });
+    });
+  } catch (error) {
+    throw Error(error);
+  }
+};
+
 module.exports = {
   create,
+  update,
 };

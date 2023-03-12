@@ -201,9 +201,12 @@ const verify = async ({
       audience: process.env.AUTH_AUDIENCE,
     });
   } catch (error) {
-    throw ServiceError.forbidden(`Verification failed for token ${token}`);
+    throw ServiceError.validationFailed(`Verification failed for token ${token}`);
   }
     const user = await userRepository.findByMail(decoded.email);
+    if (!user) {
+      throw ServiceError.notFound('user does not exist');
+    }
     if (user.role !== decoded.permission) {
       const jwtPackage = {
         name: user.name,
