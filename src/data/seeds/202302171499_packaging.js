@@ -25,6 +25,26 @@ module.exports = {
         price: 25,
         active: true,
       },
+      {
+        id: 3,
+        name: "large packaging",
+        type: "standard",
+        width: 100,
+        height: 100,
+        length: 100,
+        price: 250,
+        active: false,
+      },
+      {
+        id: 4,
+        name: "Super Special Ultra Deluxe Packaging",
+        type: "standard",
+        width: 69,
+        height: 69,
+        length: 69,
+        price: 100000,
+        active: false,
+      },
     ]);
   },
 };

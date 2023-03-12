@@ -6,7 +6,7 @@ async function findById(id) {
   return packaging;
 }
 const findAll = async () => {
-  const packaging = await getKnex()(tables.packaging).select();
+  const packaging = await getKnex()(tables.packaging).select().orderBy('active', 'desc');
   return packaging;
 };
 

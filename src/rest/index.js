@@ -8,6 +8,7 @@ const installProductRouter = require('./_product');
 const installCategoryRouter = require('./_category');
 const installNotificationRouter = require('./_notification');
 const installDeliveryRouter = require('./_delivery');
+const installPackageRouter = require('./_packaging');
 
 module.exports = (app) => {
   const router = new Router({
@@ -22,6 +23,7 @@ module.exports = (app) => {
   installCompanyRouter(router);
   installNotificationRouter(router);
   installDeliveryRouter(router);
+  installPackageRouter(router);
 
   app.use(router.routes()).use(router.allowedMethods());
 };
