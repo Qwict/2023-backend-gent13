@@ -1,6 +1,4 @@
-const {
-  tables,
-} = require('..');
+const { tables } = require('..');
 
 module.exports = {
   seed: async (knex) => {
@@ -14,13 +12,31 @@ module.exports = {
       {
         id: 2,
         name: 'Care items',
-        description: "Various items concerning health and beauty",
+        description: 'Various items concerning health and beauty',
         categoryImg: null,
       },
       {
         id: 3,
         name: 'Hardware',
-        description: "Various types of hardware, including servers with built in hardware",
+        description: 'Various types of hardware, including servers with built in hardware',
+        categoryImg: null,
+      },
+      {
+        id: 4,
+        name: 'Telephony',
+        description: 'Electronics used to call / communicate / play',
+        categoryImg: null,
+      },
+      {
+        id: 5,
+        name: 'Computers & Tablets',
+        description: 'Electronics used to call / communicate / play',
+        categoryImg: null,
+      },
+      {
+        id: 5,
+        name: 'Image & Sound',
+        description: 'Electronics used to listen to music / see videos',
         categoryImg: null,
       },
     ]);
