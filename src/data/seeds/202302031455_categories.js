@@ -34,7 +34,7 @@ module.exports = {
         categoryImg: null,
       },
       {
-        id: 5,
+        id: 6,
         name: 'Image & Sound',
         description: 'Electronics used to listen to music / see videos',
         categoryImg: null,
