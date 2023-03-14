@@ -4,42 +4,6 @@ module.exports = {
   seed: async (knex) => {
     await knex(tables.productPrice).insert([
       {
-        productId: 1,
-        currencyId: 'EUR',
-        price: 49.99,
-        quantity: 1,
-      },
-      {
-        productId: 1,
-        currencyId: 'USD',
-        price: 49.99,
-        quantity: 1,
-      },
-      {
-        productId: 2,
-        currencyId: 'EUR',
-        price: 25.0,
-        quantity: 1,
-      },
-      {
-        productId: 2,
-        currencyId: 'USD',
-        price: 25.0,
-        quantity: 1,
-      },
-      {
-        productId: 3,
-        currencyId: 'EUR',
-        price: 10000,
-        quantity: 3,
-      },
-      {
-        productId: 3,
-        currencyId: 'USD',
-        price: 10000,
-        quantity: 3,
-      },
-      {
         productId: 4,
         currencyId: 'EUR',
         price: 215,

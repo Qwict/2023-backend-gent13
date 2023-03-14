@@ -9,32 +9,11 @@ module.exports = {
   seed: async (knex) => {
     await knex(tables.product).insert([
       {
-        id: 1,
-        productCategoryId: 1,
-        stock: 500,
-        image: null,
-        companyId: 1,
-      },
-      {
-        id: 2,
-        productCategoryId: 2,
-        stock: 1500,
-        image: null,
-        companyId: 1,
-      },
-      {
-        id: 3,
-        productCategoryId: 3,
-        stock: 100,
-        image: null,
-        companyId: 1,
-      },
-      {
         // Tanita RD-953 Black 215,00
         id: 4,
         productCategoryId: 2,
         stock: 215,
-        image: null,
+        image: 'Tanita RD-953 Black.avif',
         companyId: 1,
       },
       {
@@ -42,7 +21,7 @@ module.exports = {
         id: 5,
         productCategoryId: 1,
         stock: 10,
-        image: null,
+        image: 'Garmin Vivoactive 4 Black 45mm.avif',
         companyId: 1,
       },
       {
@@ -50,7 +29,7 @@ module.exports = {
         id: 6,
         productCategoryId: 2,
         stock: 105,
-        image: null,
+        image: 'Withings Body + Black.avif',
         companyId: 1,
       },
       {
@@ -58,7 +37,7 @@ module.exports = {
         id: 7,
         productCategoryId: 4,
         stock: 150,
-        image: null,
+        image: 'Samsung Galaxy S22 128GB 5G.avif',
         companyId: 1,
       },
       {
@@ -66,7 +45,7 @@ module.exports = {
         id: 8,
         productCategoryId: 4,
         stock: 579,
-        image: null,
+        image: 'Samsung Galaxy S21 FE 128GB 5G.avif',
         companyId: 1,
       },
       {
@@ -74,7 +53,7 @@ module.exports = {
         id: 9,
         productCategoryId: 4,
         stock: 15,
-        image: null,
+        image: 'Samsung Galaxy Z Flip 4 256GB 5G.avif',
         companyId: 1,
       },
       {
@@ -82,7 +61,7 @@ module.exports = {
         id: 10,
         productCategoryId: 4,
         stock: 5,
-        image: null,
+        image: 'Samsung Galaxy Z Fold 4 512GB 5G + Black cover leather.avif',
         companyId: 1,
       },
       {
@@ -90,7 +69,7 @@ module.exports = {
         id: 11,
         productCategoryId: 4,
         stock: 100,
-        image: null,
+        image: 'Samsung Galaxy Z Fold 4 512GB 5G.avif',
         companyId: 1,
       },
       {
@@ -98,7 +77,7 @@ module.exports = {
         id: 12,
         productCategoryId: 6,
         stock: 4,
-        image: null,
+        image: 'Samsung HW-Q990B.avif',
         companyId: 1,
       },
       {
@@ -106,7 +85,7 @@ module.exports = {
         id: 13,
         productCategoryId: 5,
         stock: 100,
-        image: null,
+        image: 'Samsung Galaxy Tab S8 ultra.avif',
         companyId: 1,
       },
       {
@@ -114,7 +93,7 @@ module.exports = {
         id: 14,
         productCategoryId: 6,
         stock: 100,
-        image: null,
+        image: 'Samsung QD OLED 65S95B (2022).avif',
         companyId: 1,
       },
       {
@@ -122,7 +101,7 @@ module.exports = {
         id: 15,
         productCategoryId: 6,
         stock: 100,
-        image: null,
+        image: 'Samsung QD OLED 55S95B (2022).avif',
         companyId: 1,
       },
       {
@@ -130,7 +109,7 @@ module.exports = {
         id: 16,
         productCategoryId: 6,
         stock: 100,
-        image: null,
+        image: 'Philips 48OLED807 - Ambilight (2022).avif',
         companyId: 1,
       },
       {
@@ -138,7 +117,7 @@ module.exports = {
         id: 17,
         productCategoryId: 6,
         stock: 100,
-        image: null,
+        image: 'LG OLED42C24LA (2022) + Soundbar.avif',
         companyId: 1,
       },
       {
@@ -146,7 +125,7 @@ module.exports = {
         id: 18,
         productCategoryId: 3,
         stock: 100,
-        image: null,
+        image: 'SeagatePicture.avif',
         companyId: 1,
       },
       {
@@ -154,7 +133,7 @@ module.exports = {
         id: 19,
         productCategoryId: 3,
         stock: 100,
-        image: null,
+        image: 'SeagatePicture.avif',
         companyId: 1,
       },
       {
@@ -162,7 +141,7 @@ module.exports = {
         id: 20,
         productCategoryId: 2,
         stock: 100,
-        image: null,
+        image: 'Inventum TMO430.avif',
         companyId: 1,
       },
     ]);
