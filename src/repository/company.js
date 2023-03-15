@@ -8,12 +8,15 @@ const {
 } = require('../core/logging');
 
 const formatCompanyPrivacy = ({
+  id,
   name,
-  vatNumber,
-  countryCode,
+  country,
+  city,
 }) => ({
+  id,
   name,
-  companyVAT: countryCode + vatNumber,
+  country,
+  city,
 });
 
 /**

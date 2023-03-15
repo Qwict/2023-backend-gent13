@@ -1,6 +1,6 @@
 {
   "name": "webservices-delaware",
-  "version": "0.7.4",
+  "version": "0.9.0",
   "license": "UNLICENSED",
   "nodemonConfig": {
     "signal": "SIGTERM",

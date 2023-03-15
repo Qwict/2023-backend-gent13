@@ -102,7 +102,6 @@ const deleteUser = async (token) => {
     if (admins.length > 1) {
       debugLog(`Deleting ADMIN user ${email}`);
       const deleted = await userRepository.deleteById(id);
-      console.log(deleted);
       if (!deleted) {
         throw ServiceError.notFound(`There is no user with email ${email}`);
       }
@@ -233,16 +232,15 @@ const verify = async ({
 
 const join = async ({
   token,
-  companyVAT,
+  companyId,
 }) => {
   const { email } = await getByToken(token);
-  debugLog(`User ${email} wants to join ${companyVAT}`);
+  debugLog(`User ${email} wants to join company with id: ${companyId}`);
   try {
-    const company = await companyService.findByVAT(companyVAT);
     const user = await userRepository.findByMail(email);
     const newUser = {
       ...user,
-      companyId: company.id,
+      companyId,
       role: 'pending',
     };
     const updatedUserId = await userRepository.updateById(newUser.id, newUser);
@@ -250,7 +248,7 @@ const join = async ({
     debugLog(`User: ${updatedUser.email} is on waiting list to join companyId: ${updatedUser.companyId}`);
   } catch (e) {
     debugLog(e);
-    throw ServiceError.notFound(`${companyVAT} was not found`);
+    throw ServiceError.notFound(`${companyId} was not found`);
   }
 };
 
@@ -295,6 +293,43 @@ const update = async (token, {
   return verification;
 };
 
+const leaveCompany = async (token) => {
+  const user = await getByToken(token);
+  if (user.role !== 'admin') {
+    debugLog(`User ${user.name} wants to leave company`);
+    const newUser = {
+      ...user,
+      companyId: null,
+      role: 'unemployed',
+    };
+    const updatedUserId = await userRepository.updateById(newUser.id, newUser);
+    const updatedUser = await getById(updatedUserId);
+    if (!updatedUserId) {
+      throw ServiceError.notFound(`There is no user with email ${user.email}`);
+    }
+    debugLog(`${user.name} left company (${user.companyId} -> ${updatedUser.companyId}), role changed from ${user.role} -> ${updatedUser.role}`);
+  } else {
+    const employees = await getAllEmployees(user.companyId);
+    const admins = employees.filter((employee) => employee.role === 'admin');
+    if (admins.length > 1) {
+      debugLog(`User ${user.name} wants to leave company`);
+      const newUser = {
+        ...user,
+        companyId: null,
+        role: 'unemployed',
+      };
+      const updatedUserId = await userRepository.updateById(newUser.id, newUser);
+      const updatedUser = await getById(updatedUserId);
+      if (!updatedUserId) {
+        throw ServiceError.notFound(`There is no admin with email ${user.email}`);
+      }
+      debugLog(`ADMIN ${user.name} left company (${user.companyId} -> ${updatedUser.companyId}), role changed from ${user.role} -> ${updatedUser.role}`);
+    } else {
+      throw ServiceError.badRequest(`The ${user.role} - ${user.email} is the only admin in the company and can not be deleted`);
+    }
+  }
+};
+
 module.exports = {
   getById,
   getByToken,
@@ -308,4 +343,5 @@ module.exports = {
   getUser,
   deleteUser,
   promote,
+  leaveCompany,
 };

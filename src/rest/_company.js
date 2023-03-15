@@ -31,15 +31,15 @@ register.validationScheme = {
 };
 
 const join = async (ctx) => {
-  const { companyVAT } = ctx.request.body;
+  const { companyId } = ctx.request.body;
   const token = ctx.request.headers.authorization;
-  const response = await userService.join({ token, companyVAT });
+  const response = await userService.join({ token, companyId });
   ctx.body = response;
   ctx.status = 204;
 };
 join.validationScheme = {
   body: {
-    companyVAT: Joi.string(),
+    companyId: Joi.number(),
   },
 };
 

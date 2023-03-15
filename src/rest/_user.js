@@ -111,6 +111,13 @@ promote.validationScheme = {
   },
 };
 
+const leaveCompany = async (ctx) => {
+  const token = ctx.headers.authorization;
+  await userService.leaveCompany(token);
+  ctx.status = 200;
+};
+leaveCompany.validationScheme = null;
+
 module.exports = function installUserRouter(app) {
   const router = new Router({
     prefix: '/user',
@@ -119,7 +126,7 @@ module.exports = function installUserRouter(app) {
   router.post('/login', validate(login.validationScheme), login);
   router.post('/verify', validate(verify.validationScheme), verify);
 
-  router.get('/', validate(getUser.validationScheme), authorization(permissions.loggedIn), getUser);
+  router.get('/', authorization(permissions.loggedIn), getUser);
   router.delete('/', authorization(permissions.loggedIn), deleteUser);
 
   router.post('/update', authorization(permissions.loggedIn), update);
@@ -128,6 +135,7 @@ module.exports = function installUserRouter(app) {
 
   router.post('/register', validate(register.validationScheme), register);
   router.put('/promote', authorization(permissions.admin), validate(promote.validationScheme), promote);
+  router.put('/leave', validate(leaveCompany.validationScheme), authorization(permissions.loggedIn), leaveCompany);
 
   app
     .use(router.routes())
