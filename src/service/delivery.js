@@ -29,9 +29,9 @@ const getByTrackAndTrace = async ({ trackCode, verificationCode }) => {
 
   const bundledDelivery = {
     transporter: {
-      name: deliveryService.name,
-      email: deliveryService.email,
-      phone: deliveryService.phoneNumber,
+      name: deliveryService ? deliveryService.name : '',
+      email: deliveryService ? deliveryService.email : '',
+      phone: deliveryService ? deliveryService.phone : undefined,
     },
     street: delivery.street,
     number: delivery.number,

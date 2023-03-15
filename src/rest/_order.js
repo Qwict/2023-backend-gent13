@@ -43,7 +43,7 @@ create.validationScheme = {
     zipCode: Joi.string(),
     city: Joi.string(),
     country: Joi.string(),
-    additionalInformation: Joi.string(),
+    additionalInformation: Joi.any(),
   },
 };
 

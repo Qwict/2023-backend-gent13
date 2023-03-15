@@ -75,8 +75,8 @@ const getById = async (id) => {
       height: packaging.height,
       length: packaging.length,
     },
-    transportService: deliveryService.name,
-    trackAndtrace: delivery.trackAndtrace,
+    transportService: deliveryService ? deliveryService.name : undefined,
+    trackAndtrace: delivery ? delivery.trackAndtrace : undefined,
   };
   return mainOrders;
   }
