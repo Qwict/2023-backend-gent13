@@ -2,6 +2,7 @@ const Router = require('@koa/router');
 const path = require('path');
 const serve = require('koa-static');
 
+const mount = require('koa-mount');
 const installHealthRouter = require('./_health');
 const installOrderRouter = require('./_order');
 const installUserRouter = require('./_user');
@@ -27,7 +28,6 @@ module.exports = (app) => {
   installDeliveryRouter(router);
   installPackageRouter(router);
 
-  app.use(serve(path.join(__dirname, '../../uploads')));
-
   app.use(router.routes()).use(router.allowedMethods());
+  app.use(mount('/api', serve(path.join(__dirname, '../../uploads'))));
 };

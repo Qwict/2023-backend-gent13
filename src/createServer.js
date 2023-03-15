@@ -132,7 +132,6 @@ module.exports = async function createServer() {
   });
 
   installRest(app);
-
   return {
     getApp() {
       return app;
