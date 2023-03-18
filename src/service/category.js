@@ -30,7 +30,15 @@ const getAll = async () => {
   };
 };
 
+const getAllIds = async () => {
+  const categories = await (await getAll()).categories;
+  console.log(categories);
+  const ids = categories.map((category) => category.id);
+  return ids;
+};
+
 module.exports = {
   getById,
   getAll,
+  getAllIds,
 };
