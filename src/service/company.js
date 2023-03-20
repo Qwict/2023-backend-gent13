@@ -40,7 +40,7 @@ const findByVAT = async (companyVAT) => {
 const getCompanyByVAT = async (companyVAT) => {
   const response = await fetch(`https://controleerbtwnummer.eu/api/validate/${companyVAT}.json`);
   const company = await response.json();
-  if (company) {
+  if (company.name) {
     return company;
   }
   throw ServiceError.notFound(`Company with ${companyVAT} not found`, {
