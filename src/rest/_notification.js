@@ -1,9 +1,17 @@
 const Joi = require('joi');
 const Router = require('@koa/router');
+const { Server } = require('socket.io');
 
 const notificationService = require('../service/notification');
 const validate = require('./_validation');
 const { authorization, permissions } = require('../core/auth');
+
+const io = new Server({
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
+io.listen(9001);
 
 const getById = async (ctx) => {
   ctx.body = await notificationService.getById(ctx.params.id);
@@ -61,6 +69,19 @@ const createNotification = async (ctx) => {
       id: Joi.number().integer().positive(),
     },
   };
+
+  io.on('connection', (socket) => {
+    socket.on('ping notification', async (token) => {
+      try {
+        const notifications = await notificationService.getAll(token);
+        socket.emit('pong notification', notifications);
+      } catch (error) {
+        const notifications = { items: [], count: 0 };
+        socket.emit('pong notification', notifications);
+      }
+    });
+  });
+
 module.exports = function installNotificationRouter(app) {
   const router = new Router({
     prefix: '/notification',
