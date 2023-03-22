@@ -1,5 +1,5 @@
 const { getLogger } = require('../core/logging');
-const database = require('../repository/notification');
+const notificationRepository = require('../repository/notification');
 const userService = require('./user');
 
 const debugLog = (message, meta = {}) => {
@@ -10,8 +10,8 @@ const ServiceError = require('../core/serviceError');
 
 const getById = async (id) => {
   debugLog(`Fetching notification with id ${id}`);
-  const notification = await database.findById(id);
-   if (!notification) {
+  const notification = await notificationRepository.findById(id);
+  if (!notification) {
     throw ServiceError.notFound(`Notification with id ${id} does not exist`, {
       id,
     });
@@ -19,15 +19,21 @@ const getById = async (id) => {
   return notification;
 };
 
-const getAll = async (token) => {
+const getAll = async (token, archived = false) => {
   const user = await userService.getByToken(token);
   let notifications = [];
 
   if (user.companyId) {
-    notifications = await database.findAllByCompany(user.companyId);
-  } else if (user.buyerId) {
-    notifications = await database.findAllByUser(user.buyerId);
+    notifications = await notificationRepository.findAllByCompany(user.companyId);
+    if (user.role !== 'admin') {
+      notifications = notifications.filter((notification) => notification.audience !== 'admin');
+    }
+  } else if (user.userId) {
+    notifications = await notificationRepository.findAllByUser(user.userId);
+    notifications = notifications.filter((notification) => notification.companyId === null);
   }
+
+  notifications = notifications.filter((notification) => notification.archived !== archived);
 
   return {
     items: notifications,
@@ -36,40 +42,68 @@ const getAll = async (token) => {
 };
 
 const create = async ({
-    orderid,
-    buyerId,
+  orderId,
+  userId,
+  companyId,
+  date,
+  audience,
+  subject,
+  text,
+}) => {
+  const newNotification = {
+    orderId,
+    userId,
     companyId,
     date,
+    audience,
+    subject,
     text,
-    status,
-  }) => {
-    const newNotification = {
-      orderid,
-      buyerId,
-      companyId,
-      date,
-      text,
-      status,
+  };
+  debugLog('Creating new notification', newNotification);
+  const id = await notificationRepository.create(newNotification);
+  return getById(id);
+};
+
+const deleteById = async (id) => {
+  debugLog(`Deleting notification with id ${id}`);
+  await notificationRepository.deleteById(id);
+};
+
+const switchReadStatusById = async (id, token) => {
+  const user = await userService.getByToken(token);
+  const notification = await getById(id);
+  if (notification.status === 1) {
+    debugLog(`Marking notification with ${id} as unread`);
+    await notificationRepository.updateById(id, !notification.status);
+  } else {
+    debugLog(`Marking notification with ${id} as read (user: ${user.email}))`);
+    const changes = {
+      status: !notification.status,
+      readBy: user.email,
     };
-    debugLog('Creating new notification', newNotification);
-    const id = await database.create(newNotification);
-    return getById(id);
-  };
+    await notificationRepository.updateById(id, changes);
+  }
 
-  const deleteById = async (id) => {
-    debugLog(`Deleting notification with id ${id}`);
-    await database.deleteById(id);
-  };
+  const updatedNotification = await getById(id);
+  console.log(updatedNotification)
+};
 
-  const updateById = async (id, { status }) => {
-    debugLog(`Updating notification with id ${id}`);
-    await database.updateById(id, status);
-  };
+const switchArchiveStatus = async (id, token) => {
+  const user = await userService.getByToken(token);
+  const notification = await getById(id);
+  debugLog(`Notification was archived ${id}`);
+  if (notification.archived) {
+    await notificationRepository.updateById(id, !notification.archived);
+  } else {
+    await notificationRepository.updateById(id, !notification.archived, user.email);
+  }
+};
 
 module.exports = {
   getById,
   getAll,
   create,
-  updateById,
+  switchReadStatusById,
+  switchArchiveStatus,
   deleteById,
 };

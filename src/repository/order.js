@@ -11,29 +11,29 @@ async function findById(id) {
 
 const findAllByPackaging = async (packagingId) => {
   const orders = getKnex()(tables.order).where('packagingId', packagingId)
-  .orderBy('orderDateTime');
+    .orderBy('orderDateTime');
   return orders;
 };
 
-const findAllOfBuyer = async (buyerId) => {
-  const orders = await getKnex()(tables.order).where('buyerId', buyerId)
-  .orderBy('orderDateTime');
+const findAllOfBuyer = async (userId) => {
+  const orders = await getKnex()(tables.order).where('userId', userId)
+    .orderBy('orderDateTime');
   return orders;
 };
 
 const findAllOfCompany = async (customerId) => {
   const orders = await getKnex()(tables.order).where('customerId', customerId)
-  .orderBy('orderDateTime');
+    .orderBy('orderDateTime');
   return orders;
 };
 
 const create = async ({
- buyerId, customerId, packagingId, currencyId, orderReference, orderDateTime, netPrice, taxPrice, totalPrice, orderStatus,
+  userId, customerId, packagingId, currencyId, orderReference, orderDateTime, netPrice, taxPrice, totalPrice, orderStatus,
 }) => {
   const id = uuid.v4();
   await getKnex()(tables.order).insert({
     id,
-    buyerId,
+    userId,
     customerId,
     packagingId,
     currencyId,
