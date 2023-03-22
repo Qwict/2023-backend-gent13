@@ -8,7 +8,10 @@ const { authorization, permissions } = require('../core/auth');
 
 const io = new Server({
   cors: {
-    origin: "http://localhost:3000",
+    origin: ['http://localhost:3000', 'http://localhost:3000/*', 'https://dws.qwict.com'],
+    methods: ["GET", "POST"],
+    allowedHeaders: ['Accept', 'Content-Type', 'Authorization', 'Origin'],
+    credentials: true,
   },
 });
 io.listen(9001);
