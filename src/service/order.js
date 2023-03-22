@@ -1,3 +1,6 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { round } = require('lodash');
+
 const {
   getLogger,
 } = require('../core/logging');
@@ -186,6 +189,15 @@ const create = async (token, {
   country,
   additionalInformation,
 }) => {
+  let total = 0;
+  for (const product of products) {
+    total += product.netPrice;
+  }
+  total += round(total * 0.06, 2);
+  if (total !== totalPrice) {
+    throw ServiceError.forbidden('You have gesjoemeld met de prijzen!');
+  }
+
   debugLog('Creating new order');
   const user = await userService.getByToken(token);
   // const user = { id: '4b09960e-0864-45e0-bab6-6cf8c7fc4626', companyId: 1 };

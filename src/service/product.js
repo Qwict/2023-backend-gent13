@@ -24,9 +24,10 @@ const getAll = async () => {
   if (products.length === 0) {
     throw ServiceError.notFound('No products found');
   }
+  const count = await database.findCount();
   return {
     products,
-    count: products.length,
+    count,
   };
 };
 

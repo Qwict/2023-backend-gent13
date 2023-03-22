@@ -17,6 +17,26 @@ const findAll = async () => {
   return products;
 };
 
+const findCount = async () => {
+  const count = await getKnex()(tables.product).distinct('id').count('id as count');
+  return count[0].count;
+};
+const findCategoriesByProductId = async (id) => {
+  const categories = await getKnex()(tables.productCategory).where('productId', id);
+  return categories;
+};
+
+const findProductsByCategoryId = async (id) => {
+  const products = await getKnex()(tables.productCategory).where('categoryId', id);
+  const productIds = products.map((product) => product.productId);
+  const completeProducts = [];
+  for (const productId of productIds) {
+    const product = await findById(productId);
+    completeProducts.push(product);
+  }
+  return completeProducts;
+};
+
 const update = async (id, stock) => {
    await getKnex()(tables.product).update({
     stock,
@@ -25,5 +45,8 @@ const update = async (id, stock) => {
 module.exports = {
   findById,
   findAll,
+  findCount,
+  findCategoriesByProductId,
+  findProductsByCategoryId,
   update,
 };
