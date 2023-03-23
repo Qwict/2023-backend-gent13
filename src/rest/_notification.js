@@ -66,12 +66,12 @@ updateById.validationScheme = {
   },
 };
 
-const markAsReadById = async (ctx) => {
+const switchReadStatusById = async (ctx) => {
   await notificationService.switchReadStatusById(ctx.params.id, ctx.headers.authorization);
   ctx.status = 204;
 };
 
-markAsReadById.validationScheme = {
+switchReadStatusById.validationScheme = {
   params: {
     id: Joi.string(),
   },
@@ -121,7 +121,7 @@ module.exports = function installNotificationRouter(app) {
   router.post('/', authorization(permissions.loggedIn), validate(createNotification.validationScheme), createNotification);
   router.delete('/:id', authorization(permissions.loggedIn), validate(deleteNotification.validationScheme), deleteNotification);
 
-  router.put('/:id/read', authorization(permissions.loggedIn), validate(markAsReadById.validationScheme), markAsReadById);
+  router.put('/:id/read', authorization(permissions.loggedIn), validate(switchReadStatusById.validationScheme), switchReadStatusById);
   router.put('/:id/archive', authorization(permissions.loggedIn), validate(archiveById.validationScheme), archiveById);
   app.use(router.routes()).use(router.allowedMethods());
 };

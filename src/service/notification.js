@@ -23,7 +23,7 @@ const getAll = async (token, archived = false) => {
   const user = await userService.getByToken(token);
   let notifications = [];
 
-  if (user.companyId) {
+  if (user.companyId && user.role !== 'pending') {
     notifications = await notificationRepository.findAllByCompany(user.companyId);
     if (user.role !== 'admin') {
       notifications = notifications.filter((notification) => notification.audience !== 'admin');
@@ -74,18 +74,19 @@ const switchReadStatusById = async (id, token) => {
   const notification = await getById(id);
   if (notification.status === 1) {
     debugLog(`Marking notification with ${id} as unread`);
-    await notificationRepository.updateById(id, !notification.status);
+    const changes = {
+      status: 0,
+      readBy: null,
+    };
+    await notificationRepository.updateById(id, changes);
   } else {
     debugLog(`Marking notification with ${id} as read (user: ${user.email}))`);
     const changes = {
-      status: !notification.status,
+      status: 1,
       readBy: user.email,
     };
     await notificationRepository.updateById(id, changes);
   }
-
-  const updatedNotification = await getById(id);
-  console.log(updatedNotification)
 };
 
 const switchArchiveStatus = async (id, token) => {

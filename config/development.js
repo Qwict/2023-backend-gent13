@@ -5,8 +5,7 @@ module.exports = {
     disabled: false,
   },
   cors: {
-    // origins: ['http://localhost:3000', 'http://localhost:9001'],
-    origins: ['*'],
+    origins: ['http://localhost:3000', 'http://localhost:9001'],
     maxAge: 3 * 60 * 60,
   },
   database: {
