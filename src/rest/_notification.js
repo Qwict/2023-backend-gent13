@@ -1,9 +1,23 @@
 const Joi = require('joi');
 const Router = require('@koa/router');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { Server } = require('socket.io');
+const config = require('config');
 
 const notificationService = require('../service/notification');
 const validate = require('./_validation');
 const { authorization, permissions } = require('../core/auth');
+
+const io = new Server(9001, {
+  cors: {
+    origin: config.get('cors.origins'),
+    methods: ["GET", "POST"],
+    allowedHeaders: ['Accept', 'Content-Type', 'Authorization', 'Origin'],
+    maxAge: 3600,
+    credentials: true,
+  },
+});
+io.listen(9001);
 
 const getById = async (ctx) => {
   ctx.body = await notificationService.getById(ctx.params.id);
@@ -30,9 +44,9 @@ const createNotification = async (ctx) => {
 
 createNotification.validationScheme = {
   body: {
-    orderid: Joi.string(),
+    orderId: Joi.string(),
     userId: Joi.any(),
-    companyid: Joi.any(),
+    companyId: Joi.any(),
     date: Joi.date(),
     text: Joi.string(),
     status: Joi.string(),
@@ -49,16 +63,6 @@ updateById.validationScheme = {
   },
   body: {
     status: Joi.string(),
-  },
-};
-
-const deleteNotification = async (ctx) => {
-  await notificationService.deleteById(ctx.params.id);
-  ctx.status = 204;
-};
-deleteNotification.validationScheme = {
-  params: {
-    id: Joi.number().integer().positive(),
   },
 };
 
@@ -83,6 +87,28 @@ archiveById.validationScheme = {
     id: Joi.string(),
   },
 };
+
+const deleteNotification = async (ctx) => {
+  await notificationService.deleteById(ctx.params.id);
+  ctx.status = 204;
+};
+deleteNotification.validationScheme = {
+  params: {
+    id: Joi.number().integer().positive(),
+  },
+};
+
+io.on('connection', (socket) => {
+  socket.on('ping notification', async (token) => {
+    try {
+      const notifications = await notificationService.getAll(token);
+      socket.emit('pong notification', notifications);
+    } catch (error) {
+      const notifications = { items: [], count: 0 };
+      socket.emit('pong notification', notifications);
+    }
+  });
+});
 
 module.exports = function installNotificationRouter(app) {
   const router = new Router({

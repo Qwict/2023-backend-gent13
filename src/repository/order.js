@@ -15,8 +15,8 @@ const findAllByPackaging = async (packagingId) => {
   return orders;
 };
 
-const findAllOfBuyer = async (userId) => {
-  const orders = await getKnex()(tables.order).where('userId', userId)
+const findAllOfBuyer = async (buyerId) => {
+  const orders = await getKnex()(tables.order).where('buyerId', buyerId)
     .orderBy('orderDateTime');
   return orders;
 };
@@ -28,12 +28,12 @@ const findAllOfCompany = async (customerId) => {
 };
 
 const create = async ({
-  userId, customerId, packagingId, currencyId, orderReference, orderDateTime, netPrice, taxPrice, totalPrice, orderStatus,
+  buyerId, customerId, packagingId, currencyId, orderReference, orderDateTime, netPrice, taxPrice, totalPrice, orderStatus,
 }) => {
   const id = uuid.v4();
   await getKnex()(tables.order).insert({
     id,
-    userId,
+    buyerId,
     customerId,
     packagingId,
     currencyId,

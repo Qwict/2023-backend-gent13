@@ -7,7 +7,7 @@ module.exports = {
     await knex(tables.order).insert([
       {
         id: '12165d36-cb10-4e12-8d6b-10cdf8f5f9f1',
-        userId: "4b09960e-0864-45e0-bab6-6cf8c7fc4626",
+        buyerId: "4b09960e-0864-45e0-bab6-6cf8c7fc4626",
         customerId: 1,
         packagingId: 1,
         currencyId: "EUR",

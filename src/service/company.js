@@ -79,7 +79,7 @@ const register = async (company, newAdminToken) => {
   });
   debugLog(`Company with id ${createdCompanyId} now has ${adminId} as admin (${admin.name})!`);
   notificationFactory.create({
-    userId: adminId,
+    buyerId: adminId,
     companyId: createdCompanyId,
     date: new Date(),
     audience: 'admin',

@@ -28,7 +28,7 @@ const create = async (user, {
 
       await trx(tables.order).insert({
         id: orderId,
-        userId: user.id,
+        buyerId: user.id,
         customerId: user.companyId,
         packagingId,
         currencyId,

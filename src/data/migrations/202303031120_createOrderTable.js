@@ -6,7 +6,7 @@ module.exports = {
   up: async (knex) => {
     await knex.schema.createTable(tables.order, (table) => {
       table.uuid('id').primary().unique();
-      table.uuid('userId').notNullable();
+      table.uuid('buyerId').notNullable();
       table.integer('customerId').unsigned().notNullable();
       table.integer('packagingId').unsigned().notNullable();
       table.string('currencyId').notNullable();
@@ -18,7 +18,7 @@ module.exports = {
       // 0 is geplaatst, 1 is volgende stage ...
       table.integer('orderStatus');
       table.foreign('customerId', 'fk_Order_Company').references(`${tables.company}.id`).onDelete('CASCADE');
-      table.foreign('userId', 'fk_Order_User').references(`${tables.user}.id`);
+      table.foreign('buyerId', 'fk_Order_User').references(`${tables.user}.id`);
       table.foreign('packagingId', 'fk_Order_Packaging').references(`${tables.packaging}.id`);
     });
   },

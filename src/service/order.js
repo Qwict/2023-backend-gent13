@@ -45,7 +45,7 @@ const getById = async (id) => {
     }
 
     const deliveryService = await deliveryServiceRepo.findById(delivery.transporterId);
-    const user = await userService.getById(order.userId);
+    const user = await userService.getById(order.buyerId);
     const company = await companyService.getById(order.customerId);
     const packaging = await pacakgingService.getById(order.packagingId);
 
@@ -95,7 +95,7 @@ const getAllFromCompany = async (user) => {
     // const orderItems = [];
     for (const order of orders) {
       // const delivery = await deliveryRepo.findByOrder(order.id);
-      const blameUser = await userService.getById(order.userId);
+      const blameUser = await userService.getById(order.buyerId);
       const orderItem = await orderItemRepo.findByOrder(order.id);
       const products = [];
       for (const element of orderItem) {
@@ -124,15 +124,15 @@ const getAllFromCompany = async (user) => {
 };
 
 const getAllFromUser = async (user) => {
-  const { userId } = user;
-  debugLog(`Fetching all orders of user with id: ${userId}`);
-  if (userId) {
+  const { buyerId } = user;
+  debugLog(`Fetching all orders of user with id: ${buyerId}`);
+  if (buyerId) {
     const mainOrders = [];
-    const orders = await orderRepo.findAllOfBuyer(userId);
+    const orders = await orderRepo.findAllOfBuyer(buyerId);
     // const orderItems = [];
     for (const order of orders) {
       // const delivery = await deliveryRepo.findByOrder(order.id);
-      const blameUser = await userService.getById(order.userId);
+      const blameUser = await userService.getById(order.buyerId);
       const orderItem = await orderItemRepo.findByOrder(order.id);
       const products = [];
       for (const element of orderItem) {
@@ -157,7 +157,7 @@ const getAllFromUser = async (user) => {
     }
     return mainOrders;
   }
-  throw ServiceError.notFound('No userId provided');
+  throw ServiceError.notFound('No buyerId provided');
 };
 
 const getAll = async (token) => {

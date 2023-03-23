@@ -31,10 +31,13 @@ const generateJavaWebToken = async (user) => {
 
 const getByToken = async (token) => {
   debugLog(`Decoding token ${token}`);
+  if (token) {
   const decodedUser = jwt.decode(token);
   const user = userRepository.findByMail(decodedUser.email);
   const { salt, hash, ...rest } = user;
   return user;
+}
+throw ServiceError.forbidden('No token provided');
 };
 
 const getUserByEmail = async (email) => {
