@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const Router = require('@koa/router');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const { Server } = require('socket.io');
 const config = require('config');
 
@@ -7,7 +8,7 @@ const notificationService = require('../service/notification');
 const validate = require('./_validation');
 const { authorization, permissions } = require('../core/auth');
 
-const io = new Server(9001, {
+const io = new Server({
   cors: {
     origin: config.get('cors.origins'),
     methods: ["GET", "POST"],
@@ -16,6 +17,7 @@ const io = new Server(9001, {
     credentials: true,
   },
 });
+io.listen(9001);
 
 const getById = async (ctx) => {
   ctx.body = await notificationService.getById(ctx.params.id);
@@ -35,56 +37,78 @@ const getAll = async (ctx) => {
 getAll.validationScheme = null;
 
 const createNotification = async (ctx) => {
-    const newNotification = await notificationService.create(ctx.request.body);
-    ctx.body = newNotification;
-    ctx.status = 201;
-  };
+  const newNotification = await notificationService.create(ctx.request.body);
+  ctx.body = newNotification;
+  ctx.status = 201;
+};
 
-  createNotification.validationScheme = {
-    body: {
-      orderid: Joi.string(),
-      buyerId: Joi.any(),
-      companyid: Joi.any(),
-      date: Joi.date(),
-      text: Joi.string(),
-      status: Joi.string(),
-    },
-  };
+createNotification.validationScheme = {
+  body: {
+    orderId: Joi.string(),
+    userId: Joi.any(),
+    companyId: Joi.any(),
+    date: Joi.date(),
+    text: Joi.string(),
+    status: Joi.string(),
+  },
+};
 
-  const updateById = async (ctx) => {
-    await notificationService.updateById(ctx.params.id, ctx.request.body);
-    ctx.status = 204;
-  };
-  updateById.validationScheme = {
-    params: {
-      id: Joi.number().integer(),
-    },
-    body: {
-      status: Joi.string(),
-    },
-  };
+const updateById = async (ctx) => {
+  await notificationService.updateById(ctx.params.id, ctx.request.body);
+  ctx.status = 204;
+};
+updateById.validationScheme = {
+  params: {
+    id: Joi.number().integer(),
+  },
+  body: {
+    status: Joi.string(),
+  },
+};
 
-  const deleteNotification = async (ctx) => {
-    await notificationService.deleteById(ctx.params.id);
-    ctx.status = 204;
-  };
-  deleteNotification.validationScheme = {
-    params: {
-      id: Joi.number().integer().positive(),
-    },
-  };
+const switchReadStatusById = async (ctx) => {
+  await notificationService.switchReadStatusById(ctx.params.id, ctx.headers.authorization);
+  ctx.status = 204;
+};
 
-  io.on('connection', (socket) => {
-    socket.on('ping notification', async (token) => {
-      try {
-        const notifications = await notificationService.getAll(token);
-        socket.emit('pong notification', notifications);
-      } catch (error) {
-        const notifications = { items: [], count: 0 };
-        socket.emit('pong notification', notifications);
-      }
-    });
+switchReadStatusById.validationScheme = {
+  params: {
+    id: Joi.string(),
+  },
+};
+
+const archiveById = async (ctx) => {
+  await notificationService.switchArchiveStatusById(ctx.params.id, ctx.headers.authorization);
+  ctx.status = 204;
+};
+
+archiveById.validationScheme = {
+  params: {
+    id: Joi.string(),
+  },
+};
+
+const deleteNotification = async (ctx) => {
+  await notificationService.deleteById(ctx.params.id);
+  ctx.status = 204;
+};
+deleteNotification.validationScheme = {
+  params: {
+    id: Joi.number().integer().positive(),
+  },
+};
+
+io.on('connection', (socket) => {
+  socket.on('ping notification', async (token) => {
+    try {
+      const notifications = await notificationService.getAll(token);
+      socket.emit('pong notification', notifications);
+    } catch (error) {
+      const notifications = { items: [], count: 0 };
+      socket.emit('pong notification', notifications);
+    }
   });
+});
 
 module.exports = function installNotificationRouter(app) {
   const router = new Router({
@@ -97,5 +121,7 @@ module.exports = function installNotificationRouter(app) {
   router.post('/', authorization(permissions.loggedIn), validate(createNotification.validationScheme), createNotification);
   router.delete('/:id', authorization(permissions.loggedIn), validate(deleteNotification.validationScheme), deleteNotification);
 
+  router.put('/:id/read', authorization(permissions.loggedIn), validate(switchReadStatusById.validationScheme), switchReadStatusById);
+  router.put('/:id/archive', authorization(permissions.loggedIn), validate(archiveById.validationScheme), archiveById);
   app.use(router.routes()).use(router.allowedMethods());
 };

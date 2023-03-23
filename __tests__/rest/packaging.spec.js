@@ -8,14 +8,14 @@ const {
 
 const data = {
   packaging: {
-  id: 1,
-  name: "Extra special packaging",
-  type: "custom",
-  width: 10,
-  height: 10,
-  length: 10,
-  price: 50,
-  active: true,
+    id: 1,
+    name: "Extra special packaging",
+    type: "custom",
+    width: 10,
+    height: 10,
+    length: 10,
+    price: 50,
+    active: true,
   },
   user: {
     id: '4b09960e-0864-45e0-bab6-6cf8c7fc4626',
@@ -31,7 +31,7 @@ const data = {
     salt: 'EmdaG/Ks3SRf1kKVzabARJwNqRLnXlpCN60kCmLX5tt2faDlaXrkE1BI1R8mFKMo/Sj6VOjeZEvCb/CaPLw68bUs6p9qpPhSYT1DJVoYyWoovbN4VTTVwE6lsqy40/XHpECzr9wjpfdYAs/770EBzzou/e1rue/7VoZhJau0UFI=',
     hash: 'hQXWdE01+n+yibcH1LqjpuMUhcufBMBT2NkNmuV6x7DoeSPbFRvM3laXdIfnqyOi9rknLoBeok5m6y+4yHbsQQ==',
     companyId: 1,
-    companyVerified: true,
+
     role: 'employee',
   },
 };

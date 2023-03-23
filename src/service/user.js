@@ -6,7 +6,8 @@ const {
 const ServiceError = require('../core/serviceError');
 
 const userRepository = require('../repository/user');
-const companyService = require('./company');
+const notificationFactory = require('../repository/notificationFactory');
+const companyRepository = require('../repository/company');
 
 const debugLog = (message, meta = {}) => {
   if (!this.logger) this.logger = getLogger();
@@ -78,6 +79,23 @@ const promote = async ({ token, email, role }) => {
       companyId,
     });
     const promotedUser = await userRepository.getUser(promotedUserId);
+    debugLog(`Promoted user ${promotedUser.name} (${promotedUser.id} - ${promotedUser.companyId}) to ${role}`);
+    notificationFactory.create({
+      userId: promotedUser.id,
+      companyId: promotedUser.companyId,
+      date: new Date(),
+      audience: 'private',
+      subject: 'You have been promoted',
+      text: `You have been promoted to ${role}`,
+    });
+    notificationFactory.create({
+      userId: admin.id,
+      companyId: admin.companyId,
+      date: new Date(),
+      audience: 'admin',
+      subject: `User role changed`,
+      text: `${admin.name} promoted ${user.name} to ${role}`,
+    });
   }
 };
 
@@ -112,6 +130,13 @@ const deleteUser = async (token) => {
       throw ServiceError.badRequest(`The ${role} - ${email} is the only admin in the company and can not be deleted`);
     }
   }
+  notificationFactory.create({
+    companyId,
+    date: new Date(),
+    audience: 'admin',
+    subject: 'Account deleted',
+    text: `User ${email} deleted their account`,
+  });
 };
 
 const register = async ({
@@ -142,17 +167,17 @@ const register = async ({
       issuer: process.env.AUTH_ISSUER,
       audience: process.env.AUTH_AUDIENCE,
     });
-  // const jwtPackage = {
-  //   id: user.id,
-  //   name: user.name,
-  //   email: user.email,
-  //   companyId: user.companyId,
-  // };
-  // return jwt.sign(jwtPackage, process.env.JWT_SECRET, {
-  //   expiresIn: 36000,
-  //   issuer: process.env.AUTH_ISSUER,
-  //   audience: process.env.AUTH_AUDIENCE,
-  // });
+    // const jwtPackage = {
+    //   id: user.id,
+    //   name: user.name,
+    //   email: user.email,
+    //   companyId: user.companyId,
+    // };
+    // return jwt.sign(jwtPackage, process.env.JWT_SECRET, {
+    //   expiresIn: 36000,
+    //   issuer: process.env.AUTH_ISSUER,
+    //   audience: process.env.AUTH_AUDIENCE,
+    // });
   } catch (error) {
     if (error.message === 'DUPLICATE_ENTRY') {
       throw ServiceError.duplicate('DUPLICATE ENTRY');
@@ -205,30 +230,30 @@ const verify = async ({
   } catch (error) {
     throw ServiceError.validationFailed(`Verification failed for token ${token}`);
   }
-    const user = await userRepository.findByMail(decoded.email);
-    if (!user) {
-      throw ServiceError.notFound('user does not exist');
-    }
-    if (user.role !== decoded.permission) {
-      const jwtPackage = {
-        name: user.name,
-        email: user.email,
-        permission: user.role,
-      };
+  const user = await userRepository.findByMail(decoded.email);
+  if (!user) {
+    throw ServiceError.notFound('user does not exist');
+  }
+  if (user.role !== decoded.permission) {
+    const jwtPackage = {
+      name: user.name,
+      email: user.email,
+      permission: user.role,
+    };
 
-      const newToken = jwt.sign(jwtPackage, process.env.JWT_SECRET, {
-        expiresIn: 36000,
-        issuer: process.env.AUTH_ISSUER,
-        audience: process.env.AUTH_AUDIENCE,
-      });
-      verification.token = newToken;
-      verification.validated = true;
-      return verification;
-    }
-    if (decoded) {
-      verification.validated = true;
-      return verification;
-    }
+    const newToken = jwt.sign(jwtPackage, process.env.JWT_SECRET, {
+      expiresIn: 36000,
+      issuer: process.env.AUTH_ISSUER,
+      audience: process.env.AUTH_AUDIENCE,
+    });
+    verification.token = newToken;
+    verification.validated = true;
+    return verification;
+  }
+  if (decoded) {
+    verification.validated = true;
+    return verification;
+  }
 
   return verification;
 };
@@ -239,8 +264,8 @@ const join = async ({
 }) => {
   const { email } = await getByToken(token);
   debugLog(`User ${email} wants to join company with id: ${companyId}`);
+  const user = await userRepository.findByMail(email);
   try {
-    const user = await userRepository.findByMail(email);
     const newUser = {
       ...user,
       companyId,
@@ -253,6 +278,21 @@ const join = async ({
     debugLog(e);
     throw ServiceError.notFound(`${companyId} was not found`);
   }
+  const company = await companyRepository.findById(companyId);
+  notificationFactory.create({
+    companyId,
+    date: new Date(),
+    audience: 'admin',
+    subject: 'New user',
+    text: `User ${email} wants to join your company`,
+  });
+  notificationFactory.create({
+    userId: user.id,
+    date: new Date(),
+    audience: 'private',
+    subject: 'Pending status',
+    text: `You are now on the waiting list to join company ${company.name}`,
+  });
 };
 
 const update = async (token, {

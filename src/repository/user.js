@@ -9,7 +9,6 @@ const {
 } = require('../core/logging');
 
 const formatUser = ({
-  companyVerified,
   email,
   name,
   firstName,
@@ -26,7 +25,6 @@ const formatUser = ({
   name,
   email,
   role,
-  companyVerified,
   address: {
     street,
     streetNumber,

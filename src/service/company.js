@@ -4,6 +4,7 @@ const {
 } = require('../core/logging');
 const ServiceError = require('../core/serviceError');
 
+const notificationFactory = require('./notification');
 const companyRepository = require('../repository/company');
 const userRepository = require('../repository/user');
 
@@ -14,11 +15,11 @@ const debugLog = (message, meta = {}) => {
 
 const decodeToken = async (token) => {
   try {
-  const decoded = jwt.verify(token, process.env.JWT_SECRET, {
-    issuer: process.env.AUTH_ISSUER,
-    audience: process.env.AUTH_AUDIENCE,
-  });
-  return decoded;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      issuer: process.env.AUTH_ISSUER,
+      audience: process.env.AUTH_AUDIENCE,
+    });
+    return decoded;
   } catch (error) {
     throw ServiceError.validationFailed('Token verification failed');
   }
@@ -77,6 +78,14 @@ const register = async (company, newAdminToken) => {
     ...admin,
   });
   debugLog(`Company with id ${createdCompanyId} now has ${adminId} as admin (${admin.name})!`);
+  notificationFactory.create({
+    buyerId: adminId,
+    companyId: createdCompanyId,
+    date: new Date(),
+    audience: 'admin',
+    subject: `New Company registered by ${admin.name}`,
+    text: `Company ${createdCompany.name} (${createdCompany.vatNumber}) was registered by ${admin.name} (${admin.email})`,
+  });
 };
 
 /**

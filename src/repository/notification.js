@@ -2,7 +2,7 @@ const { tables, getKnex } = require('../data');
 
 async function findById(id) {
   const notification = await getKnex()(tables.notification).where('id', id).first();
-   return notification;
+  return notification;
 }
 const findAllByCompany = async (companyId) => {
   const notifications = await getKnex()(tables.notification).select()
@@ -11,48 +11,54 @@ const findAllByCompany = async (companyId) => {
   return notifications;
 };
 
-const findAllByUser = async (buyerId) => {
+const findAllByUser = async (userId) => {
   const notifications = await getKnex()(tables.notification).select()
-    .where('buyerId', buyerId)
+    .where('userId', userId)
     .orderBy('date', 'ASC');
   return notifications;
 };
 
 const create = async ({
-  orderid,
-  buyerId,
-  companyid,
+  orderId,
+  userId,
+  companyId,
   date,
+  audience,
+  subject,
   text,
-  status,
-  }) => {
-      const [id] = await getKnex()(tables.notification)
-        .insert({
-          orderid,
-          buyerId,
-          companyid,
-          date,
-          text,
-          status,
-        });
-      return id;
-  };
-
-const updateById = async (id, status) => {
-  await getKnex()(tables.notification)
-  .insert({
-    status,
-  });
+}) => {
+  const [id] = await getKnex()(tables.notification)
+    .insert({
+      orderId,
+      userId,
+      companyId,
+      date,
+      audience,
+      subject,
+      text,
+    });
   return id;
 };
 
-  const deleteById = async (id) => {
-      const rowsAffected = await getKnex()(tables.notification)
-        .delete()
-        .where('id', id);
+const updateById = async (id, {
+  status,
+  readBy = '',
+}) => {
+  await getKnex()(tables.notification)
+    .update({
+      status,
+      readBy,
+    })
+    .where('id', id);
+};
 
-      return rowsAffected > 0;
-  };
+const deleteById = async (id) => {
+  const rowsAffected = await getKnex()(tables.notification)
+    .delete()
+    .where('id', id);
+
+  return rowsAffected > 0;
+};
 module.exports = {
   findById,
   findAllByCompany,
