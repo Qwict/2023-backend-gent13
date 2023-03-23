@@ -1,5 +1,5 @@
-const { tables, getKnex } = require('../data');
 const uuid = require('uuid');
+const { tables, getKnex } = require('../data');
 
 const create = async ({
   orderId,

@@ -8,7 +8,7 @@ const notificationService = require('../service/notification');
 const validate = require('./_validation');
 const { authorization, permissions } = require('../core/auth');
 
-const io = new Server(9001, {
+const io = new Server({
   cors: {
     origin: config.get('cors.origins'),
     methods: ["GET", "POST"],
