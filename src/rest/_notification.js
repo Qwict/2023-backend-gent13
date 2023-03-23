@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const Router = require('@koa/router');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const { Server } = require('socket.io');
 const config = require('config');
 
