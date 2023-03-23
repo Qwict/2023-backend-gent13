@@ -1,20 +1,21 @@
 const Joi = require('joi');
 const Router = require('@koa/router');
 const { Server } = require('socket.io');
+const config = require('config');
 
 const notificationService = require('../service/notification');
 const validate = require('./_validation');
 const { authorization, permissions } = require('../core/auth');
 
-const io = new Server({
+const io = new Server(9001, {
   cors: {
-    origin: ['http://localhost:3000', 'http://localhost:3000/*', 'https://dws.qwict.com'],
+    origin: config.get('cors.origins'),
     methods: ["GET", "POST"],
     allowedHeaders: ['Accept', 'Content-Type', 'Authorization', 'Origin'],
+    maxAge: 3600,
     credentials: true,
   },
 });
-io.listen(9001);
 
 const getById = async (ctx) => {
   ctx.body = await notificationService.getById(ctx.params.id);
