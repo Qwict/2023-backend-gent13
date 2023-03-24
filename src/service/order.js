@@ -12,7 +12,7 @@ const productService = require("./product");
 const orderFactory = require('../repository/completeOrderCreation');
 const userService = require('./user');
 const companyService = require('./company');
-const pacakgingService = require('./packaging');
+const packagingService = require('./packaging');
 
 function makeChars(length) {
   let result = '';
@@ -50,7 +50,7 @@ const getById = async (id) => {
     const deliveryService = await deliveryServiceRepo.findById(delivery.transporterId);
     const user = await userService.getById(order.buyerId);
     const company = await companyService.getById(order.customerId);
-    const packaging = await pacakgingService.getById(order.packagingId);
+    const packaging = await packagingService.getById(order.packagingId);
 
     const mainOrders = {
       orderId: order.id,
@@ -189,11 +189,21 @@ const create = async (token, {
   country,
   additionalInformation,
 }) => {
-  let total = 0;
+  const packaging = await packagingService.getById(packagingId);
+  let total = packaging.price;
+  const dbProducts = [];
   for (const product of products) {
-    total += product.netPrice;
+    const productFromDb = await productService.getById(product.id);
+    dbProducts.push({
+      id: product.id,
+      companyId: productFromDb[0].companyId,
+      quantity: product.quantity,
+      netPrice: productFromDb[0].price,
+    });
+    total += productFromDb[0].price * product.quantity;
   }
   total += round(total * 0.06, 2);
+
   if (total !== totalPrice) {
     throw ServiceError.forbidden('You have gesjoemeld met de prijzen!');
   }
@@ -212,7 +222,7 @@ const create = async (token, {
     netPrice,
     taxPrice,
     totalPrice,
-    products,
+    products: dbProducts,
     street,
     number,
     zipCode,
