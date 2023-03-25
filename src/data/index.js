@@ -181,6 +181,7 @@ const tables = {
   delivery: 'delivery',
   deliveryService: 'deliveryservice',
   packaging: 'packaging',
+  productCategory: 'productcategory',
 };
 
 module.exports = {

@@ -17,10 +17,12 @@ const findAll = async () => {
   return products;
 };
 
+
 const findCount = async () => {
   const count = await getKnex()(tables.product).distinct('id').count('id as count');
   return count[0].count;
 };
+
 const findCategoriesByProductId = async (id) => {
   const categories = await getKnex()(tables.productCategory).where('productId', id);
   return categories;
@@ -31,6 +33,7 @@ const findProductsByCategoryId = async (id) => {
   const productIds = products.map((product) => product.productId);
   const completeProducts = [];
   for (const productId of productIds) {
+    console.log(productId);
     const product = await findById(productId);
     completeProducts.push(product);
   }

@@ -27,7 +27,6 @@ const data = {
   },
   product: {
     id: 1,
-    productCategoryId: 1,
     stock: 500,
     image: null,
     companyId: 1,
@@ -44,6 +43,11 @@ const data = {
     currencyId: 'EUR',
     price: 49.99,
     quantity: 1,
+  },
+  productCategory: {
+    id: 1,
+    productId: 1,
+    categoryId: 1,
   },
 };
 
@@ -73,9 +77,11 @@ describe('Products', () => {
       await knex(tables.product).insert(data.product);
       await knex(tables.productDescription).insert(data.productDescription);
       await knex(tables.productPrice).insert(data.productPrice);
+      await knex(tables.productCategory).insert(data.productCategory);
     });
 
     afterAll(async () => {
+      await knex(tables.productCategory).delete();
       await knex(tables.productPrice).delete();
       await knex(tables.productDescription).delete();
       await knex(tables.product)
@@ -100,12 +106,16 @@ describe('Products', () => {
       await knex(tables.product).insert(data.product);
       await knex(tables.productDescription).insert(data.productDescription);
       await knex(tables.productPrice).insert(data.productPrice);
+      await knex(tables.productCategory).insert(data.productCategory);
     });
 
     afterAll(async () => {
+      await knex(tables.productCategory).delete();
       await knex(tables.product)
         .where('id', dataToDelete.product)
         .delete();
+      await knex(tables.productPrice).delete();
+      await knex(tables.productDescription).delete();
       await knex(tables.category).delete();
       await knex(tables.company).delete();
     });
@@ -113,7 +123,7 @@ describe('Products', () => {
     test('It should return a specific product', async () => {
       const response = await request.get(`${url}/${data.product.id}`);
       expect(response.status).toBe(200);
-      expect(response.body[0].id).toBe(data.product.id);
+      expect(response.body.product[0].id).toBe(data.product.id);
     });
   });
 });

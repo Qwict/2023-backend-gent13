@@ -104,9 +104,9 @@ const getAllFromCompany = async (user) => {
       for (const element of orderItem) {
         const product = await productService.getById(element.productId);
         const newProduct = {
-          name: product[0].name,
+          name: product.product[0].name,
           quantity: element.quantity,
-          unitPrice: product.price,
+          unitPrice: product.product.price,
           totalPrice: element.netPrice,
         };
         products.push(newProduct);
