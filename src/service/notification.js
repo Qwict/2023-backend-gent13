@@ -19,21 +19,31 @@ const getById = async (id) => {
   return notification;
 };
 
-const getAll = async (token, archived = false) => {
+const getAll = async (token, archived = 0) => {
   const user = await userService.getByToken(token);
   let notifications = [];
+  let companyNotifications = [];
 
+  // Get all private notifications
+  notifications = await notificationRepository.findAllByUser(user.id);
+  notifications = notifications.filter((notification) => notification.audience === 'private');
+
+  // List all notifications for company users
   if (user.companyId && user.role !== 'pending') {
-    notifications = await notificationRepository.findAllByCompany(user.companyId);
+    companyNotifications = await notificationRepository.findAllByCompany(user.companyId);
     if (user.role !== 'admin') {
-      notifications = notifications.filter((notification) => notification.audience !== 'admin');
+      companyNotifications = notifications.filter((notification) => notification.audience !== 'admin');
     }
-  } else if (user.userId) {
-    notifications = await notificationRepository.findAllByUser(user.userId);
-    notifications = notifications.filter((notification) => notification.companyId === null);
   }
 
-  notifications = notifications.filter((notification) => notification.archived !== archived);
+  notifications = [...companyNotifications, ...notifications];
+  notifications = notifications.filter((notification) => notification.archived === archived);
+  // notifications = notifications.sort(function (a, b) {
+  //   return a.status - b.status || new Date(b.date) - new Date(a.date)
+  // });
+  notifications.sort((a, b) => (
+    a.status - b.status || new Date(b.date) - new Date(a.date)
+  ));
 
   return {
     items: notifications,
@@ -78,25 +88,35 @@ const switchReadStatusById = async (id, token) => {
       status: 0,
       readBy: null,
     };
-    await notificationRepository.updateById(id, changes);
+    await notificationRepository.changeReadStatusById(id, changes);
   } else {
     debugLog(`Marking notification with ${id} as read (user: ${user.email}))`);
     const changes = {
       status: 1,
       readBy: user.email,
     };
-    await notificationRepository.updateById(id, changes);
+    await notificationRepository.changeReadStatusById(id, changes);
   }
 };
 
-const switchArchiveStatus = async (id, token) => {
+const switchArchiveStatusById = async (id, token) => {
   const user = await userService.getByToken(token);
   const notification = await getById(id);
-  debugLog(`Notification was archived ${id}`);
-  if (notification.archived) {
-    await notificationRepository.updateById(id, !notification.archived);
+  if (notification.archived === 1) {
+    const changes = {
+      archived: 0,
+      archivedBy: null,
+    };
+    await notificationRepository.changeArchiveStatusById(id, changes);
+    debugLog(`Notification was UNarchived by ${user.email}`);
   } else {
-    await notificationRepository.updateById(id, !notification.archived, user.email);
+    const changes = {
+      archived: 1,
+      archivedBy: user.email,
+      readBy: notification.readBy || user.email,
+    };
+    await notificationRepository.changeArchiveStatusById(id, changes);
+    debugLog(`Notification was archived by ${user.email}`);
   }
 };
 
@@ -105,6 +125,6 @@ module.exports = {
   getAll,
   create,
   switchReadStatusById,
-  switchArchiveStatus,
+  switchArchiveStatusById,
   deleteById,
 };

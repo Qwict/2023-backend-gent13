@@ -37,7 +37,7 @@ module.exports = {
         text: 'This notification was archived',
         audience: 'private',
         status: false,
-        archived: true,
+        archived: false,
       }, {
         id: '3ce7efd7-0bb3-4719-ad62-938f4b2d3342',
         orderId: null,

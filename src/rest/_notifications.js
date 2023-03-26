@@ -23,10 +23,9 @@ const getById = async (ctx) => {
   ctx.body = await notificationService.getById(ctx.params.id);
   ctx.status = 200;
 };
-
 getById.validationScheme = {
   params: {
-    id: Joi.number().integer(),
+    id: Joi.string(),
   },
 };
 
@@ -34,24 +33,38 @@ const getAll = async (ctx) => {
   ctx.body = await notificationService.getAll(ctx.headers.authorization);
   ctx.status = 200;
 };
-getAll.validationScheme = null;
-
-const createNotification = async (ctx) => {
-  const newNotification = await notificationService.create(ctx.request.body);
-  ctx.body = newNotification;
-  ctx.status = 201;
-};
-
-createNotification.validationScheme = {
-  body: {
-    orderId: Joi.string(),
-    userId: Joi.any(),
-    companyId: Joi.any(),
-    date: Joi.date(),
-    text: Joi.string(),
-    status: Joi.string(),
+getAll.validationScheme = {
+  headers: {
+    authorization: Joi.string(),
   },
 };
+
+const getAllArchived = async (ctx) => {
+  ctx.body = await notificationService.getAll(ctx.headers.authorization, 1);
+  ctx.status = 200;
+};
+getAllArchived.validationScheme = {
+  headers: {
+    authorization: Joi.string(),
+  },
+};
+
+// const createNotification = async (ctx) => {
+//   const newNotification = await notificationService.create(ctx.request.body);
+//   ctx.body = newNotification;
+//   ctx.status = 201;
+// };
+
+// createNotification.validationScheme = {
+//   body: {
+//     orderId: Joi.string(),
+//     userId: Joi.any(),
+//     companyId: Joi.any(),
+//     date: Joi.date(),
+//     text: Joi.string(),
+//     status: Joi.string(),
+//   },
+// };
 
 const updateById = async (ctx) => {
   await notificationService.updateById(ctx.params.id, ctx.request.body);
@@ -77,12 +90,12 @@ switchReadStatusById.validationScheme = {
   },
 };
 
-const archiveById = async (ctx) => {
+const switchArchiveStatusById = async (ctx) => {
   await notificationService.switchArchiveStatusById(ctx.params.id, ctx.headers.authorization);
   ctx.status = 204;
 };
 
-archiveById.validationScheme = {
+switchArchiveStatusById.validationScheme = {
   params: {
     id: Joi.string(),
   },
@@ -112,16 +125,20 @@ io.on('connection', (socket) => {
 
 module.exports = function installNotificationRouter(app) {
   const router = new Router({
-    prefix: '/notification',
+    prefix: '/notifications',
   });
 
-  router.get('/:id', authorization(permissions.loggedIn), validate(getById.validationScheme), getById); // nog validation toevoegen
-  router.get('/', authorization(permissions.loggedIn), validate(getAll.validationScheme), getAll);
+  // router.get('/:id', authorization(permissions.loggedIn), validate(getById.validationScheme), getById); // nog validation toevoegen
   router.put('/:id', authorization(permissions.loggedIn), validate(updateById.validationScheme), updateById);
-  router.post('/', authorization(permissions.loggedIn), validate(createNotification.validationScheme), createNotification);
-  router.delete('/:id', authorization(permissions.loggedIn), validate(deleteNotification.validationScheme), deleteNotification);
+  // router.delete('/:id', authorization(permissions.loggedIn), validate(deleteNotification.validationScheme), deleteNotification);
+
+  router.get('/', authorization(permissions.loggedIn), validate(getAll.validationScheme), getAll);
+  // router.get('/archived', authorization(permissions.loggedIn), validate(getAllArchived.validationScheme), getAllArchived);
+  router.get('/archived', authorization(permissions.loggedIn), validate(getAllArchived.validationScheme), getAllArchived);
+  // router.post('/', authorization(permissions.loggedIn), validate(createNotification.validationScheme), createNotification);
 
   router.put('/:id/read', authorization(permissions.loggedIn), validate(switchReadStatusById.validationScheme), switchReadStatusById);
-  router.put('/:id/archive', authorization(permissions.loggedIn), validate(archiveById.validationScheme), archiveById);
+  router.put('/:id/archive', authorization(permissions.loggedIn), validate(switchArchiveStatusById.validationScheme), switchArchiveStatusById);
+
   app.use(router.routes()).use(router.allowedMethods());
 };
