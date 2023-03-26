@@ -7,6 +7,7 @@ const {
 const create = async (user, {
   packagingId,
   currencyId,
+  fromCompanyId,
   orderReference,
   netPrice,
   taxPrice,
@@ -30,6 +31,7 @@ const create = async (user, {
         id: orderId,
         buyerId: user.id,
         customerId: user.companyId,
+        fromCompanyId,
         packagingId,
         currencyId,
         orderReference,
@@ -39,9 +41,6 @@ const create = async (user, {
         totalPrice,
         orderStatus: 0,
       });
-      console.log(products);
-      const companyIds = new Set(products.map((product) => product.companyId));
-      console.log(companyIds);
       for (const product of products) {
         await trx(tables.orderItem).insert({
           orderId,

@@ -35,18 +35,6 @@ const getById = async (id) => {
   if (order) {
     const orderItems = await orderItemRepo.findByOrder(id);
     const delivery = await deliveryRepo.findByOrder(id);
-    const products = [];
-    for (const orderItem of orderItems) {
-      const product = await productService.getById(orderItem.productId);
-      const newProduct = {
-        name: product[0].name,
-        quantity: orderItem.quantity,
-        unitPrice: product[0].price,
-        totalPrice: orderItem.netPrice,
-      };
-      products.push(newProduct);
-    }
-
     const deliveryService = await deliveryServiceRepo.findById(delivery.transporterId);
     const user = await userService.getById(order.buyerId);
     const company = await companyService.getById(order.customerId);
@@ -68,7 +56,7 @@ const getById = async (id) => {
       company: {
         name: company ? company.name : "No company",
       },
-      products,
+      orderItems,
       totalPrice: order.totalPrice,
       status: order.orderStatus,
       packaging: {
@@ -100,23 +88,12 @@ const getAllFromCompany = async (user) => {
       // const delivery = await deliveryRepo.findByOrder(order.id);
       const blameUser = await userService.getById(order.buyerId);
       const orderItem = await orderItemRepo.findByOrder(order.id);
-      const products = [];
-      for (const element of orderItem) {
-        const product = await productService.getById(element.productId);
-        const newProduct = {
-          name: product.product[0].name,
-          quantity: element.quantity,
-          unitPrice: product.product.price,
-          totalPrice: element.netPrice,
-        };
-        products.push(newProduct);
-      }
       // orderItems.push(orderItem);
       mainOrders.push({
         orderId: order.id,
         user: blameUser.email,
         date: order.orderDateTime,
-        productCount: products.length,
+        productCount: orderItem.length,
         status: order.orderStatus,
         totalPrice: order.totalPrice,
       });
@@ -137,23 +114,12 @@ const getAllFromUser = async (user) => {
       // const delivery = await deliveryRepo.findByOrder(order.id);
       const blameUser = await userService.getById(order.buyerId);
       const orderItem = await orderItemRepo.findByOrder(order.id);
-      const products = [];
-      for (const element of orderItem) {
-        const product = await productService.getById(element.productId);
-        const newProduct = {
-          name: product[0].name,
-          quantity: element.quantity,
-          unitPrice: product[0].price,
-          totalPrice: element.netPrice,
-        };
-        products.push(newProduct);
-      }
       // orderItems.push(orderItem);
       mainOrders.push({
         orderId: order.id,
         user: blameUser.email,
         date: order.orderDateTime,
-        productCount: products.length,
+        productCount: orderItem.length,
         status: order.orderStatus,
         totalPrice: order.totalPrice,
       });
@@ -192,6 +158,7 @@ const create = async (token, {
   const packaging = await packagingService.getById(packagingId);
   let total = packaging.price;
   const dbProducts = [];
+  const companies = new Set();
   for (const product of products) {
     const productFromDb = await productService.getById(product.id);
     dbProducts.push({
@@ -200,6 +167,7 @@ const create = async (token, {
       quantity: product.quantity,
       netPrice: productFromDb[0].price,
     });
+    companies.add(productFromDb[0].companyId);
     total += productFromDb[0].price * product.quantity;
   }
   total += round(total * 0.06, 2);
@@ -208,6 +176,8 @@ const create = async (token, {
     throw ServiceError.forbidden('You have gesjoemeld met de prijzen!');
   }
 
+  const mainOrders = [];
+  for (const company of companies) {
   debugLog('Creating new order');
   const user = await userService.getByToken(token);
   // const user = { id: '4b09960e-0864-45e0-bab6-6cf8c7fc4626', companyId: 1 };
@@ -218,11 +188,12 @@ const create = async (token, {
   const id = await orderFactory.create(user, {
     packagingId,
     currencyId,
+    fromCompanyId: company,
     orderReference,
     netPrice,
     taxPrice,
     totalPrice,
-    products: dbProducts,
+    products: dbProducts.filter((product) => product.companyId === company),
     street,
     number,
     zipCode,
@@ -232,7 +203,9 @@ const create = async (token, {
     trackAndtrace,
   });
   const mainOrder = await getById(id);
-  return mainOrder;
+  mainOrders.push(mainOrder);
+}
+  return mainOrders;
 };
 
 const updateById = async (id, {

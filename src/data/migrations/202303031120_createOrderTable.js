@@ -8,6 +8,7 @@ module.exports = {
       table.uuid('id').primary().unique();
       table.uuid('buyerId').notNullable();
       table.integer('customerId').unsigned().notNullable();
+      table.integer('fromCompanyId').unsigned().notNullable();
       table.integer('packagingId').unsigned().notNullable();
       table.string('currencyId').notNullable();
       table.string('orderReference', 64).notNullable();
@@ -20,6 +21,7 @@ module.exports = {
       table.foreign('customerId', 'fk_Order_Company').references(`${tables.company}.id`).onDelete('CASCADE');
       table.foreign('buyerId', 'fk_Order_User').references(`${tables.user}.id`);
       table.foreign('packagingId', 'fk_Order_Packaging').references(`${tables.packaging}.id`);
+      table.foreign('fromCompanyId', 'fk_Order_Company2').references(`${tables.company}.id`);
     });
   },
   down: (knex) => knex.schema.dropTableIfExists(tables.order),

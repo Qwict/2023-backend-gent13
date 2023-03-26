@@ -2,7 +2,6 @@ const {
   getLogger,
 } = require('../core/logging');
 const database = require('../repository/product');
-const categoryService = require('./category');
 
 const debugLog = (message, meta = {}) => {
   if (!this.logger) this.logger = getLogger();
@@ -10,25 +9,20 @@ const debugLog = (message, meta = {}) => {
 };
 const ServiceError = require('../core/serviceError');
 
-const getById = async (id) => {
+const getById = async (id, languageId) => {
   debugLog(`Fetching product with id ${id}`);
-  const product = await database.findById(id);
+  const product = await database.findById(id, languageId);
   if (product.length === 0) {
     throw ServiceError.notFound(`Product with id ${id} does not exist`, {
       id,
     });
   }
-
-  const categoriesByProduct = await database.findCategoriesByProductId(id);
-  const bundledProduct = {
-    product,
-    categories: categoriesByProduct.map((productCategory) => productCategory.categoryId),
-  };
-  return bundledProduct;
+  return product;
 };
 
-const getAll = async () => {
-  const products = await database.findAll();
+const getAll = async (languageId) => {
+  debugLog(`Fetching all products with language ${languageId}`);
+  const products = await database.findAll(languageId);
 
   if (products.length === 0) {
     throw ServiceError.notFound('No products found');
@@ -40,24 +34,15 @@ const getAll = async () => {
   };
 };
 
-const getAllByCategory = async () => {
-  const categories = await categoryService.getAllIds();
+const getAllByCategory = async (id, languageId) => {
+  debugLog(`Fetching products with categoryId ${id}`);
+  const products = await database.findProductsByCategoryId(id, languageId);
 
-  if (categories.length === 0) {
-    throw ServiceError.notFound('No categories found');
+  if (products.length === 0) {
+    throw ServiceError.notFound(`No products found for category with id ${id}`);
   }
 
-  const productsByCategory = [];
-
-  for (const categoryId of categories) {
-    const products = await database.findProductsByCategoryId(categoryId);
-    productsByCategory.push({
-      categoryId,
-      products,
-    });
-  }
-
-  return productsByCategory;
+  return products;
 };
 
 const updateById = async (id, {

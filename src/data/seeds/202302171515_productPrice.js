@@ -10,21 +10,9 @@ module.exports = {
         quantity: 1,
       },
       {
-        productId: 4,
-        currencyId: 'USD',
-        price: 217.0,
-        quantity: 1,
-      },
-      {
         productId: 5,
         currencyId: 'EUR',
         price: 219.0,
-        quantity: 1,
-      },
-      {
-        productId: 5,
-        currencyId: 'USD',
-        price: 220.0,
         quantity: 1,
       },
       {
@@ -34,21 +22,9 @@ module.exports = {
         quantity: 1,
       },
       {
-        productId: 6,
-        currencyId: 'USD',
-        price: 95.0,
-        quantity: 1,
-      },
-      {
         productId: 7,
         currencyId: 'EUR',
         price: 809.0,
-        quantity: 1,
-      },
-      {
-        productId: 7,
-        currencyId: 'USD',
-        price: 811.0,
         quantity: 1,
       },
       {
@@ -58,21 +34,9 @@ module.exports = {
         quantity: 1,
       },
       {
-        productId: 8,
-        currencyId: 'USD',
-        price: 581.0,
-        quantity: 1,
-      },
-      {
         productId: 9,
         currencyId: 'EUR',
         price: 1145.0,
-        quantity: 1,
-      },
-      {
-        productId: 9,
-        currencyId: 'USD',
-        price: 1147.0,
         quantity: 1,
       },
       {
@@ -82,21 +46,9 @@ module.exports = {
         quantity: 1,
       },
       {
-        productId: 10,
-        currencyId: 'USD',
-        price: 1972.0,
-        quantity: 1,
-      },
-      {
         productId: 11,
         currencyId: 'EUR',
         price: 1889.0,
-        quantity: 1,
-      },
-      {
-        productId: 11,
-        currencyId: 'USD',
-        price: 1892.0,
         quantity: 1,
       },
       {
@@ -105,60 +57,35 @@ module.exports = {
         price: 1089.0,
         quantity: 1,
       },
-      {
-        productId: 12,
-        currencyId: 'USD',
-        price: 1093.0,
-        quantity: 1,
-      },
+
       {
         productId: 13,
         currencyId: 'EUR',
         price: 1369.0,
         quantity: 1,
       },
-      {
-        productId: 13,
-        currencyId: 'USD',
-        price: 1373.0,
-        quantity: 1,
-      },
+
       {
         productId: 14,
         currencyId: 'EUR',
         price: 2199.0,
         quantity: 1,
       },
-      {
-        productId: 14,
-        currencyId: 'USD',
-        price: 2202.0,
-        quantity: 1,
-      },
+
       {
         productId: 15,
         currencyId: 'EUR',
         price: 1599.0,
         quantity: 3,
       },
-      {
-        productId: 15,
-        currencyId: 'USD',
-        price: 1602.0,
-        quantity: 3,
-      },
+
       {
         productId: 16,
         currencyId: 'EUR',
         price: 1699.0,
         quantity: 1,
       },
-      {
-        productId: 16,
-        currencyId: 'USD',
-        price: 1702.0,
-        quantity: 3,
-      },
+
       {
         productId: 17,
         currencyId: 'EUR',
@@ -166,47 +93,26 @@ module.exports = {
         quantity: 1,
       },
       {
-        productId: 17,
-        currencyId: 'USD',
-        price: 1311.0,
-        quantity: 3,
-      },
-      {
         productId: 18,
         currencyId: 'EUR',
         price: 136.99,
         quantity: 1,
       },
-      {
-        productId: 18,
-        currencyId: 'USD',
-        price: 138.99,
-        quantity: 3,
-      },
+
       {
         productId: 19,
         currencyId: 'EUR',
         price: 75.99,
         quantity: 1,
       },
-      {
-        productId: 19,
-        currencyId: 'USD',
-        price: 77.99,
-        quantity: 1,
-      },
+
       {
         productId: 20,
         currencyId: 'EUR',
         price: 10000.0,
         quantity: 1,
       },
-      {
-        productId: 20,
-        currencyId: 'USD',
-        price: 29.99,
-        quantity: 1,
-      },
+
     ]);
   },
 };
