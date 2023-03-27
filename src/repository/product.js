@@ -10,25 +10,62 @@ const SELECT_COLUMNS = [
 
 async function findById(id, languageId) {
   const product = await getKnex()(tables.product)
-  .select(SELECT_COLUMNS)
+  .select([
+    `${tables.product}.id`,
+    `${tables.product}.stock`,
+    `${tables.product}.image`,
+    `${tables.productDescription}.name`,
+    `${tables.productDescription}.shortDescription`,
+    `${tables.productDescription}.longDescription`,
+    `${tables.productPrice}.price`,
+    `${tables.productPrice}.quantity`,
+    `${tables.company}.name as companyName`,
+    `${tables.company}.logoImg`,
+    getKnex().raw(`GROUP_CONCAT(${tables.productCategory}.categoryId) as categoryId`),
+  ])
   .join(tables.productDescription, `${tables.productDescription}.productId`, '=', `${tables.product}.id`)
   .join(tables.productPrice, `${tables.productPrice}.productId`, '=', `${tables.product}.id`)
   .join(tables.company, `${tables.company}.id`, '=', `${tables.product}.companyId`)
   .join(tables.productCategory, `${tables.productCategory}.productId`, '=', `${tables.product}.id`)
   .where(`${tables.product}.id`, id)
-  .andWhere(`${tables.productDescription}.languageId`, languageId);
-  return product;
+  .andWhere(`${tables.productDescription}.languageId`, languageId)
+  .groupBy(`${tables.product}.id`)
+  .first();
+  const formattedProducts = {
+    ...product,
+    categoryId: product.categoryId.split(',').map((categoryId) => Number(categoryId)),
+  };
+  return formattedProducts;
 }
 const findAll = async (languageId) => {
   const products = await getKnex()(tables.product)
-    .select(SELECT_COLUMNS)
-    .join(tables.productDescription, `${tables.productDescription}.productId`, '=', `${tables.product}.id`)
-    .join(tables.productPrice, `${tables.productPrice}.productId`, '=', `${tables.product}.id`)
-    .join(tables.company, `${tables.company}.id`, '=', `${tables.product}.companyId`)
-    .join(tables.productCategory, `${tables.productCategory}.productId`, '=', `${tables.product}.id`)
-    .where(`${tables.productDescription}.languageId`, languageId)
-    .orderBy('id', 'ASC');
-  return products;
+  .select([
+    `${tables.product}.id`,
+    `${tables.product}.stock`,
+    `${tables.product}.image`,
+    `${tables.productDescription}.name`,
+    `${tables.productDescription}.shortDescription`,
+    `${tables.productDescription}.longDescription`,
+    `${tables.productPrice}.price`,
+    `${tables.productPrice}.quantity`,
+    `${tables.company}.name as companyName`,
+    `${tables.company}.logoImg`,
+    getKnex().raw(`GROUP_CONCAT(${tables.productCategory}.categoryId) as categoryId`),
+  ])
+  .join(tables.productDescription, `${tables.productDescription}.productId`, '=', `${tables.product}.id`)
+  .join(tables.productPrice, `${tables.productPrice}.productId`, '=', `${tables.product}.id`)
+  .join(tables.company, `${tables.company}.id`, '=', `${tables.product}.companyId`)
+  .join(tables.productCategory, `${tables.productCategory}.productId`, '=', `${tables.product}.id`)
+  .where(`${tables.productDescription}.languageId`, languageId)
+  .groupBy(`${tables.product}.id`)
+  .orderBy('id', 'ASC');
+
+const formattedProducts = products.map((product) => ({
+    ...product,
+    categoryId: product.categoryId.split(',').map((categoryId) => Number(categoryId)),
+  }));
+  return formattedProducts;
+  // return products;
 };
 
 const findCount = async () => {

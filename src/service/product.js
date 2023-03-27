@@ -23,7 +23,7 @@ const getById = async (id, languageId) => {
 const getAll = async (languageId) => {
   debugLog(`Fetching all products with language ${languageId}`);
   const products = await database.findAll(languageId);
-
+  console.log(products);
   if (products.length === 0) {
     throw ServiceError.notFound('No products found');
   }

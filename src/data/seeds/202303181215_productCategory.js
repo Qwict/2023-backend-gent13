@@ -11,6 +11,11 @@ module.exports = {
         productId: 4,
       },
       {
+        id: 18,
+        categoryId: 3,
+        productId: 4,
+      },
+      {
         id: 2,
         categoryId: 1,
         productId: 5,
