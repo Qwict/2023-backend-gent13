@@ -83,16 +83,16 @@ const promote = async ({ token, email, role }) => {
       userId: promotedUser.id,
       date: new Date(),
       audience: 'private',
-      subject: 'You have been promoted',
-      text: `You have been promoted to ${role}`,
+      subject: 'Company role changed',
+      text: `You have been promoted to ${role} by administrator ${admin.name} (${admin.email})`,
     });
     notificationFactory.create({
       userId: admin.id,
       companyId: admin.companyId,
       date: new Date(),
       audience: 'admin',
-      subject: `User role changed`,
-      text: `${admin.name} promoted ${user.name} to ${role}`,
+      subject: `Changed employee role`,
+      text: `${admin.name ? `(${admin.name} ${admin.email})` : admin.email} promoted ${user.name ? `${user.name} (${user.email})` : user.email} to ${role}`,
     });
   }
 };
@@ -168,7 +168,7 @@ const register = async ({
       date: new Date(),
       audience: 'private',
       subject: 'Welcome!',
-      text: `Welcome to delaware shipping, ${user.name}`,
+      text: `Welcome to delaware shipping, ${user.name ? user.name : user.email}`,
     });
     return jwt.sign(jwtPackage, process.env.JWT_SECRET, {
       expiresIn: 36000,

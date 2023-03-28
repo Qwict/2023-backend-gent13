@@ -74,17 +74,19 @@ const register = async (company, newAdminToken) => {
     companyId: createdCompanyId,
     role: 'admin',
   };
-  const adminId = await userRepository.updateById(admin.id, {
+  // removed await
+  userRepository.updateById(admin.id, {
     ...admin,
   });
-  await notificationFactory.create({
+  // removed await
+  notificationFactory.create({
     companyId: createdCompanyId,
     date: new Date(),
     audience: 'admin',
     subject: `New Company registered`,
-    text: `Company ${createdCompany.name} (${createdCompany.vatNumber}) was registered by ${admin.name} (${admin.email})`,
+    text: `Company ${createdCompany.name} (${createdCompany.vatNumber}) was registered by ${admin.name ? `${admin.name} (${admin.email})` : admin.email} }`,
   });
-  debugLog(`Company with id ${createdCompanyId} now has ${adminId} as admin (${admin.name})!`);
+  debugLog(`Company with id ${createdCompanyId} now has ${admin.email} as admin !`);
 };
 
 /**

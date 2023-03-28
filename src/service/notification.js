@@ -23,20 +23,23 @@ const getAll = async (token, archived = 0) => {
   const user = await userService.getByToken(token);
   let notifications = [];
   let companyNotifications = [];
+  let filteredCompanyNotifications = [];
+  let privateNotifications = [];
 
   // Get all private notifications
   notifications = await notificationRepository.findAllByUser(user.id);
-  notifications = notifications.filter((notification) => notification.audience === 'private');
-
+  privateNotifications = notifications.filter((notification) => notification.audience === 'private');
   // List all notifications for company users
   if (user.companyId && user.role !== 'pending') {
     companyNotifications = await notificationRepository.findAllByCompany(user.companyId);
     if (user.role !== 'admin') {
-      companyNotifications = notifications.filter((notification) => notification.audience !== 'admin');
+      filteredCompanyNotifications = companyNotifications.filter((notification) => notification.audience === 'company');
+    } else {
+      filteredCompanyNotifications = companyNotifications;
     }
   }
 
-  notifications = [...companyNotifications, ...notifications];
+  notifications = [...privateNotifications, ...filteredCompanyNotifications];
   notifications = notifications.filter((notification) => notification.archived === archived);
   // notifications = notifications.sort(function (a, b) {
   //   return a.status - b.status || new Date(b.date) - new Date(a.date)
