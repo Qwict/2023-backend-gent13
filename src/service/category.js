@@ -30,7 +30,16 @@ const getAll = async () => {
   };
 };
 
+// BAD CODE
+// const getAllIds = async () => {
+//   const categories = await getAll();
+//   console.log(categories);
+//   const ids = categories.map((category) => category.id);
+//   return ids;
+// };
+
 module.exports = {
   getById,
   getAll,
+  // getAllIds,
 };
