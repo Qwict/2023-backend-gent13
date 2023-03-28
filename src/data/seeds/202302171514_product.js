@@ -125,7 +125,7 @@ module.exports = {
         id: 20,
         stock: 100,
         image: 'Inventum TMO430.avif',
-        companyId: 1,
+        companyId: 2,
       },
     ]);
   },

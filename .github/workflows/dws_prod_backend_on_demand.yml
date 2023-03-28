@@ -22,6 +22,7 @@ jobs:
           git status
           yarn install
           cp ../dws_back/prod-pm2.ecosystem.config.js ./
+          cp -r ../dws_back/uploads ./
           pm2 list
           pm2 delete dws_backend_prod
           pm2 start prod-pm2.ecosystem.config.js --watch --ignore-watch="node_modules"

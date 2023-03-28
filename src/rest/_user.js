@@ -56,7 +56,6 @@ verify.validationScheme = {
 };
 
 const update = async (ctx) => {
-  // console.log(ctx.request.body)
   const token = ctx.headers.authorization;
   const verification = await userService.update(token, ctx.request.body);
   ctx.body = verification;

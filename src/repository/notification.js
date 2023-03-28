@@ -2,62 +2,85 @@ const { tables, getKnex } = require('../data');
 
 async function findById(id) {
   const notification = await getKnex()(tables.notification).where('id', id).first();
-   return notification;
+  return notification;
 }
 const findAllByCompany = async (companyId) => {
   const notifications = await getKnex()(tables.notification).select()
-    .where('companyId', companyId)
-    .orderBy('date', 'ASC');
+    .where('companyId', companyId);
   return notifications;
 };
 
-const findAllByUser = async (buyerId) => {
+const findAllByUser = async (userId) => {
   const notifications = await getKnex()(tables.notification).select()
-    .where('buyerId', buyerId)
-    .orderBy('date', 'ASC');
+    .where('userId', userId)
+    .andWhere('audience', 'private')
+    .orWhere('audience', 'all');
   return notifications;
 };
 
 const create = async ({
-  orderid,
-  buyerId,
-  companyid,
+  orderId,
+  userId,
+  companyId,
   date,
+  audience,
+  subject,
   text,
-  status,
-  }) => {
-      const [id] = await getKnex()(tables.notification)
-        .insert({
-          orderid,
-          buyerId,
-          companyid,
-          date,
-          text,
-          status,
-        });
-      return id;
-  };
-
-const updateById = async (id, status) => {
-  await getKnex()(tables.notification)
-  .insert({
-    status,
-  });
+}) => {
+  const [id] = await getKnex()(tables.notification)
+    .insert({
+      orderId,
+      userId,
+      companyId,
+      date,
+      audience,
+      subject,
+      text,
+      archived: false,
+      status: false,
+    });
   return id;
 };
 
-  const deleteById = async (id) => {
-      const rowsAffected = await getKnex()(tables.notification)
-        .delete()
-        .where('id', id);
+const changeReadStatusById = async (id, {
+  status,
+  readBy,
+}) => {
+  await getKnex()(tables.notification)
+    .update({
+      status,
+      readBy,
+    })
+    .where('id', id);
+};
 
-      return rowsAffected > 0;
-  };
+const changeArchiveStatusById = async (id, {
+  archived,
+  archivedBy,
+  readBy,
+}) => {
+  await getKnex()(tables.notification)
+    .update({
+      archived,
+      archivedBy,
+      readBy,
+    })
+    .where('id', id);
+};
+
+const deleteById = async (id) => {
+  const rowsAffected = await getKnex()(tables.notification)
+    .delete()
+    .where('id', id);
+
+  return rowsAffected > 0;
+};
 module.exports = {
   findById,
   findAllByCompany,
   findAllByUser,
   create,
-  updateById,
+  changeReadStatusById,
+  changeArchiveStatusById,
   deleteById,
 };

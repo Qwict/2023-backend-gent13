@@ -1,5 +1,5 @@
 const { getLogger } = require('../core/logging');
-const database = require('../repository/notification');
+const notificationRepository = require('../repository/notification');
 const userService = require('./user');
 
 const debugLog = (message, meta = {}) => {
@@ -10,8 +10,8 @@ const ServiceError = require('../core/serviceError');
 
 const getById = async (id) => {
   debugLog(`Fetching notification with id ${id}`);
-  const notification = await database.findById(id);
-   if (!notification) {
+  const notification = await notificationRepository.findById(id);
+  if (!notification) {
     throw ServiceError.notFound(`Notification with id ${id} does not exist`, {
       id,
     });
@@ -19,15 +19,31 @@ const getById = async (id) => {
   return notification;
 };
 
-const getAll = async (token) => {
+const getAll = async (token, archived = 0) => {
   const user = await userService.getByToken(token);
   let notifications = [];
+  let companyNotifications = [];
 
-  if (user.companyId) {
-    notifications = await database.findAllByCompany(user.companyId);
-  } else if (user.buyerId) {
-    notifications = await database.findAllByUser(user.buyerId);
+  // Get all private notifications
+  notifications = await notificationRepository.findAllByUser(user.id);
+  notifications = notifications.filter((notification) => notification.audience === 'private');
+
+  // List all notifications for company users
+  if (user.companyId && user.role !== 'pending') {
+    companyNotifications = await notificationRepository.findAllByCompany(user.companyId);
+    if (user.role !== 'admin') {
+      companyNotifications = notifications.filter((notification) => notification.audience !== 'admin');
+    }
   }
+
+  notifications = [...companyNotifications, ...notifications];
+  notifications = notifications.filter((notification) => notification.archived === archived);
+  // notifications = notifications.sort(function (a, b) {
+  //   return a.status - b.status || new Date(b.date) - new Date(a.date)
+  // });
+  notifications.sort((a, b) => (
+    a.status - b.status || new Date(b.date) - new Date(a.date)
+  ));
 
   return {
     items: notifications,
@@ -36,40 +52,79 @@ const getAll = async (token) => {
 };
 
 const create = async ({
-    orderid,
-    buyerId,
+  orderId,
+  userId,
+  companyId,
+  date,
+  audience,
+  subject,
+  text,
+}) => {
+  const newNotification = {
+    orderId,
+    userId,
     companyId,
     date,
+    audience,
+    subject,
     text,
-    status,
-  }) => {
-    const newNotification = {
-      orderid,
-      buyerId,
-      companyId,
-      date,
-      text,
-      status,
+  };
+  debugLog('Creating new notification', newNotification);
+  const id = await notificationRepository.create(newNotification);
+  return getById(id);
+};
+
+const deleteById = async (id) => {
+  debugLog(`Deleting notification with id ${id}`);
+  await notificationRepository.deleteById(id);
+};
+
+const switchReadStatusById = async (id, token) => {
+  const user = await userService.getByToken(token);
+  const notification = await getById(id);
+  if (notification.status === 1) {
+    debugLog(`Marking notification with ${id} as unread`);
+    const changes = {
+      status: 0,
+      readBy: null,
     };
-    debugLog('Creating new notification', newNotification);
-    const id = await database.create(newNotification);
-    return getById(id);
-  };
+    await notificationRepository.changeReadStatusById(id, changes);
+  } else {
+    debugLog(`Marking notification with ${id} as read (user: ${user.email}))`);
+    const changes = {
+      status: 1,
+      readBy: user.email,
+    };
+    await notificationRepository.changeReadStatusById(id, changes);
+  }
+};
 
-  const deleteById = async (id) => {
-    debugLog(`Deleting notification with id ${id}`);
-    await database.deleteById(id);
-  };
-
-  const updateById = async (id, { status }) => {
-    debugLog(`Updating notification with id ${id}`);
-    await database.updateById(id, status);
-  };
+const switchArchiveStatusById = async (id, token) => {
+  const user = await userService.getByToken(token);
+  const notification = await getById(id);
+  if (notification.archived === 1) {
+    const changes = {
+      archived: 0,
+      archivedBy: null,
+    };
+    await notificationRepository.changeArchiveStatusById(id, changes);
+    debugLog(`Notification was UNarchived by ${user.email}`);
+  } else {
+    const changes = {
+      archived: 1,
+      archivedBy: user.email,
+      readBy: notification.readBy || user.email,
+    };
+    await notificationRepository.changeArchiveStatusById(id, changes);
+    debugLog(`Notification was archived by ${user.email}`);
+  }
+};
 
 module.exports = {
   getById,
   getAll,
   create,
-  updateById,
+  switchReadStatusById,
+  switchArchiveStatusById,
   deleteById,
 };
