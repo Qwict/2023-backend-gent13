@@ -6,7 +6,6 @@ const {
 
 const create = async (user, {
   packagingId,
-  currencyId,
   fromCompanyId,
   orderReference,
   netPrice,
@@ -33,7 +32,6 @@ const create = async (user, {
         customerId: user.companyId,
         fromCompanyId,
         packagingId,
-        currencyId,
         orderReference,
         orderDateTime: new Date().toString(),
         netPrice,
@@ -46,7 +44,7 @@ const create = async (user, {
           orderId,
           productId: product.id,
           quantity: product.quantity,
-          netPrice: product.netPrice,
+          netPrice: product.netPrice * product.quantity,
         });
       }
 

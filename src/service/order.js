@@ -143,7 +143,6 @@ const getAll = async (token) => {
 
 const create = async (token, {
   packagingId,
-  currencyId,
   netPrice,
   taxPrice,
   totalPrice,
@@ -160,18 +159,19 @@ const create = async (token, {
   const dbProducts = [];
   const companies = new Set();
   for (const product of products) {
-    const productFromDb = await productService.getById(product.id);
+    const productFromDb = await productService.getById(product.id, 'nl');
+    console.log(productFromDb);
     dbProducts.push({
       id: product.id,
-      companyId: productFromDb[0].companyId,
+      companyId: productFromDb.companyId,
       quantity: product.quantity,
-      netPrice: productFromDb[0].price,
+      netPrice: productFromDb.price,
     });
-    companies.add(productFromDb[0].companyId);
-    total += productFromDb[0].price * product.quantity;
+    console.log(productFromDb.companyId);
+    companies.add(productFromDb.companyId);
+    total += productFromDb.price * product.quantity;
   }
   total += round(total * 0.06, 2);
-
   if (total !== totalPrice) {
     throw ServiceError.forbidden('You have gesjoemeld met de prijzen!');
   }
@@ -182,12 +182,11 @@ const create = async (token, {
   const user = await userService.getByToken(token);
   // const user = { id: '4b09960e-0864-45e0-bab6-6cf8c7fc4626', companyId: 1 };
   const orderReference = `REF${makeChars(13)}`;
-
+    console.log(company);
   const trackAndtrace = `${Date.now()}${makeChars(5)}`;
 
   const id = await orderFactory.create(user, {
     packagingId,
-    currencyId,
     fromCompanyId: company,
     orderReference,
     netPrice,

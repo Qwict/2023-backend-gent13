@@ -10,7 +10,6 @@ module.exports = {
       table.integer('customerId').unsigned().notNullable();
       table.integer('fromCompanyId').unsigned().notNullable();
       table.integer('packagingId').unsigned().notNullable();
-      table.string('currencyId').notNullable();
       table.string('orderReference', 64).notNullable();
       table.string('orderDateTime').notNullable();
       table.double('netPrice').notNullable();

@@ -33,7 +33,6 @@ const create = async (ctx) => {
 create.validationScheme = {
   body: {
     packagingId: Joi.number().integer(),
-    currencyId: Joi.string().max(10),
     netPrice: Joi.number(),
     taxPrice: Joi.number(),
     totalPrice: Joi.number(),

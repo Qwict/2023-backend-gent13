@@ -11,7 +11,6 @@ module.exports = {
         customerId: 1,
         fromCompanyId: 1,
         packagingId: 1,
-        currencyId: "EUR",
         orderReference: "REF1",
         orderDateTime: "Fri Mar 03 2023 15:34:55 GMT+0100 (Central European Standard Time)",
         netPrice: 49.99,
