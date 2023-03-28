@@ -6,15 +6,15 @@ async function findById(id) {
 }
 const findAllByCompany = async (companyId) => {
   const notifications = await getKnex()(tables.notification).select()
-    .where('companyId', companyId)
-    .orderBy('date', 'ASC');
+    .where('companyId', companyId);
   return notifications;
 };
 
 const findAllByUser = async (userId) => {
   const notifications = await getKnex()(tables.notification).select()
     .where('userId', userId)
-    .orderBy('date', 'ASC');
+    .andWhere('audience', 'private')
+    .orWhere('audience', 'all');
   return notifications;
 };
 
@@ -36,17 +36,33 @@ const create = async ({
       audience,
       subject,
       text,
+      archived: false,
+      status: false,
     });
   return id;
 };
 
-const updateById = async (id, {
+const changeReadStatusById = async (id, {
   status,
-  readBy = '',
+  readBy,
 }) => {
   await getKnex()(tables.notification)
     .update({
       status,
+      readBy,
+    })
+    .where('id', id);
+};
+
+const changeArchiveStatusById = async (id, {
+  archived,
+  archivedBy,
+  readBy,
+}) => {
+  await getKnex()(tables.notification)
+    .update({
+      archived,
+      archivedBy,
       readBy,
     })
     .where('id', id);
@@ -64,6 +80,7 @@ module.exports = {
   findAllByCompany,
   findAllByUser,
   create,
-  updateById,
+  changeReadStatusById,
+  changeArchiveStatusById,
   deleteById,
 };

@@ -17,6 +17,7 @@ module.exports = {
         .defaultTo('Order information');
       table.string('text', 512);
       table.string('readBy', 255);
+      table.string('archivedBy', 255);
       table.boolean('status');
       table.boolean('archived');
       table.foreign('orderId', 'fk_Notification_Order').references(`${tables.order}.id`).onDelete('SET NULL');

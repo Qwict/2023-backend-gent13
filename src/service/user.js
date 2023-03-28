@@ -30,14 +30,13 @@ const generateJavaWebToken = async (user) => {
 };
 
 const getByToken = async (token) => {
-  debugLog(`Decoding token ${token}`);
+  // debugLog(`Decoding token ${token}`);
   if (token) {
-  const decodedUser = jwt.decode(token);
-  const user = userRepository.findByMail(decodedUser.email);
-  const { salt, hash, ...rest } = user;
-  return user;
-}
-throw ServiceError.forbidden('No token provided');
+    const decodedUser = jwt.decode(token);
+    const user = userRepository.findByMail(decodedUser.email);
+    return user;
+  }
+  throw ServiceError.forbidden('No token provided');
 };
 
 const getUserByEmail = async (email) => {
@@ -82,7 +81,6 @@ const promote = async ({ token, email, role }) => {
     debugLog(`Promoted user ${promotedUser.name} (${promotedUser.id} - ${promotedUser.companyId}) to ${role}`);
     notificationFactory.create({
       userId: promotedUser.id,
-      companyId: promotedUser.companyId,
       date: new Date(),
       audience: 'private',
       subject: 'You have been promoted',
@@ -130,13 +128,15 @@ const deleteUser = async (token) => {
       throw ServiceError.badRequest(`The ${role} - ${email} is the only admin in the company and can not be deleted`);
     }
   }
-  notificationFactory.create({
-    companyId,
-    date: new Date(),
-    audience: 'admin',
-    subject: 'Account deleted',
-    text: `User ${email} deleted their account`,
-  });
+  if (companyId) {
+    notificationFactory.create({
+      companyId,
+      date: new Date(),
+      audience: 'admin',
+      subject: 'Account deleted',
+      text: `User ${email} deleted their account`,
+    });
+  }
 };
 
 const register = async ({
@@ -162,22 +162,19 @@ const register = async ({
       email: user.email,
       permission: user.role,
     };
+
+    notificationFactory.create({
+      userId: user.id,
+      date: new Date(),
+      audience: 'private',
+      subject: 'Welcome!',
+      text: `Welcome to delaware shipping, ${user.name}`,
+    });
     return jwt.sign(jwtPackage, process.env.JWT_SECRET, {
       expiresIn: 36000,
       issuer: process.env.AUTH_ISSUER,
       audience: process.env.AUTH_AUDIENCE,
     });
-    // const jwtPackage = {
-    //   id: user.id,
-    //   name: user.name,
-    //   email: user.email,
-    //   companyId: user.companyId,
-    // };
-    // return jwt.sign(jwtPackage, process.env.JWT_SECRET, {
-    //   expiresIn: 36000,
-    //   issuer: process.env.AUTH_ISSUER,
-    //   audience: process.env.AUTH_AUDIENCE,
-    // });
   } catch (error) {
     if (error.message === 'DUPLICATE_ENTRY') {
       throw ServiceError.duplicate('DUPLICATE ENTRY');
@@ -283,8 +280,8 @@ const join = async ({
     companyId,
     date: new Date(),
     audience: 'admin',
-    subject: 'New user',
-    text: `User ${email} wants to join your company`,
+    subject: 'Pending join request',
+    text: `User ${email} wants to join your company. It is possible to allow this user to join your company in the admin panel.`,
   });
   notificationFactory.create({
     userId: user.id,
@@ -333,6 +330,26 @@ const update = async (token, {
     verification.updatedUser = formatedUpdatedUser;
     verification.validated = true;
   }
+  debugLog(`User ${user.name} updated`);
+
+  if (email && decodedUser.companyId) {
+    notificationFactory.create({
+      userId: user.id,
+      companyId: decodedUser.companyId,
+      date: new Date(),
+      audience: 'private',
+      subject: 'Email changed',
+      text: `Your email has been changed from ${originalEmail} to ${email}`,
+    });
+    notificationFactory.create({
+      companyId: decodedUser.companyId,
+      date: new Date(),
+      audience: 'admin',
+      subject: 'User changed email',
+      text: `User ${originalEmail} changed email to ${email}`,
+    });
+    debugLog(`User ${user.name} changed email from ${originalEmail} to ${email}`);
+  }
   return verification;
 };
 
@@ -371,6 +388,20 @@ const leaveCompany = async (token) => {
       throw ServiceError.badRequest(`The ${user.role} - ${user.email} is the only admin in the company and can not be deleted`);
     }
   }
+  notificationFactory.create({
+    userId: user.id,
+    date: new Date(),
+    audience: 'private',
+    subject: 'Left company',
+    text: `You left a company`,
+  });
+  notificationFactory.create({
+    companyId: user.companyId,
+    date: new Date(),
+    audience: 'admin',
+    subject: 'Left company',
+    text: `${user.name} (${user.email}) left the company`,
+  });
 };
 
 module.exports = {

@@ -1,5 +1,11 @@
 const uuid = require('uuid');
 const { tables, getKnex } = require('../data');
+const { getLogger } = require('../core/logging');
+
+const debugLog = (message, meta = {}) => {
+  if (!this.logger) this.logger = getLogger();
+  this.logger.debug(message, meta);
+};
 
 const create = async ({
   orderId,
@@ -21,10 +27,12 @@ const create = async ({
       audience: audience || 'private',
       subject: subject || 'No Subject',
       text: text || 'Extra information not specified',
+      status: false,
+      archived: false,
     });
+  debugLog(`NOTIFICATION FACTORY with id ${id} for user ${userId} and company ${companyId}`);
 };
 
 module.exports = {
   create,
-  // update,
 };

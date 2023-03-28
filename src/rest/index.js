@@ -9,7 +9,7 @@ const installUserRouter = require('./_user');
 const installCompanyRouter = require('./_company');
 const installProductRouter = require('./_product');
 const installCategoryRouter = require('./_category');
-const installNotificationRouter = require('./_notification');
+const installNotificationsRouter = require('./_notifications');
 const installDeliveryRouter = require('./_delivery');
 const installPackageRouter = require('./_packaging');
 
@@ -24,7 +24,7 @@ module.exports = (app) => {
   installProductRouter(router);
   installUserRouter(router);
   installCompanyRouter(router);
-  installNotificationRouter(router);
+  installNotificationsRouter(router);
   installDeliveryRouter(router);
   installPackageRouter(router);
 
