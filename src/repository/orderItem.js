@@ -17,7 +17,6 @@ async function findByOrder(orderId) {
   .join(tables.company, `${tables.company}.id`, '=', `${tables.product}.companyId`)
   .where(`${tables.orderItem}.orderId`, orderId)
   .andWhere(`${tables.productDescription}.languageId`, 'en');
-  console.log(orderItems);
   return orderItems;
 }
 

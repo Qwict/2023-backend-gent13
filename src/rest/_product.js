@@ -5,7 +5,6 @@ const productService = require('../service/product');
 const validate = require('./_validation');
 
 const getById = async (ctx) => {
-  console.log(ctx.params);
   ctx.body = await productService.getById(ctx.params.id, ctx.params.languageId);
   ctx.status = 200;
 };
@@ -28,7 +27,6 @@ getAll.validationScheme = {
 };
 
 const getAllByCategory = async (ctx) => {
-  console.log(ctx.params);
   ctx.body = await productService.getAllByCategory(ctx.params.categoryId, ctx.params.languageId);
   ctx.status = 200;
 };

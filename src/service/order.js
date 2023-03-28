@@ -160,14 +160,12 @@ const create = async (token, {
   const companies = new Set();
   for (const product of products) {
     const productFromDb = await productService.getById(product.id, 'nl');
-    console.log(productFromDb);
     dbProducts.push({
       id: product.id,
       companyId: productFromDb.companyId,
       quantity: product.quantity,
       netPrice: productFromDb.price,
     });
-    console.log(productFromDb.companyId);
     companies.add(productFromDb.companyId);
     total += productFromDb.price * product.quantity;
   }
@@ -182,7 +180,6 @@ const create = async (token, {
   const user = await userService.getByToken(token);
   // const user = { id: '4b09960e-0864-45e0-bab6-6cf8c7fc4626', companyId: 1 };
   const orderReference = `REF${makeChars(13)}`;
-    console.log(company);
   const trackAndtrace = `${Date.now()}${makeChars(5)}`;
 
   const id = await orderFactory.create(user, {
