@@ -14,6 +14,16 @@ const debugLog = (message, meta = {}) => {
   this.logger.debug(message, meta);
 };
 
+// const checkCompanyForAdmins = async (companyId) => {
+//   debugLog(`Checking if company ${companyId} has admins`);
+//   const employees = await getAllEmployees(user.companyId);
+//   const admins = employees.filter((employee) => employee.role === 'admin');
+//   if (admins.length > 1) {
+//     return true;
+//   }
+//   throw ServiceError.badRequest(`The ${user.role} - ${user.email} is the only admin in the company and can not be deleted`);
+// };
+
 const generateJavaWebToken = async (user) => {
   debugLog(`Generating JWT for ${user.email}`);
   const jwtPackage = {
@@ -92,7 +102,7 @@ const promote = async ({ token, email, role }) => {
       date: new Date(),
       audience: 'admin',
       subject: `Changed employee role`,
-      text: `${admin.name ? `(${admin.name} ${admin.email})` : admin.email} promoted ${user.name ? `${user.name} (${user.email})` : user.email} to ${role}`,
+      text: `${admin.name ? `${admin.name} (${admin.email})` : admin.email} promoted ${user.name ? `${user.name} (${user.email})` : user.email} to ${role}`,
     });
   }
 };
@@ -259,9 +269,8 @@ const join = async ({
   token,
   companyId,
 }) => {
-  const { email } = await getByToken(token);
-  debugLog(`User ${email} wants to join company with id: ${companyId}`);
-  const user = await userRepository.findByMail(email);
+  const user = await getByToken(token);
+  debugLog(`User ${user.email} wants to join company with id: ${companyId}`);
   try {
     const newUser = {
       ...user,
@@ -281,7 +290,7 @@ const join = async ({
     date: new Date(),
     audience: 'admin',
     subject: 'Pending join request',
-    text: `User ${email} wants to join your company. It is possible to allow this user to join your company in the admin panel.`,
+    text: `User ${user.email} wants to join your company. It is possible to allow this user to join your company in the admin panel.`,
   });
   notificationFactory.create({
     userId: user.id,
@@ -303,9 +312,11 @@ const update = async (token, {
   city,
   country,
 }) => {
-  const decodedUser = await getByToken(token);
-  const originalEmail = decodedUser.email;
-  const user = await getUserByEmail(originalEmail);
+  const user = await getByToken(token);
+  if (user.role === 'admin') {
+    checkCompanyForAdmins(user.companyId);
+  }
+  const originalEmail = user.email;
   debugLog(`updating user with id ${user.id}`);
   const updatedUserId = await userRepository.updateById(user.id, {
     name: (name || user.name),
@@ -329,26 +340,28 @@ const update = async (token, {
     verification.token = updatedToken;
     verification.updatedUser = formatedUpdatedUser;
     verification.validated = true;
+    debugLog(`Successfully created JWT for user ${updatedUser.name}`);
   }
   debugLog(`User ${user.name} updated`);
 
-  if (email && decodedUser.companyId) {
+  if (email !== originalEmail) {
+    if (user.companyId) {
+      notificationFactory.create({
+        companyId: user.companyId,
+        date: new Date(),
+        audience: 'admin',
+        subject: 'User changed email',
+        text: `User ${originalEmail} changed email to ${email}`,
+      });
+      debugLog(`User ${user.name} changed email from ${originalEmail} to ${email}`);
+    }
     notificationFactory.create({
       userId: user.id,
-      companyId: decodedUser.companyId,
       date: new Date(),
       audience: 'private',
       subject: 'Email changed',
       text: `Your email has been changed from ${originalEmail} to ${email}`,
     });
-    notificationFactory.create({
-      companyId: decodedUser.companyId,
-      date: new Date(),
-      audience: 'admin',
-      subject: 'User changed email',
-      text: `User ${originalEmail} changed email to ${email}`,
-    });
-    debugLog(`User ${user.name} changed email from ${originalEmail} to ${email}`);
   }
   return verification;
 };

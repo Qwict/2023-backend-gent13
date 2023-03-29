@@ -22,7 +22,7 @@ const create = async ({
       id,
       orderId: orderId || null,
       userId: userId || null,
-      companyId: companyId || null,
+      companyId: audience === 'private' ? null : companyId || null,
       date,
       audience: audience || 'private',
       subject: subject || 'No Subject',
@@ -30,7 +30,7 @@ const create = async ({
       status: false,
       archived: false,
     });
-  debugLog(`NOTIFICATION FACTORY with id ${id} for user ${userId} and company ${companyId}`);
+  debugLog(`NOTIFICATION FACTORY - ${audience}: ${subject} -> ${text}`);
 };
 
 module.exports = {
