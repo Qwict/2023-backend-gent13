@@ -179,7 +179,10 @@ const create = async (token, {
   const user = await userService.getByToken(token);
   for (const company of companies) {
   debugLog('Creating new order');
-
+  const companyProducts = dbProducts.filter((product) => product.companyId === company);
+  const companyNet = companyProducts.reduce((acc, product) => acc + (product.netPrice * product.quantity), 0) + packaging.price;
+  const companyTax = round(companyNet * 0.06, 2);
+  const companyTotal = companyNet + companyTax;
   // const user = { id: '4b09960e-0864-45e0-bab6-6cf8c7fc4626', companyId: 1 };
   const orderReference = `REF${makeChars(13)}`;
   const trackAndtrace = `${Date.now()}${makeChars(5)}`;
@@ -188,10 +191,10 @@ const create = async (token, {
     packagingId,
     fromCompanyId: company,
     orderReference,
-    netPrice,
-    taxPrice,
-    totalPrice,
-    products: dbProducts.filter((product) => product.companyId === company),
+    netPrice: companyNet,
+    taxPrice: companyTax,
+    totalPrice: companyTotal,
+    products: companyProducts,
     street,
     number,
     zipCode,
