@@ -40,7 +40,6 @@ const data = {
     },
   productPrice: {
     productId: 1,
-    currencyId: 'EUR',
     price: 49.99,
     quantity: 1,
   },
@@ -92,7 +91,7 @@ describe('Products', () => {
     });
 
     test('It should return all products', async () => {
-      const response = await request.get(url);
+      const response = await request.get(`${url}/nl`);
       expect(response.status).toBe(200);
       expect(response.body.count).toBeGreaterThanOrEqual(1);
       expect(response.body.products.length).toBeGreaterThanOrEqual(1);
@@ -121,9 +120,9 @@ describe('Products', () => {
     });
 
     test('It should return a specific product', async () => {
-      const response = await request.get(`${url}/${data.product.id}`);
+      const response = await request.get(`${url}/${data.product.id}/nl`);
       expect(response.status).toBe(200);
-      expect(response.body.product[0].id).toBe(data.product.id);
+      expect(response.body.id).toBe(data.product.id);
     });
   });
 });

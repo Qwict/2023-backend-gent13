@@ -43,7 +43,6 @@ const data = {
       salt: 'EmdaG/Ks3SRf1kKVzabARJwNqRLnXlpCN60kCmLX5tt2faDlaXrkE1BI1R8mFKMo/Sj6VOjeZEvCb/CaPLw68bUs6p9qpPhSYT1DJVoYyWoovbN4VTTVwE6lsqy40/XHpECzr9wjpfdYAs/770EBzzou/e1rue/7VoZhJau0UFI=',
       hash: 'hQXWdE01+n+yibcH1LqjpuMUhcufBMBT2NkNmuV6x7DoeSPbFRvM3laXdIfnqyOi9rknLoBeok5m6y+4yHbsQQ==',
       companyId: 1,
-      companyVerified: true,
       role: 'employee',
     },
     product: {
@@ -61,7 +60,6 @@ const data = {
       },
     productPrice: {
       productId: 1,
-      currencyId: 'EUR',
       price: 49.99,
       quantity: 1,
     },
@@ -69,8 +67,8 @@ const data = {
     id: '12165d36-cb10-4e12-8d6b-10cdf8f5f9f1',
     buyerId: "4b09960e-0864-45e0-bab6-6cf8c7fc4626",
     customerId: 1,
+    fromCompanyId: 1,
     packagingId: 1,
-    currencyId: "EUR",
     orderReference: "REF1",
     orderDateTime: "Fri Mar 03 2023 15:34:55 GMT+0100 (Central European Standard Time)",
     netPrice: 49.99,
