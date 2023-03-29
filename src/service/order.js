@@ -13,6 +13,7 @@ const orderFactory = require('../repository/completeOrderCreation');
 const userService = require('./user');
 const companyService = require('./company');
 const packagingService = require('./packaging');
+const notificationFactory = require('../repository/notificationFactory');
 
 function makeChars(length) {
   let result = '';
@@ -175,9 +176,10 @@ const create = async (token, {
   }
 
   const mainOrders = [];
+  const user = await userService.getByToken(token);
   for (const company of companies) {
   debugLog('Creating new order');
-  const user = await userService.getByToken(token);
+
   // const user = { id: '4b09960e-0864-45e0-bab6-6cf8c7fc4626', companyId: 1 };
   const orderReference = `REF${makeChars(13)}`;
   const trackAndtrace = `${Date.now()}${makeChars(5)}`;
@@ -199,6 +201,17 @@ const create = async (token, {
     trackAndtrace,
   });
   const mainOrder = await getById(id);
+
+  notificationFactory.create({
+    orderId: mainOrder.orderId,
+    userId: user.id,
+    companyId: user.companyId,
+    date: mainOrder.date,
+    audience: 'company',
+    subject: 'order',
+    text: 'New order created',
+  });
+
   mainOrders.push(mainOrder);
 }
   return mainOrders;
