@@ -4,17 +4,17 @@ const {
 } = require('../data');
 
 async function findById(id) {
-  const deliveryService = await getKnex()(tables.deliveryService).where('id', id).first();
+  const deliveryService = await getKnex()(tables.delivery_service).where('id', id).first();
   return deliveryService;
 }
 
 const findByVat = async (vat) => {
-  const deliveryService = await getKnex()(tables.deliveryService).where('vatNumber', vat).first();
+  const deliveryService = await getKnex()(tables.delivery_service).where('vat_number', vat).first();
   return deliveryService;
 };
 
 const findAll = async () => {
-  const deliServices = await getKnex()(tables.deliveryService).select();
+  const deliServices = await getKnex()(tables.delivery_service).select();
   return deliServices;
 };
 

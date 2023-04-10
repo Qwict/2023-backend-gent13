@@ -5,12 +5,12 @@ module.exports = {
     await knex.schema.createTable(tables.company, (table) => {
       table.increments('id').unique();
       table.string('name', 128).notNullable();
-      table.string('logoImg', 512);
-      table.string('countryCode', 16).notNullable();
-      table.string('vatNumber', 64).notNullable();
+      table.string('logo_img', 512);
+      table.string('country_code', 16).notNullable();
+      table.string('vat_number', 64).notNullable();
       table.string('street', 64).notNullable();
-      table.string('streetNumber', 32).notNullable();
-      table.string('zipCode', 32).notNullable();
+      table.string('street_number', 32).notNullable();
+      table.string('zip_code', 32).notNullable();
       table.string('city', 64).notNullable();
       table.string('country', 64).notNullable();
     });

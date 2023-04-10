@@ -20,9 +20,9 @@ const create = async ({
   await getKnex()(tables.notification)
     .insert({
       id,
-      orderId: orderId || null,
-      userId: userId || null,
-      companyId: audience === 'private' ? null : companyId || null,
+      order_id: orderId || null,
+      user_id: userId || null,
+      company_id: audience === 'private' ? null : companyId || null,
       date,
       audience: audience || 'private',
       subject: subject || 'No Subject',

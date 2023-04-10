@@ -31,7 +31,7 @@ const findAll = async () => {
 
 const findById = async (id) => {
   const company = await getKnex()(tables.company)
-  .where('id', id).first();
+    .where('id', id).first();
   return company;
 };
 
@@ -50,8 +50,8 @@ const findCount = async () => {
 const findByVAT = async (countryCode, vatNumber) => {
   const company = await getKnex()(tables.company)
     .select()
-    .where('countryCode', countryCode)
-    .andWhere('vatNumber', vatNumber)
+    .where('country_code', countryCode)
+    .andWhere('vat_number', vatNumber)
     .first();
   return company;
 };
@@ -83,11 +83,11 @@ async function create({
     const [id] = await getKnex()(tables.company)
       .insert({
         name,
-        countryCode,
-        vatNumber,
+        country_code: countryCode,
+        vat_number: vatNumber,
         street,
-        streetNumber,
-        zipCode,
+        street_number: streetNumber,
+        zip_code: zipCode,
         city,
         country,
       });

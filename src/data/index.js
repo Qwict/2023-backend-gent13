@@ -170,18 +170,16 @@ const tables = {
   category: 'category',
   company: 'company',
   user: 'user',
-  userCompany: 'userCompany',
   product: 'product',
-  productDescription: 'productdescription',
-  productPrice: 'productprice',
-  productMeasure: 'productunitofmeasureconverion',
+  product_description: 'product_description',
+  product_price: 'product_price',
   order: 'order',
-  orderItem: 'orderitem',
+  order_item: 'order_item',
   notification: 'notification',
   delivery: 'delivery',
-  deliveryService: 'deliveryservice',
+  delivery_service: 'delivery_service',
   packaging: 'packaging',
-  productCategory: 'productcategory',
+  product_category: 'product_category',
 };
 
 module.exports = {

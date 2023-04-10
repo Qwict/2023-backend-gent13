@@ -84,7 +84,7 @@ const register = async (company, newAdminToken) => {
     date: new Date(),
     audience: 'admin',
     subject: `New Company registered`,
-    text: `Company ${createdCompany.name} (${createdCompany.vatNumber}) was registered by ${admin.name ? `${admin.name} (${admin.email})` : admin.email} }`,
+    text: `Company ${createdCompany.name} (${createdCompany.vatNumber}) was registered by ${admin.name ? `${admin.name} (${admin.email})` : admin.email}`,
   });
   debugLog(`Company with id ${createdCompanyId} now has ${admin.email} as admin !`);
 };

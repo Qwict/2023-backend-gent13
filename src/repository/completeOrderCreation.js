@@ -28,38 +28,38 @@ const create = async (user, {
 
       await trx(tables.order).insert({
         id: orderId,
-        buyerId: user.id,
-        customerId: user.companyId,
-        fromCompanyId,
-        packagingId,
-        orderReference,
-        orderDateTime: new Date().toString(),
-        netPrice,
-        taxPrice,
-        totalPrice,
-        orderStatus: 0,
+        buyer_id: user.id,
+        customer_id: user.companyId,
+        from_company_id: fromCompanyId,
+        packaging_id: packagingId,
+        order_reference: orderReference,
+        order_date_time: new Date().toString(),
+        net_price: netPrice,
+        tax_price: taxPrice,
+        total_price: totalPrice,
+        order_status: 0,
       });
       for (const product of products) {
-        await trx(tables.orderItem).insert({
-          orderId,
-          productId: product.id,
+        await trx(tables.order_item).insert({
+          order_id: orderId,
+          product_id: product.id,
           quantity: product.quantity,
-          netPrice: product.netPrice * product.quantity,
+          net_price: product.netPrice * product.quantity,
         });
       }
 
       await trx(tables.delivery).insert({
-        transporterId: null,
-        orderId,
-        packagingId,
+        transporter_id: null,
+        order_id: orderId,
+        packaging_id: packagingId,
         street,
         number,
-        zipCode,
+        zip_code: zipCode,
         city,
         country,
-        additionalInformation,
-        trackAndtrace,
-        deliveryStatus: 0,
+        additional_information: additionalInformation,
+        track_and_trace: trackAndtrace,
+        delivery_status: 0,
       });
       return orderId;
     });
@@ -75,16 +75,16 @@ const update = async (id, {
   try {
     await getKnex().transaction(async (trx) => {
       await trx(tables.order).update({
-        packagingId,
+        packaging_id: packagingId,
       }).where('id', id);
       await trx(tables.delivery).update({
-        packagingId,
+        packaging_id: packagingId,
         street,
         number,
-        zipCode,
+        zip_code: zipCode,
         city,
         country,
-      }).where('orderId', id);
+      }).where('order_id', id);
     });
   } catch (error) {
     throw Error(error);

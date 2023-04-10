@@ -1,5 +1,5 @@
 const {
-  tables,
+    tables,
 } = require('..');
 
 module.exports = {
@@ -9,9 +9,9 @@ module.exports = {
             // table.integer('productCategoryId').unsigned().nullable();
             table.integer('stock').notNullable();
             table.string('image', 512).defaultTo(null);
-            table.integer('companyId').unsigned().notNullable();
+            table.integer('company_id').unsigned().notNullable();
             // table.foreign('productCategoryId', 'fk_Product_Catgeory').references(`${tables.category}.id`).onDelete('SET NULL');
-            table.foreign('companyId', 'fk_Product_Company').references(`${tables.company}.id`).onDelete('CASCADE');
+            table.foreign('company_id', 'fk_Product_Company').references(`${tables.company}.id`).onDelete('CASCADE');
         });
     },
     down: (knex) => knex.schema.dropTableIfExists(tables.product),

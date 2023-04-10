@@ -29,6 +29,7 @@ register.validationScheme = {
 };
 
 const login = async (ctx) => {
+  console.log(ctx.request.body);
   const verification = await userService.login(ctx.request.body);
   ctx.body = verification;
   if (verification.validated) {
@@ -122,7 +123,8 @@ module.exports = function installUserRouter(app) {
     prefix: '/user',
   });
 
-  router.post('/login', validate(login.validationScheme), login);
+  // router.post('/login', validate(login.validationScheme), login);
+  router.post('/login', login);
   router.post('/verify', validate(verify.validationScheme), verify);
 
   router.get('/', authorization(permissions.loggedIn), getUser);

@@ -9,7 +9,7 @@ module.exports = {
       table.string('name').notNullable();
       table.string('description', 256);
       // In case we want an image for each category header
-      table.string('categoryImg');
+      table.string('category_img');
     });
   },
   down: (knex) => knex.schema.dropTableIfExists(tables.category),

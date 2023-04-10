@@ -20,15 +20,15 @@ const formatUser = ({
   city,
   country,
 }) => ({
-  firstName,
-  lastName,
+  first_name: firstName,
+  last_name: lastName,
   name,
   email,
   role,
   address: {
     street,
-    streetNumber,
-    zipCode,
+    street_number: streetNumber,
+    zip_code: zipCode,
     city,
     country,
   },
@@ -110,14 +110,14 @@ const updateById = async (id, {
     await getKnex()(tables.user)
       .update({
         name,
-        firstName,
-        lastName,
+        first_name: firstName,
+        last_name: lastName,
         email,
-        companyId,
+        company_id: companyId,
         role,
         street,
-        streetNumber,
-        zipCode,
+        street_number: streetNumber,
+        zip_code: zipCode,
         city,
         country,
       })
@@ -156,7 +156,7 @@ const getNumberOfEmployees = async (companyId) => {
   try {
     const [count] = await getKnex()(tables.user)
       .count()
-      .where('companyId', companyId);
+      .where('company_id', companyId);
     return count['count(*)'];
   } catch (error) {
     const logger = getLogger();
@@ -171,7 +171,7 @@ const getAllEmployees = async (companyId) => {
   try {
     const employees = await getKnex()(tables.user)
       .select()
-      .where('companyId', companyId);
+      .where('company_id', companyId);
     return employees.map(formatUser);
   } catch (error) {
     const logger = getLogger();
