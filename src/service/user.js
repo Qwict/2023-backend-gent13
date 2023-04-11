@@ -14,15 +14,6 @@ const debugLog = (message, meta = {}) => {
   this.logger.debug(message, meta);
 };
 
-// const checkCompanyForAdmins = async (companyId) => {
-//   debugLog(`Checking if company ${companyId} has admins`);
-//   const employees = await getAllEmployees(user.companyId);
-//   const admins = employees.filter((employee) => employee.role === 'admin');
-//   if (admins.length > 1) {
-//     return true;
-//   }
-//   throw ServiceError.badRequest(`The ${user.role} - ${user.email} is the only admin in the company and can not be deleted`);
-// };
 
 const generateJavaWebToken = async (user) => {
   debugLog(`Generating JWT for ${user.email}`);
@@ -313,8 +304,8 @@ const update = async (token, {
   country,
 }) => {
   const user = await getByToken(token);
-  if (user.role === 'admin') {
-    checkCompanyForAdmins(user.companyId);
+  if (email !== user.email && user.role === 'admin') {
+    checkCompanyForAdmins(user);
   }
   const originalEmail = user.email;
   debugLog(`updating user with id ${user.id}`);
@@ -364,6 +355,16 @@ const update = async (token, {
     });
   }
   return verification;
+};
+
+const checkCompanyForAdmins = async (user) => {
+  debugLog(`Checking if company ${user.companyId} has admins`);
+  const employees = await getAllEmployees(user.companyId);
+  const admins = employees.filter((employee) => employee.role === 'admin');
+  if (admins.length > 1) {
+    return true;
+  }
+  throw ServiceError.badRequest(`The ${user.role} - ${user.email} is the only admin in the company and can not be deleted`);
 };
 
 const leaveCompany = async (token) => {
