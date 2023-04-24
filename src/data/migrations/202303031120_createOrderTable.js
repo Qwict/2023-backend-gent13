@@ -1,10 +1,8 @@
-const {
-  tables,
-} = require('..');
+const { tables } = require('..');
 
 module.exports = {
   up: async (knex) => {
-    await knex.schema.createTable(tables.order, (table) => {
+    await knex.schema.createTable(tables.orders, (table) => {
       table.uuid('id').primary().unique();
       table.uuid('buyerId').notNullable();
       table.integer('customerId').unsigned().notNullable();
@@ -23,5 +21,5 @@ module.exports = {
       table.foreign('fromCompanyId', 'fk_Order_Company2').references(`${tables.company}.id`);
     });
   },
-  down: (knex) => knex.schema.dropTableIfExists(tables.order),
+  down: (knex) => knex.schema.dropTableIfExists(tables.orders),
 };
