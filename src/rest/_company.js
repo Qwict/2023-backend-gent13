@@ -5,6 +5,8 @@ const companyService = require('../service/company');
 const userService = require('../service/user');
 const validate = require('./_validation');
 
+const upload = require('../core/upload');
+
 const {
   authorization,
   permissions,
@@ -69,6 +71,13 @@ getCompanyByVAT.validationScheme = {
   },
 };
 
+const addLogo = async (ctx) => {
+  console.log(ctx.file);
+  const file = ctx.file.filename;
+  console.log(file);
+  ctx.status = 201;
+};
+
 module.exports = function installUserRouter(app) {
   const router = new Router({
     prefix: '/company',
@@ -84,6 +93,7 @@ module.exports = function installUserRouter(app) {
   router.get('/', validate(getAll.validationScheme), getAll);
   router.get('/employee', authorization(permissions.admin), validate(getAllEmployees), getAllEmployees);
   router.get('/vat/:id', authorization(permissions.loggedIn), validate(getCompanyByVAT), getCompanyByVAT);
+  router.post('/logo', upload.single('image'), addLogo);
 
   app
     .use(router.routes())
