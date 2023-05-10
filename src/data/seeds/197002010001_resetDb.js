@@ -1,6 +1,4 @@
-const {
-  tables,
-} = require('..');
+const { tables } = require('..');
 
 module.exports = {
   seed: async (knex) => {
@@ -12,7 +10,7 @@ module.exports = {
     await knex(tables.delivery).delete();
     await knex(tables.deliveryService).delete();
     await knex(tables.notification).delete();
-    await knex(tables.order).delete();
+    await knex(tables.orders).delete();
     await knex(tables.packaging).delete();
     await knex(tables.user).delete();
     await knex(tables.company).delete();
