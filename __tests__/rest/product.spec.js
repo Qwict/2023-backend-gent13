@@ -32,6 +32,7 @@ const data = {
     companyId: 1,
     },
   productDescription: {
+    id: 1,
     productId: 1,
     languageId: 'nl',
     name: 'Ski-lat',
@@ -39,6 +40,7 @@ const data = {
     longDescription: 'oioi',
     },
   productPrice: {
+    id: 1,
     productId: 1,
     price: 49.99,
     quantity: 1,

@@ -91,13 +91,13 @@ describe('Notification', () => {
       await knex(tables.company).insert(data.company);
       await knex(tables.packaging).insert(data.packaging);
       await knex(tables.user).insert(data.user);
-      await knex(tables.order).insert(data.order);
+      await knex(tables.orders).insert(data.order);
       await knex(tables.notification).insert(data.notification);
     });
 
     afterAll(async () => {
       await knex(tables.notification).delete();
-      await knex(tables.order).delete();
+      await knex(tables.orders).delete();
       await knex(tables.user).delete();
       await knex(tables.packaging).delete();
       await knex(tables.company).delete();
@@ -126,13 +126,13 @@ describe('Notification', () => {
   //     await knex(tables.company).insert(data.company);
   //     await knex(tables.packaging).insert(data.packaging);
   //     await knex(tables.user).insert(data.user);
-  //     await knex(tables.order).insert(data.order);
+  //     await knex(tables.orders).insert(data.order);
   //     await knex(tables.notification).insert(data.notification);
   //   });
 
   //   afterAll(async () => {
   //     await knex(tables.notification).delete();
-  //     await knex(tables.order).delete();
+  //     await knex(tables.orders).delete();
   //     await knex(tables.user).delete();
   //     await knex(tables.packaging).delete();
   //     await knex(tables.company).delete();

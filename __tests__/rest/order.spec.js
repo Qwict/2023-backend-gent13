@@ -52,6 +52,7 @@ const data = {
       companyId: 1,
       },
     productDescription: {
+      id: 1,
       productId: 1,
       languageId: 'nl',
       name: 'Ski-lat',
@@ -59,6 +60,7 @@ const data = {
       longDescription: 'oioi',
       },
     productPrice: {
+      id: 1,
       productId: 1,
       price: 49.99,
       quantity: 1,
@@ -77,6 +79,7 @@ const data = {
     orderStatus: 0,
   },
   orderItem: {
+    id: 2,
     orderId: "12165d36-cb10-4e12-8d6b-10cdf8f5f9f1",
     productId: 1,
     quantity: 1,
@@ -128,7 +131,7 @@ describe('Order', () => {
       await knex(tables.product).insert(data.product);
       await knex(tables.productDescription).insert(data.productDescription);
       await knex(tables.productPrice).insert(data.productPrice);
-      await knex(tables.order).insert(data.order);
+      await knex(tables.orders).insert(data.order);
       await knex(tables.orderItem).insert(data.orderItem);
       await knex(tables.deliveryService).insert(data.deliveryService);
       await knex(tables.delivery).insert(data.delivery);
@@ -138,7 +141,7 @@ describe('Order', () => {
       await knex(tables.delivery).delete();
       await knex(tables.deliveryService).delete();
       await knex(tables.orderItem).delete();
-      await knex(tables.order).delete();
+      await knex(tables.orders).delete();
       await knex(tables.productPrice).delete();
       await knex(tables.productDescription).delete();
       await knex(tables.product).delete();
@@ -171,7 +174,7 @@ describe('Order', () => {
       await knex(tables.product).insert(data.product);
       await knex(tables.productDescription).insert(data.productDescription);
       await knex(tables.productPrice).insert(data.productPrice);
-      await knex(tables.order).insert(data.order);
+      await knex(tables.orders).insert(data.order);
       await knex(tables.orderItem).insert(data.orderItem);
       await knex(tables.deliveryService).insert(data.deliveryService);
       await knex(tables.delivery).insert(data.delivery);
@@ -181,7 +184,7 @@ describe('Order', () => {
       await knex(tables.delivery).delete();
       await knex(tables.deliveryService).delete();
       await knex(tables.orderItem).delete();
-      await knex(tables.order).delete();
+      await knex(tables.orders).delete();
       await knex(tables.productPrice).delete();
       await knex(tables.productDescription).delete();
       await knex(tables.product).delete();

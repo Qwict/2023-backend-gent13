@@ -26,7 +26,7 @@ const create = async (user, {
     await knex.transaction(async (trx) => {
       orderId = uuid.v4();
 
-      await trx(tables.order).insert({
+      await trx(tables.orders).insert({
         id: orderId,
         buyerId: user.id,
         customerId: user.companyId,
@@ -74,7 +74,7 @@ const update = async (id, {
 }) => {
   try {
     await getKnex().transaction(async (trx) => {
-      await trx(tables.order).update({
+      await trx(tables.orders).update({
         packagingId,
       }).where('id', id);
       await trx(tables.delivery).update({

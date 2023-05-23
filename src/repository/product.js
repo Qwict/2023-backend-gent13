@@ -31,7 +31,7 @@ async function findById(id, languageId) {
   .join(tables.productCategory, `${tables.productCategory}.productId`, '=', `${tables.product}.id`)
   .where(`${tables.product}.id`, id)
   .andWhere(`${tables.productDescription}.languageId`, languageId)
-  .groupBy(`${tables.product}.id`)
+  .groupBy(`${tables.product}.id`, `${tables.productDescription}.id`, `${tables.productPrice}.id`)
   .first();
   const formattedProducts = {
     ...product,
@@ -60,7 +60,7 @@ const findAll = async (languageId) => {
   .join(tables.company, `${tables.company}.id`, '=', `${tables.product}.companyId`)
   .join(tables.productCategory, `${tables.productCategory}.productId`, '=', `${tables.product}.id`)
   .where(`${tables.productDescription}.languageId`, languageId)
-  .groupBy(`${tables.product}.id`)
+  .groupBy(`${tables.product}.id`, `${tables.productDescription}.id`, `${tables.productPrice}.id`)
   .orderBy('id', 'ASC');
 
 const formattedProducts = products.map((product) => ({
@@ -72,7 +72,7 @@ const formattedProducts = products.map((product) => ({
 };
 
 const findCount = async () => {
-  const count = await getKnex()(tables.product).distinct('id').count('id as count');
+  const count = await getKnex()(tables.product).distinct('id').count('id as count').groupBy('id');
   return count[0].count;
 };
 

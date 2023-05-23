@@ -8,16 +8,16 @@ const notificationService = require('../service/notification');
 const validate = require('./_validation');
 const { authorization, permissions } = require('../core/auth');
 
-const io = new Server({
-  cors: {
-    origin: config.get('cors.origins'),
-    methods: ["GET", "POST"],
-    allowedHeaders: ['Accept', 'Content-Type', 'Authorization', 'Origin'],
-    maxAge: 3600,
-    credentials: true,
-  },
-});
-io.listen(9001);
+// const io = new Server({
+//   cors: {
+//     origin: config.get('cors.origins'),
+//     methods: ["GET", "POST"],
+//     allowedHeaders: ['Accept', 'Content-Type', 'Authorization', 'Origin'],
+//     maxAge: 3600,
+//     credentials: true,
+//   },
+// });
+// io.listen(9001);
 
 const getById = async (ctx) => {
   ctx.body = await notificationService.getById(ctx.params.id);
@@ -111,17 +111,17 @@ deleteNotification.validationScheme = {
   },
 };
 
-io.on('connection', (socket) => {
-  socket.on('ping notification', async (token) => {
-    try {
-      const notifications = await notificationService.getAll(token);
-      socket.emit('pong notification', notifications);
-    } catch (error) {
-      const notifications = { items: [], count: 0 };
-      socket.emit('pong notification', notifications);
-    }
-  });
-});
+// io.on('connection', (socket) => {
+//   socket.on('ping notification', async (token) => {
+//     try {
+//       const notifications = await notificationService.getAll(token);
+//       socket.emit('pong notification', notifications);
+//     } catch (error) {
+//       const notifications = { items: [], count: 0 };
+//       socket.emit('pong notification', notifications);
+//     }
+//   });
+// });
 
 module.exports = function installNotificationRouter(app) {
   const router = new Router({
