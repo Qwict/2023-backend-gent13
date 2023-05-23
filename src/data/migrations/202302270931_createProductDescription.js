@@ -3,7 +3,7 @@ const { tables } = require('..');
 module.exports = {
   up: async (knex) => {
     await knex.schema.createTable(tables.productDescription, (table) => {
-      table.primary(['productId', 'languageId']);
+      table.increments('id').notNullable().unique();
       table.integer('productId').unsigned().notNullable();
       table.string('languageId', 16).notNullable();
       table.string('name', 128).notNullable();

@@ -66,8 +66,7 @@ async function initializeData() {
       debug: getKnexLogger(logger, 'debug'),
       error: getKnexLogger(logger, 'error'),
       warn: getKnexLogger(logger, 'warn'),
-      deprecate: (method, alternative) =>
-        logger.warn('Knex reported something deprecated', {
+      deprecate: (method, alternative) => logger.warn('Knex reported something deprecated', {
           method,
           alternative,
         }),

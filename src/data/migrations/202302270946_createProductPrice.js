@@ -5,6 +5,7 @@ const {
 module.exports = {
     up: async (knex) => {
         await knex.schema.createTable(tables.productPrice, (table) => {
+            table.increments('id').notNullable().unique();
             table.integer('productId').unsigned().notNullable();
             table.double('price').notNullable();
             table.integer('quantity').notNullable();
