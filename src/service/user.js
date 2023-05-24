@@ -14,7 +14,6 @@ const debugLog = (message, meta = {}) => {
   this.logger.debug(message, meta);
 };
 
-
 const generateJavaWebToken = async (user) => {
   debugLog(`Generating JWT for ${user.email}`);
   const jwtPackage = {
@@ -82,7 +81,7 @@ const promote = async ({ token, email, role }) => {
     debugLog(`Promoted user ${promotedUser.name} (${promotedUser.id} - ${promotedUser.companyId}) to ${role}`);
     notificationFactory.create({
       userId: promotedUser.id,
-      date: new Date(),
+      date: new Date().toString(),
       audience: 'private',
       subject: 'Company role changed',
       text: `You have been promoted to ${role} by administrator ${admin.name} (${admin.email})`,
@@ -90,7 +89,7 @@ const promote = async ({ token, email, role }) => {
     notificationFactory.create({
       userId: admin.id,
       companyId: admin.companyId,
-      date: new Date(),
+      date: new Date().toString(),
       audience: 'admin',
       subject: `Changed employee role`,
       text: `${admin.name ? `${admin.name} (${admin.email})` : admin.email} promoted ${user.name ? `${user.name} (${user.email})` : user.email} to ${role}`,
@@ -132,7 +131,7 @@ const deleteUser = async (token) => {
   if (companyId) {
     notificationFactory.create({
       companyId,
-      date: new Date(),
+      date: new Date().toString(),
       audience: 'admin',
       subject: 'Account deleted',
       text: `User ${email} deleted their account`,
@@ -166,7 +165,7 @@ const register = async ({
 
     notificationFactory.create({
       userId: user.id,
-      date: new Date(),
+      date: new Date().toString(),
       audience: 'private',
       subject: 'Welcome!',
       text: `Welcome to delaware shipping, ${user.name ? user.name : user.email}`,
@@ -278,7 +277,7 @@ const join = async ({
   const company = await companyRepository.findById(companyId);
   notificationFactory.create({
     companyId,
-    date: new Date(),
+    date: new Date().toString(),
     audience: 'admin',
     subject: 'Pending join request',
     text: `User ${user.email} wants to join your company. It is possible to allow this user to join your company in the admin panel.`,
@@ -339,7 +338,7 @@ const update = async (token, {
     if (user.companyId) {
       notificationFactory.create({
         companyId: user.companyId,
-        date: new Date(),
+        date: new Date().toString(),
         audience: 'admin',
         subject: 'User changed email',
         text: `User ${originalEmail} changed email to ${email}`,
@@ -404,14 +403,14 @@ const leaveCompany = async (token) => {
   }
   notificationFactory.create({
     userId: user.id,
-    date: new Date(),
+    date: new Date().toString(),
     audience: 'private',
     subject: 'Left company',
     text: `You left a company`,
   });
   notificationFactory.create({
     companyId: user.companyId,
-    date: new Date(),
+    date: new Date().toString(),
     audience: 'admin',
     subject: 'Left company',
     text: `${user.name} (${user.email}) left the company`,

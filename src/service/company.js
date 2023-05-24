@@ -81,7 +81,7 @@ const register = async (company, newAdminToken) => {
   // removed await
   notificationFactory.create({
     companyId: createdCompanyId,
-    date: new Date(),
+    date: new Date().toString(),
     audience: 'admin',
     subject: `New Company registered`,
     text: `Company ${createdCompany.name} (${createdCompany.vatNumber}) was registered by ${admin.name ? `${admin.name} (${admin.email})` : admin.email} }`,
